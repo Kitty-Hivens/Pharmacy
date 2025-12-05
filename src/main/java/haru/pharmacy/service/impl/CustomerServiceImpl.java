@@ -3,6 +3,7 @@ package haru.pharmacy.service.impl;
 import haru.pharmacy.dto.customer.CustomerCreateDto;
 import haru.pharmacy.dto.customer.CustomerResponseDto;
 import haru.pharmacy.dto.customer.CustomerUpdateDto;
+import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.mapper.CustomerMapper;
 import haru.pharmacy.model.Customer;
 import haru.pharmacy.repository.CustomerRepository;
@@ -28,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponseDto update(Long id, CustomerUpdateDto dto) {
         Customer entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         mapper.updateEntity(dto, entity);
         return mapper.toDto(repository.save(entity));
@@ -38,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDto get(Long id) {
         return repository.findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     @Override
