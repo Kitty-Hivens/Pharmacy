@@ -1,6 +1,8 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.InventoryAddDto;
+import haru.pharmacy.exception.BusinessConstraintException;
+import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.Inventory;
 import haru.pharmacy.model.Medicine;
 import haru.pharmacy.model.Supplier;
@@ -20,12 +22,12 @@ public class InventoryService {
 
     public void addStock(InventoryAddDto dto) {
         Medicine medicine = medicineRepository.findById(dto.medicineId())
-                .orElseThrow(() -> new RuntimeException("Medicine not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
 
         Supplier supplier = null;
         if (dto.supplierId() != null) {
             supplier = supplierRepository.findById(dto.supplierId())
-                    .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
         }
 
         Inventory inventory = new Inventory();
