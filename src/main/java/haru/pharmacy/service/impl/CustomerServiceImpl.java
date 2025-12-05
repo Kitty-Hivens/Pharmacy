@@ -29,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponseDto update(Long id, CustomerUpdateDto dto) {
         Customer entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
 
         mapper.updateEntity(dto, entity);
         return mapper.toDto(repository.save(entity));
@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDto get(Long id) {
         return repository.findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
     }
 
     @Override
