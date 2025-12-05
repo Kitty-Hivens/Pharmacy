@@ -28,7 +28,7 @@ public class MedicineServiceImpl implements MedicineService {
     @Override
     public MedicineResponseDto update(Long id, MedicineUpdateDto dto) {
         Medicine entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.login.taken"));
 
         mapper.updateEntity(dto, entity);
         return mapper.toDto(repository.save(entity));
@@ -38,7 +38,7 @@ public class MedicineServiceImpl implements MedicineService {
     public MedicineResponseDto get(Long id) {
         return repository.findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.login.taken"));
     }
 
     @Override
