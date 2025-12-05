@@ -1,6 +1,7 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.SaleCreateDto;
+import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
 import haru.pharmacy.repository.*;
 // (Создай этот интерфейс или удали импорт, если пока без него)
@@ -47,36 +48,29 @@ public class SaleService {
 
         for (SaleCreateDto.SaleItemRequest itemRequest : dto.items()) {
             Medicine medicine = medicineRepository.findById(itemRequest.medicineId())
-                    .orElseThrow(() -> new RuntimeException("Medicine not found: " + itemRequest.medicineId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Medicine not found: " + itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
-
-            // 1. Ищем все партии этого лекарства (сначала старые)
             List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
-
-            // Считаем, сколько всего есть на складе
             int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
 
             if (totalStock < quantityToSell) {
-                throw new RuntimeException("Недостаточно товара на складе! Нужно: " + quantityToSell + ", Есть: " + totalStock);
+                throw new ResourceNotFoundException("Not enough items in stock! Required: " + quantityToSell + ", Available: " + totalStock);
             }
 
-            // 2. Списываем по очереди (FEFO)
             for (Inventory batch : batches) {
-                if (quantityToSell <= 0) break; // Всё продали
+                if (quantityToSell <= 0) break;
 
                 int availableInBatch = batch.getStockQuantity();
 
                 if (availableInBatch >= quantityToSell) {
-                    // В этой партии хватает. Забираем сколько надо.
                     batch.setStockQuantity(availableInBatch - quantityToSell);
                     quantityToSell = 0;
                 } else {
-                    // В этой партии мало. Забираем всё и идем к следующей.
                     batch.setStockQuantity(0);
                     quantityToSell -= availableInBatch;
                 }
-                inventoryRepository.save(batch); // Сохраняем измененный остаток
+                inventoryRepository.save(batch);
             }
 
 
