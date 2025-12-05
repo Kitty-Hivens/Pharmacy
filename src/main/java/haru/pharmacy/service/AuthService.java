@@ -1,6 +1,7 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.controller.request.AuthResponse;
+import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.model.UserAccount;
 import haru.pharmacy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,10 @@ public class AuthService {
 
     public AuthResponse login(String username, String password) {
         UserAccount user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new BusinessConstraintException("error.auth.invalid"));
 
         if (!encoder.matches(password, user.getPasswordHash()))
-            throw new RuntimeException("Invalid credentials");
+            throw new BusinessConstraintException("error.auth.invalid");
 
         String token = jwtService.generateToken(user);
 

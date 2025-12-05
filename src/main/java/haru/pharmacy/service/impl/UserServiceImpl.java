@@ -2,6 +2,7 @@ package haru.pharmacy.service.impl;
 
 import haru.pharmacy.dto.user.UserCreateDto;
 import haru.pharmacy.dto.user.UserResponseDto;
+import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.mapper.UserMapper; // <--- Импорт маппера
 import haru.pharmacy.model.Employee;
 import haru.pharmacy.model.UserAccount;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImlp implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
     private final EmployeeRepository employeeRepo;
@@ -28,7 +29,7 @@ public class UserServiceImlp implements UserService {
     @Transactional
     public void createUser(UserCreateDto dto) {
         if (userRepo.findByUsername(dto.username()).isPresent()) {
-            throw new RuntimeException("Пользователь с таким логином уже существует");
+            throw new BusinessConstraintException("error.login.taken");
         }
         Employee emp = mapper.toEmployee(dto);
         emp.setHireDate(LocalDate.now());
