@@ -1,6 +1,7 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.SaleCreateDto;
+import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
 import haru.pharmacy.repository.*;
@@ -32,13 +33,13 @@ public class SaleService {
 
         // Get seller (or admin)
         UserAccount user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Seller not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.seller.not_found"));
         sale.setEmployee(user.getEmployee());
 
         // Get customer
         if (dto.customerId() != null) {
             Customer customer = customerRepository.findById(dto.customerId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
             sale.setCustomer(customer);
         }
 
@@ -48,14 +49,15 @@ public class SaleService {
 
         for (SaleCreateDto.SaleItemRequest itemRequest : dto.items()) {
             Medicine medicine = medicineRepository.findById(itemRequest.medicineId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Medicine not found: " + itemRequest.medicineId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found" + itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
             List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
             int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
 
             if (totalStock < quantityToSell) {
-                throw new ResourceNotFoundException("Not enough items in stock! Required: " + quantityToSell + ", Available: " + totalStock);
+                throw new BusinessConstraintException("error.inventory.insufficient",
+                        medicine.getName(), quantityToSell, totalStock);
             }
 
             for (Inventory batch : batches) {
