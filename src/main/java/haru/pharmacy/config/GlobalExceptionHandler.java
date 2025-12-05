@@ -48,6 +48,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessConstraintException.class)
     public ResponseEntity<String> handleBusiness(BusinessConstraintException ex) {
-        return new ResponseEntity<>(getMessage(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getMessage(ex.getMessage(), ex.getArgs()), HttpStatus.BAD_REQUEST);
     }
 }
