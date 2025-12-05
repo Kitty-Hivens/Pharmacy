@@ -22,12 +22,12 @@ public class InventoryService {
 
     public void addStock(InventoryAddDto dto) {
         Medicine medicine = medicineRepository.findById(dto.medicineId())
-                .orElseThrow(() -> new ResourceNotFoundException("Medicine not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found"));
 
         Supplier supplier = null;
         if (dto.supplierId() != null) {
             supplier = supplierRepository.findById(dto.supplierId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("error.supplier.not_found"));
         }
 
         Inventory inventory = new Inventory();
