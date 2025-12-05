@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void createUser(UserCreateDto dto) {
         if (userRepo.findByUsername(dto.username()).isPresent()) {
-            throw new BusinessConstraintException("A user with this login already exists.");
+            throw new BusinessConstraintException("error.login.taken");
         }
         Employee emp = mapper.toEmployee(dto);
         emp.setHireDate(LocalDate.now());
