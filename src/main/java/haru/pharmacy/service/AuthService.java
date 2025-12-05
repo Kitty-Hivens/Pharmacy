@@ -18,10 +18,10 @@ public class AuthService {
 
     public AuthResponse login(String username, String password) {
         UserAccount user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new BusinessConstraintException("Invalid credentials"));
+                .orElseThrow(() -> new BusinessConstraintException("error.auth.invalid"));
 
         if (!encoder.matches(password, user.getPasswordHash()))
-            throw new BusinessConstraintException("Invalid credentials");
+            throw new BusinessConstraintException("error.auth.invalid");
 
         String token = jwtService.generateToken(user);
 
