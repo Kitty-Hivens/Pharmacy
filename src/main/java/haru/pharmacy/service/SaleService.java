@@ -49,7 +49,7 @@ public class SaleService {
 
         for (SaleCreateDto.SaleItemRequest itemRequest : dto.items()) {
             Medicine medicine = medicineRepository.findById(itemRequest.medicineId())
-                    .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found" + itemRequest.medicineId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
             List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
