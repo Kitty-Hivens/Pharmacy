@@ -2,6 +2,7 @@ package haru.pharmacy.controller;
 
 import haru.pharmacy.dto.SaleCreateDto;
 import haru.pharmacy.service.SaleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class SaleController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
-    public void create(@RequestBody SaleCreateDto dto, Principal principal) {
+    public void create(@Valid @RequestBody SaleCreateDto dto, Principal principal) {
         service.createSale(dto, principal.getName());
     }
 }

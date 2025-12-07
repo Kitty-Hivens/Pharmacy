@@ -4,6 +4,7 @@ import haru.pharmacy.dto.customer.CustomerCreateDto;
 import haru.pharmacy.dto.customer.CustomerResponseDto;
 import haru.pharmacy.dto.customer.CustomerUpdateDto;
 import haru.pharmacy.service.interfaces.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,14 @@ public class CustomerController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
-    public CustomerResponseDto create(@RequestBody CustomerCreateDto dto) {
+    public CustomerResponseDto create(@Valid @RequestBody CustomerCreateDto dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     public CustomerResponseDto update(@PathVariable Long id,
-                                      @RequestBody CustomerUpdateDto dto) {
+                                      @Valid @RequestBody CustomerUpdateDto dto) {
         return service.update(id, dto);
     }
 
