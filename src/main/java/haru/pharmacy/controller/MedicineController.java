@@ -4,6 +4,7 @@ import haru.pharmacy.dto.medicine.MedicineCreateDto;
 import haru.pharmacy.dto.medicine.MedicineResponseDto;
 import haru.pharmacy.dto.medicine.MedicineUpdateDto;
 import haru.pharmacy.service.interfaces.MedicineService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,14 @@ public class MedicineController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public MedicineResponseDto create(@RequestBody MedicineCreateDto dto) {
+    public MedicineResponseDto create(@Valid @RequestBody MedicineCreateDto dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public MedicineResponseDto update(@PathVariable Long id,
-                                      @RequestBody MedicineUpdateDto dto) {
+                                      @Valid @RequestBody MedicineUpdateDto dto) {
         return service.update(id, dto);
     }
 

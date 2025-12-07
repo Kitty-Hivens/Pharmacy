@@ -2,6 +2,7 @@ package haru.pharmacy.controller;
 
 import haru.pharmacy.dto.SupplierDto;
 import haru.pharmacy.service.SupplierService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class SupplierController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public SupplierDto create(@RequestBody SupplierDto dto) {
+    public SupplierDto create(@Valid @RequestBody SupplierDto dto) {
         return service.create(dto);
     }
 

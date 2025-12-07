@@ -6,11 +6,16 @@ import haru.pharmacy.repository.EmployeeRepository;
 import haru.pharmacy.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InitAdmin {
@@ -19,33 +24,44 @@ public class InitAdmin {
     private final EmployeeRepository employeeRepo;
     private final PasswordEncoder encoder;
 
+    @Value("${admin.initial.password:#{null}}")
+    private String configuredPassword;
+
     @PostConstruct
+    @Transactional
     public void init() {
-        System.out.println(">>> ЗАПУСК INIT ADMIN <<<"); // Лог для проверки
+        String adminUsername = "admin";
 
-        if (userRepo.count() == 0) {
-            System.out.println(">>> БАЗА ПУСТАЯ, СОЗДАЮ АДМИНА... <<<");
-
-            // 1. Создаем сотрудника
-            Employee emp = new Employee();
-            emp.setFirstName("Главный");
-            emp.setLastName("Админ");
-            emp.setPosition("Директор");
-            emp.setHireDate(LocalDate.now());
-            emp = employeeRepo.save(emp); // Сохраняем и получаем ID
-
-            // 2. Создаем аккаунт
-            UserAccount user = new UserAccount();
-            user.setUsername("admin");
-            user.setPasswordHash(encoder.encode("12345"));
-            user.setRole("ADMIN");
-            user.setIsActive(true);
-            user.setEmployee(emp); // Привязываем сотрудника!
-
-            userRepo.save(user);
-            System.out.println(">>> АДМИН УСПЕШНО СОЗДАН! <<<");
-        } else {
-            System.out.println(">>> ПОЛЬЗОВАТЕЛИ УЖЕ ЕСТЬ. ПРОПУСК. <<<");
+        if (userRepo.findByUsername(adminUsername).isPresent()) {
+            log.info("Admin user '{}' already exists. Skipping initialization.", adminUsername);
+            return;
         }
+
+        log.info("Initializing default admin user '{}'...", adminUsername);
+
+        Employee emp = new Employee();
+        emp.setFirstName("Super");
+        emp.setLastName("Admin");
+        emp.setPosition("System Administrator");
+        emp.setHireDate(LocalDate.now());
+        emp = employeeRepo.save(emp);
+
+        String passwordToUse = configuredPassword;
+        if (passwordToUse == null || passwordToUse.isBlank()) {
+            passwordToUse = UUID.randomUUID().toString().substring(0, 12);
+            log.warn("Generated temporary admin password: {}", passwordToUse); 
+        } else {
+            log.info("Using configured admin password.");
+        }
+
+        UserAccount user = new UserAccount();
+        user.setUsername(adminUsername);
+        user.setPasswordHash(encoder.encode(passwordToUse));
+        user.setRole("ADMIN");
+        user.setIsActive(true);
+        user.setEmployee(emp);
+
+        userRepo.save(user);
+        log.info("Admin user created successfully.");
     }
 }

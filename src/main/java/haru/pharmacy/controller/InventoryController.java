@@ -2,6 +2,7 @@ package haru.pharmacy.controller;
 
 import haru.pharmacy.dto.InventoryAddDto;
 import haru.pharmacy.service.InventoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class InventoryController {
 
     @PostMapping("/restock")
     @PreAuthorize("hasRole('ADMIN')")
-    public void restock(@RequestBody InventoryAddDto dto) {
+    public void restock(@Valid @RequestBody InventoryAddDto dto) {
         service.addStock(dto);
     }
 }
