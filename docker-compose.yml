@@ -1,0 +1,38 @@
+services:
+  app:
+    container_name: pharmacy-backend
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/pharmacy_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - JWT_SECRET=VerySecretKeyForTokensChangeMeInProduction12345
+      - ADMIN_INITIAL_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+    networks:
+      - pharmacy-net
+    restart: always
+
+  db:
+    image: mariadb:10.6
+    container_name: pharmacy-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=pharmacy_db
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - pharmacy-net
+    restart: always
+
+volumes:
+  db_data:
+
+networks:
+  pharmacy-net:
