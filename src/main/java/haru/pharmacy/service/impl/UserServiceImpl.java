@@ -3,7 +3,8 @@ package haru.pharmacy.service.impl;
 import haru.pharmacy.dto.user.UserCreateDto;
 import haru.pharmacy.dto.user.UserResponseDto;
 import haru.pharmacy.exception.BusinessConstraintException;
-import haru.pharmacy.mapper.UserMapper; // <--- Импорт маппера
+import haru.pharmacy.exception.ResourceNotFoundException; // <--- Импорт
+import haru.pharmacy.mapper.UserMapper;
 import haru.pharmacy.model.Employee;
 import haru.pharmacy.model.UserAccount;
 import haru.pharmacy.repository.EmployeeRepository;
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void createUser(UserCreateDto dto) {
         if (userRepo.findByUsername(dto.username()).isPresent()) {
-            throw new BusinessConstraintException("error.login.taken");
+            throw new BusinessConstraintException("error.login.taken", dto.username());
         }
         Employee emp = mapper.toEmployee(dto);
         emp.setHireDate(LocalDate.now());
@@ -53,7 +54,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void delete(Long id) {
-        UserAccount user = userRepo.findById(id).orElseThrow();
+        UserAccount user = userRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.user.not_found", id));
         userRepo.delete(user);
     }
 }
