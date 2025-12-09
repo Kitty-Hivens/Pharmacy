@@ -1,7 +1,7 @@
 services:
   app:
     container_name: pharmacy-backend
-    build: .
+    build: ./backend
     ports:
       - "8080:8080"
     environment:
