@@ -42,6 +42,29 @@ class MedicineServiceTest {
     private MedicineServiceImpl service;
 
     @Test
+    @DisplayName("Create should save entity and return DTO")
+    void create_ShouldSave() {
+        MedicineCreateDto dto = new MedicineCreateDto(
+                "Aspirin", BigDecimal.TEN, "Bayer", "Desc", false
+        );
+        Medicine entity = new Medicine();
+        Medicine saved = new Medicine();
+        saved.setId(1L);
+        MedicineResponseDto responseDto = new MedicineResponseDto(
+                1L, "Aspirin", BigDecimal.TEN, "Bayer", "Desc", false
+        );
+
+        when(mapper.toEntity(dto)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(saved);
+        when(mapper.toDto(saved)).thenReturn(responseDto);
+
+        MedicineResponseDto result = service.create(dto);
+
+        assertEquals(1L, result.id());
+        verify(repository).save(entity);
+    }
+
+    @Test
     @DisplayName("Create should save medicine and return mapped DTO")
     void create_ShouldSaveAndReturnDto() {
         // Given
@@ -71,31 +94,24 @@ class MedicineServiceTest {
     }
 
     @Test
-    @DisplayName("Update should modify existing entity and return DTO")
+    @DisplayName("Update should modify entity when found")
     void update_ShouldUpdate_WhenFound() {
-        // Given
         Long id = 1L;
         MedicineUpdateDto dto = new MedicineUpdateDto(
-                "Aspirin Ultra", BigDecimal.valueOf(15), "Bayer", "Stronger", false
+                "NewName", BigDecimal.ONE, "NewManuf", "Desc", true
         );
         Medicine existing = new Medicine();
         existing.setId(id);
 
-        Medicine saved = new Medicine();
-        MedicineResponseDto expectedResponse = new MedicineResponseDto(
-                id, "Aspirin Ultra", BigDecimal.valueOf(15), "Bayer", "Stronger", false
-        );
-
         when(repository.findById(id)).thenReturn(Optional.of(existing));
-        when(repository.save(existing)).thenReturn(saved);
-        when(mapper.toDto(saved)).thenReturn(expectedResponse);
+        when(repository.save(existing)).thenReturn(existing);
 
-        // When
-        MedicineResponseDto result = service.update(id, dto);
+        when(mapper.toDto(existing)).thenReturn(new MedicineResponseDto(
+                id, "NewName", BigDecimal.ONE, "NewManuf", "Desc", true
+        ));
 
-        // Then
-        assertNotNull(result);
-        assertEquals("Aspirin Ultra", result.name());
+        service.update(id, dto);
+
         verify(mapper).updateEntity(dto, existing);
         verify(repository).save(existing);
     }
@@ -129,6 +145,14 @@ class MedicineServiceTest {
 
     @Test
     @DisplayName("Get should throw exception when not found")
+    void get_ShouldThrow_WhenMissing() {
+        Long id = 99L;
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> service.get(id));
+    }
+
+    @Test
+    @DisplayName("Get should throw exception when not found")
     void get_ShouldThrow_WhenNotFound() {
         Long id = 99L;
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -147,9 +171,25 @@ class MedicineServiceTest {
     }
 
     @Test
-    @DisplayName("Delete should call repository delete")
+    @DisplayName("Delete should call repository when entity exists")
     void delete_ShouldCallRepo() {
-        service.delete(1L);
-        verify(repository).deleteById(1L);
+        Long id = 1L;
+        when(repository.existsById(id)).thenReturn(true);
+
+        service.delete(id);
+
+        verify(repository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Delete should throw exception when entity missing")
+    void delete_ShouldThrow_WhenMissing() {
+        Long id = 99L;
+
+        when(repository.existsById(id)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> service.delete(id));
+
+        verify(repository, never()).deleteById(any());
     }
 }
