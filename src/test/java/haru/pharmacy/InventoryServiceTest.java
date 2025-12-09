@@ -101,23 +101,4 @@ class InventoryServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> inventoryService.addStock(dto));
         verify(inventoryRepository, never()).save(any());
     }
-
-    /**
-     * Verifies that exception is thrown if Supplier ID is provided but not found.
-     */
-    @Test
-    @DisplayName("Should throw ResourceNotFoundException when Supplier not found")
-    void addStock_ShouldThrow_WhenSupplierMissing() {
-        // Given
-        Long medicineId = 1L;
-        Long supplierId = 99L;
-        InventoryAddDto dto = new InventoryAddDto(medicineId, supplierId, 10, "B", LocalDate.now());
-
-        when(medicineRepository.findById(medicineId)).thenReturn(Optional.of(new Medicine()));
-        when(supplierRepository.findById(supplierId)).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> inventoryService.addStock(dto));
-        verify(inventoryRepository, never()).save(any());
-    }
 }

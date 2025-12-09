@@ -27,8 +27,13 @@ import static org.mockito.Mockito.*;
  * Unit tests for {@link SaleService}.
  * <p>
  * This class validates the business logic associated with processing sales,
- * including stock availability checks, the FEFO (First Expired, First Out)
- * inventory deduction algorithm, and entity validation.
+ * including:
+ * <ul>
+ * <li>Stock availability checks.</li>
+ * <li>FEFO (First Expired - First Out) inventory deduction strategy.</li>
+ * <li>Transactional integrity and entity validation.</li>
+ * <li>Error handling for missing entities.</li>
+ * </ul>
  *
  * @author Haru
  * @version 2.0
@@ -50,6 +55,8 @@ class SaleServiceTest {
     @InjectMocks
     private SaleService saleService;
 
+    // --- Happy Path Tests (Успешные сценарии) ---
+
     /**
      * Verifies that a sale is successfully processed when all entities exist
      * and there is sufficient stock.
@@ -58,14 +65,14 @@ class SaleServiceTest {
      * according to the FEFO strategy and that the sale is persisted.
      */
     @Test
-    @DisplayName("Should successfully create sale and deduct inventory stock")
+    @DisplayName("Should successfully create sale and deduct inventory stock (FEFO)")
     void createSale_ShouldSucceed_WhenStockIsSufficient() {
         // Given
         String username = "admin";
         Long medicineId = 1L;
         int requestedQty = 15;
 
-        // Setup batches: Batch 1 has 10, Batch 2 has 20. Total 30.
+        // Setup batches: Batch 1 has 10 (Oldest), Batch 2 has 20 (Newer). Total 30.
         // We need 15. Batch 1 should become 0, Batch 2 should become 15.
         Inventory batch1 = new Inventory();
         batch1.setId(101L);
@@ -102,13 +109,15 @@ class SaleServiceTest {
         // Verify sale persistence
         verify(saleRepository).save(any(Sale.class));
 
-        // Verify inventory updates
+        // Verify inventory updates (FEFO logic check)
         assertEquals(0, batch1.getStockQuantity(), "First batch should be fully depleted");
         assertEquals(15, batch2.getStockQuantity(), "Second batch should be partially depleted");
 
         // Verify that save was called for both updated batches
         verify(inventoryRepository, times(2)).save(any(Inventory.class));
     }
+
+    // --- Error Scenarios (Сценарии ошибок) ---
 
     /**
      * Verifies that a {@link BusinessConstraintException} is thrown when the
@@ -124,16 +133,16 @@ class SaleServiceTest {
         int availableQty = 5;
 
         SaleCreateDto dto = new SaleCreateDto(
-                null, // No customer
+                null,
                 List.of(new SaleCreateDto.SaleItemRequest(medicineId, requestedQty))
         );
-
-        Inventory batch = new Inventory();
-        batch.setStockQuantity(availableQty);
 
         Medicine mockMedicine = new Medicine();
         mockMedicine.setId(medicineId);
         mockMedicine.setName("Aspirin");
+
+        Inventory batch = new Inventory();
+        batch.setStockQuantity(availableQty);
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(new UserAccount()));
         when(medicineRepository.findById(medicineId)).thenReturn(Optional.of(mockMedicine));
@@ -163,6 +172,7 @@ class SaleServiceTest {
 
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> saleService.createSale(dto, username));
+        verify(saleRepository, never()).save(any());
     }
 
     /**
@@ -182,6 +192,7 @@ class SaleServiceTest {
 
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> saleService.createSale(dto, username));
+        verify(saleRepository, never()).save(any());
     }
 
     /**
@@ -204,5 +215,6 @@ class SaleServiceTest {
 
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> saleService.createSale(dto, username));
+        verify(saleRepository, never()).save(any());
     }
 }
