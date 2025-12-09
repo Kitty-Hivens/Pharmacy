@@ -1,17 +1,18 @@
-# 🏥 Pharmacy POS System (Backend)
+# 🏥 Pharmacy POS System
 
 Enterprise-grade backend for pharmaceutical retail management.
-Implements a secure POS (Point of Sale) system with inventory tracking, batch management (FEFO), and role-based access control.
+Designed for high reliability, strict data validation, and secure role-based access.
 
 > **Stack:** Java 21, Spring Boot 3, MariaDB, Docker, JWT.
+> **Status:** v1.0 (MVP Ready)
 
 ---
 
 ## ⚡ Quick Start (Docker)
 
-**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine.
+**Prerequisites:** Docker & Docker Compose installed.
 
-You don't need to install Java or MariaDB manually. Just run:
+Run the full stack (Backend + Database) with a single command from the project root:
 
 ```bash
 docker-compose up --build
@@ -24,82 +25,78 @@ The system will start automatically:
 
 ### 📖 API Documentation
 
-Once started, open Swagger UI to explore and test endpoints:
+Interactive Swagger UI is available at:
 👉 **[http://localhost:8080/swagger-ui.html](https://www.google.com/search?q=http://localhost:8080/swagger-ui.html)**
 
 -----
 
-## 🔐 Access & Security
+## 📂 Project Structure
 
-The system is secured with **JWT (JSON Web Tokens)**.
+This is a monorepo containing:
 
-### Default Admin Credentials
+* **`backend/`** - Spring Boot application (Java 21).
+* **`frontend/`** - Vue.js POS interface (in development).
+* **`docker-compose.yml`** - Orchestration for the entire system.
 
-A bootstrap admin account is created on the first launch:
+-----
 
-* **Username:** `admin`
-* **Password:** `admin` (or check console logs if randomized via ENV)
+## 🔐 Access & Credentials
 
-### How to Authenticate
+The system is secured with **Stateless JWT**.
 
-1.  **Login:** Send `POST /auth/login` with credentials.
-2.  **Get Token:** Response contains `{ "token": "eyJ...", "role": "ADMIN" }`.
-3.  **Use Token:** Add header to all protected requests:
-    `Authorization: Bearer <your_token>`
+### 1\. Default Admin
 
-> **Note:** The API implements **RBAC** (Role-Based Access Control).
->
->   * `ADMIN`: Full access (Manage Users, Inventory, Suppliers).
->   * `PHARMACIST`: Operational access (Sales, Customers, Read-only Medicine list).
+Created automatically on first launch:
+
+* **Login:** `admin`
+* **Password:** `admin` (or check console logs if randomized)
+
+### 2\. Authentication Flow
+
+1.  **Login:** `POST /auth/login`
+2.  **Get Token:** Response `{ "token": "eyJ...", "role": "ADMIN" }`
+3.  **Use Token:** Add header to requests: `Authorization: Bearer <token>`
 
 -----
 
 ## 🛠️ Key Features
 
-### 1\. Advanced Inventory Management (FEFO)
+### 📦 Inventory (FEFO Strategy)
 
-The system uses the **First Expired, First Out** strategy.
+Implements **First Expired, First Out** logic.
 
-* Medicines are tracked by **Batches** (with expiration dates).
-* When a sale occurs, the system automatically finds and deducts stock from the oldest batch first.
-* Transactional integrity ensures data consistency during concurrent sales.
+* Tracks goods by **Batches** (expiration dates).
+* Automatically finds and deducts stock from the oldest batch during sales.
 
-### 2\. Enterprise-Grade Validation
+### 🛡️ Security (RBAC)
 
-Strict data validation using **JSR-380 (Bean Validation)**.
+* **ADMIN:** Full control (Users, Inventory, Suppliers).
+* **PHARMACIST:** Operational access (Sales, Customers).
 
-* Prevents invalid data entry (e.g., negative prices, past expiration dates).
-* Returns standardized `400 Bad Request` responses with detailed error messages.
+### ✅ Reliability
 
-### 3\. Localization (i18n)
-
-Supports multi-language responses for errors and validation messages.
-
-* Default: English
-* Switchable via `Accept-Language` header (e.g., `ru`).
+* **Validation:** Strict `JSR-380` validation on all DTOs.
+* **Error Handling:** Global handler returning standardized JSON errors.
+* **i18n:** Localized error messages (EN/RU).
 
 -----
 
-## 🧪 Development & Testing
+## 🧪 Development (Manual Mode)
 
-If you want to run the project manually (without Docker):
+If you want to run the **Backend** manually (without Docker):
 
-**Requirements:** Java 21, local MariaDB instance (created database `pharmacy_db`).
-
-1.  **Configure Database:**
-    Update `src/main/resources/application.properties` if needed.
-2.  **Run Tests:**
+1.  **Navigate to backend directory:**
+    ```bash
+    cd backend
+    ```
+2.  **Configure Database:** Ensure MariaDB is running on `localhost:3306`.
+3.  **Run Tests:**
     ```bash
     ./gradlew test
     ```
-    *Includes 20+ Unit tests with Mockito covering critical business logic.*
-3.  **Build JAR:**
-    ```bash
-    ./gradlew bootJar
-    ```
 4.  **Run App:**
     ```bash
-    java -jar build/libs/pharmacy-0.0.1-SNAPSHOT.jar
+    ./gradlew bootRun
     ```
 
 -----
