@@ -21,7 +21,7 @@ public class Inventory {
     @ManyToOne
     private Medicine medicine;
 
-    @JoinColumn(name = "suppler_id")
+    @JoinColumn(name = "supplier_id")
     @ManyToOne
     private Supplier supplier;
 

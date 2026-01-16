@@ -26,7 +26,7 @@ The system will start automatically:
 ### 📖 API Documentation
 
 Interactive Swagger UI is available at:
-👉 **[http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)**
+👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
 
 -----
 
@@ -113,4 +113,4 @@ If you want to run the **Backend** manually (without Docker):
 
 -----
 
-© 2025 Haru Pharmacy Inc.
+© 2026 Haru Pharmacy Inc.

@@ -5,7 +5,6 @@ import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
 import haru.pharmacy.repository.*;
-// (Создай этот интерфейс или удали импорт, если пока без него)
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for processing sale operations.
+ * <p>
+ * Implements the core business logic for stock deduction
+ * according to the FEFO (First Expired, First Out) strategy.
+ * </p>
+ */
 @Service
 @RequiredArgsConstructor
 public class SaleService {
@@ -25,6 +31,24 @@ public class SaleService {
     private final UserRepository userRepository;
     private final InventoryRepository inventoryRepository;
 
+    /**
+     * Creates a new sale, deducting items from the stock.
+     * <p>
+     * The method is executed within a transaction. If an error occurs during the processing
+     * of any item (insufficient stock, DB error), the entire transaction will be rolled back.
+     * </p>
+     * Deduction Algorithm (FEFO):
+     * <ol>
+     * <li>For each product, batches (Inventory) are searched, sorted by expiration date (ascending).</li>
+     * <li>The total availability of the product across all batches is checked.</li>
+     * <li>Iterative deduction of the quantity occurs from the "oldest" batch to the newer ones.</li>
+     * </ol>
+     *
+     * @param dto      DTO containing sale data (customer, list of items, and quantities).
+     * @param username The username (pharmacist/admin) performing the sale.
+     * @throws ResourceNotFoundException   If the user, customer, or medicine is not found.
+     * @throws BusinessConstraintException If there is insufficient stock to satisfy the request.
+     */
     @Transactional
     public void createSale(SaleCreateDto dto, String username) {
         // Create empty sale
@@ -52,6 +76,7 @@ public class SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
+            // FEFO strategy: find batches ordered by expiration date ASC
             List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
             int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
 
@@ -69,9 +94,11 @@ public class SaleService {
                     batch.setStockQuantity(availableInBatch - quantityToSell);
                     quantityToSell = 0;
                 } else {
+                    // Deplete this batch and move to the next one
                     batch.setStockQuantity(0);
                     quantityToSell -= availableInBatch;
                 }
+                // Save updated batch state (Optimistic Locking @Version check happens here implicitly)
                 inventoryRepository.save(batch);
             }
 
