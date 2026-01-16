@@ -69,13 +69,13 @@ CREATE TABLE medicine (
 CREATE TABLE inventory (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
         medicine_id BIGINT,
-        suppler_id BIGINT,
+        supplier_id BIGINT, -- Fixed typo from 'suppler_id'
         batch_number VARCHAR(255),
         stock_quantity INT,
         expiration_date DATE,
         version BIGINT DEFAULT 0,
         CONSTRAINT fk_inventory_medicine FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE RESTRICT,
-        CONSTRAINT fk_inventory_supplier FOREIGN KEY (suppler_id) REFERENCES supplier(id) ON DELETE SET NULL,
+        CONSTRAINT fk_inventory_supplier FOREIGN KEY (supplier_id) REFERENCES supplier(id) ON DELETE SET NULL,
         INDEX idx_medicine_id (medicine_id),
         INDEX idx_expiration_date (expiration_date),
         INDEX idx_stock (stock_quantity),
@@ -84,27 +84,27 @@ CREATE TABLE inventory (
 
 -- Sales
 CREATE TABLE sale (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        employee_id BIGINT,
-        customer_id BIGINT,
-        sale_date_time DATETIME(6),
-        total_amount DECIMAL(10, 2),
-        CONSTRAINT fk_sale_employee FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT,
-        CONSTRAINT fk_sale_customer FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE SET NULL,
-        INDEX idx_sale_date_time (sale_date_time),
-        INDEX idx_employee_id (employee_id),
-        INDEX idx_customer_id (customer_id)
+                      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                      employee_id BIGINT,
+                      customer_id BIGINT,
+                      sale_date_time DATETIME(6),
+                      total_amount DECIMAL(10, 2),
+                      CONSTRAINT fk_sale_employee FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE RESTRICT,
+                      CONSTRAINT fk_sale_customer FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE SET NULL,
+                      INDEX idx_sale_date_time (sale_date_time),
+                      INDEX idx_employee_id (employee_id),
+                      INDEX idx_customer_id (customer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sale Items
 CREATE TABLE sale_item (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        sale_id BIGINT,
-        medicine_id BIGINT,
-        quantity INT,
-        unit_price DECIMAL(10, 2),
-        CONSTRAINT fk_sale_item_sale FOREIGN KEY (sale_id) REFERENCES sale(id) ON DELETE CASCADE,
-        CONSTRAINT fk_sale_item_medicine FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE RESTRICT,
-        INDEX idx_sale_id (sale_id),
-        INDEX idx_medicine_id (medicine_id)
+                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           sale_id BIGINT,
+                           medicine_id BIGINT,
+                           quantity INT,
+                           unit_price DECIMAL(10, 2),
+                           CONSTRAINT fk_sale_item_sale FOREIGN KEY (sale_id) REFERENCES sale(id) ON DELETE CASCADE,
+                           CONSTRAINT fk_sale_item_medicine FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE RESTRICT,
+                           INDEX idx_sale_id (sale_id),
+                           INDEX idx_medicine_id (medicine_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

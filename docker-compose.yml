@@ -1,38 +1,42 @@
 services:
-  app:
-    container_name: pharmacy-backend
+  backend:
     build: ./backend
+    container_name: pharmacy-backend
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/pharmacy_db
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - JWT_SECRET=VerySecretKeyForTokensChangeMeInProduction12345
-      - ADMIN_INITIAL_PASSWORD=admin
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - DB_URL=jdbc:mariadb://db:3306/pharmacy_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - JWT_SECRET=MySuperSecretKeyForDockerComposeThatIsSecure123
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
-      - pharmacy-net
-    restart: always
+      - pharmacy-network
 
   db:
-    image: mariadb:10.6
+    image: mariadb:latest
     container_name: pharmacy-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pharmacy_db
     ports:
       - "3307:3306"
-    environment:
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=pharmacy_db
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     networks:
-      - pharmacy-net
-    restart: always
+      - pharmacy-network
+
+networks:
+  pharmacy-network:
+    driver: bridge
 
 volumes:
   db_data:
-
-networks:
-  pharmacy-net:
