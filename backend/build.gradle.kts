@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.5.7"
+    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -32,6 +32,8 @@ dependencies {
 
     // Database Driver
     implementation("org.mariadb.jdbc:mariadb-java-client")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-mysql")
 
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")

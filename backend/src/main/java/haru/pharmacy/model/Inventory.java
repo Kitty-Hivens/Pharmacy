@@ -28,4 +28,7 @@ public class Inventory {
     private Integer stockQuantity;
     private String batchNumber;
     private LocalDate expirationDate;
+
+    @Version
+    private Long version;
 }
