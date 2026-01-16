@@ -10,7 +10,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - JWT_SECRET=VerySecretKeyForTokensChangeMeInProduction12345
       - ADMIN_INITIAL_PASSWORD=admin
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
     depends_on:
       - db
     networks:
