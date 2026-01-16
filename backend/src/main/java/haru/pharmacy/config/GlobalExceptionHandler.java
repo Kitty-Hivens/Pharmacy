@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -90,5 +91,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneric(Exception ex) {
         log.error("UNEXPECTED ERROR", ex);
         return new ResponseEntity<>("Internal Server Error. Please contact support.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Handles Optimistic Locking failures (concurrent updates).
+     * Returns HTTP 409 (Conflict).
+     */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<String> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
+        log.warn("Optimistic lock failure: {}", ex.getMessage());
+        String message = getMessage("error.optimistic.lock");
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 }
