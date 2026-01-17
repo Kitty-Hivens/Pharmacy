@@ -1,0 +1,13 @@
+{
+  "LOGIN": {
+    "TITLE": "Welcome Back",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "SIGN_IN": "Sign In",
+    "SUCCESS": "Login successful!",
+    "ERROR": "Invalid credentials"
+  },
+  "LANG": {
+    "SWITCH": "RU"
+  }
+}

@@ -1,0 +1,15 @@
+export * from './auth-controller.service';
+import { AuthControllerService } from './auth-controller.service';
+export * from './customer-controller.service';
+import { CustomerControllerService } from './customer-controller.service';
+export * from './inventory-controller.service';
+import { InventoryControllerService } from './inventory-controller.service';
+export * from './medicine-controller.service';
+import { MedicineControllerService } from './medicine-controller.service';
+export * from './sale-controller.service';
+import { SaleControllerService } from './sale-controller.service';
+export * from './supplier-controller.service';
+import { SupplierControllerService } from './supplier-controller.service';
+export * from './user-controller.service';
+import { UserControllerService } from './user-controller.service';
+export const APIS = [AuthControllerService, CustomerControllerService, InventoryControllerService, MedicineControllerService, SaleControllerService, SupplierControllerService, UserControllerService];
