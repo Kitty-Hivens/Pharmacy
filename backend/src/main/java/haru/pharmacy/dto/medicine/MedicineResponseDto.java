@@ -8,5 +8,6 @@ public record MedicineResponseDto(
         BigDecimal price,
         String manufacturer,
         String description,
-        Boolean prescriptionRequired
+        Boolean prescriptionRequired,
+        Long quantity
 ) {}
