@@ -7,6 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +34,10 @@ public class SaleController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
-    @Operation(summary = "Get all sales history", operationId = "getAllSales")
-    public List<SaleResponseDto> getAll() {
-        return service.getAllSales();
+    @Operation(summary = "Get sales history (paginated)", operationId = "getAllSales")
+    public Page<SaleResponseDto> getAll(
+            @PageableDefault(sort = "saleDateTime", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return service.getAllSales(pageable);
     }
 }

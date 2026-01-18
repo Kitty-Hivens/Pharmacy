@@ -7,6 +7,8 @@ import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
 import haru.pharmacy.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,15 +125,12 @@ public class SaleService {
     }
 
     /**
-     * Retrieves the full sales history ordered by date (newest first).
+     * Retrieves a paginated list of sales history.
      */
     @Transactional(readOnly = true)
-    public List<SaleResponseDto> getAllSales() {
-        List<Sale> sales = saleRepository.findAllByOrderBySaleDateTimeDesc();
-
-        return sales.stream()
-                .map(this::mapToDto)
-                .toList();
+    public Page<SaleResponseDto> getAllSales(Pageable pageable) {
+        Page<Sale> salesPage = saleRepository.findAll(pageable);
+        return salesPage.map(this::mapToDto);
     }
 
     private SaleResponseDto mapToDto(Sale sale) {
