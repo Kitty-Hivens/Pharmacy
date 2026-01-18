@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { MedicinesComponent } from './pages/medicines/medicines';
+import { PosComponent } from './pages/pos/pos';
 import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
@@ -25,6 +26,10 @@ export const routes: Routes = [
       {
         path: 'medicines',
         component: MedicinesComponent
+      },
+      {
+        path: 'pos',
+        component: PosComponent
       }
     ]
   },

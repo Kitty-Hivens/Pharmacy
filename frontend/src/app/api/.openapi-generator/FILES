@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
@@ -26,7 +25,9 @@ model/medicine-response-dto.ts
 model/medicine-update-dto.ts
 model/models.ts
 model/sale-create-dto.ts
+model/sale-item-dto.ts
 model/sale-item-request.ts
+model/sale-response-dto.ts
 model/supplier-dto.ts
 model/user-create-dto.ts
 model/user-response-dto.ts

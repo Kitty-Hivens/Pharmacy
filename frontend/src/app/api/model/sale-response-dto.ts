@@ -7,15 +7,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SaleItemDto } from './sale-item-dto';
 
 
-export interface MedicineResponseDto { 
+export interface SaleResponseDto { 
     id?: number;
-    name?: string;
-    price?: number;
-    manufacturer?: string;
-    description?: string;
-    prescriptionRequired?: boolean;
-    quantity?: number;
+    dateTime?: string;
+    sellerName?: string;
+    customerName?: string;
+    totalAmount?: number;
+    items?: Array<SaleItemDto>;
 }
 

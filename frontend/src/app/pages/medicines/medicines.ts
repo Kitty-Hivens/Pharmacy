@@ -41,28 +41,39 @@ export class MedicinesComponent implements OnInit {
     this.loadMedicines();
   }
 
+  /**
+   * Fetches the complete list of medicines from the backend.
+   * Uses the generated API client.
+   */
   loadMedicines() {
     this.loading = true;
-    // Вызываем GET /medicines
-    this.medicineService.getAll2().subscribe({
-      next: (data) => {
+    this.medicineService.getAll3().subscribe({
+      next: (data: MedicineResponseDto[]) => {
         this.medicines = data;
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Ошибка загрузки лекарств', err);
+      error: (err: any) => {
+        console.error('Failed to load medicines', err);
         this.loading = false;
       }
     });
   }
 
-  getSeverity(quantity: number): "success" | "warn" | "danger" | "info" | "secondary" | "contrast" | undefined {
+  /**
+   * Determines the severity color for the status tag based on stock quantity.
+   */
+  getSeverity(quantity?: number): "success" | "warn" | "danger" | "info" | "secondary" | "contrast" | undefined {
+    if (!quantity) return 'danger';
     if (quantity > 50) return 'success';
     if (quantity > 10) return 'warn';
     return 'danger';
   }
 
-  getStatus(quantity: number): string {
+  /**
+   * Returns a localized status string based on stock quantity.
+   */
+  getStatus(quantity?: number): string {
+    if (!quantity) return 'OUTOFSTOCK';
     if (quantity > 50) return 'INSTOCK';
     if (quantity > 10) return 'LOWSTOCK';
     return 'OUTOFSTOCK';

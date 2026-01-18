@@ -9,13 +9,10 @@
  */
 
 
-export interface MedicineResponseDto { 
-    id?: number;
-    name?: string;
-    price?: number;
-    manufacturer?: string;
-    description?: string;
-    prescriptionRequired?: boolean;
+export interface SaleItemDto { 
+    medicineName?: string;
     quantity?: number;
+    unitPrice?: number;
+    totalPrice?: number;
 }
 
