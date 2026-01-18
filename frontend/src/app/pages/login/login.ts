@@ -9,7 +9,7 @@ import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
 import { MessageModule } from 'primeng/message';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { AuthControllerService } from '../../api';
+import { AuthService } from '../../api';
 import { AuthRequest } from '../../api';
 
 @Component({
@@ -39,7 +39,7 @@ export class LoginComponent {
   errorMessage = '';
 
   constructor(
-    private authService: AuthControllerService,
+    private authService: AuthService,
     private router: Router,
     public translate: TranslateService
   ) {

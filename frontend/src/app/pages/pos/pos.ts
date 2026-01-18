@@ -15,9 +15,9 @@ import { MessageService } from 'primeng/api';
 
 // API Services & Models
 import {
-  MedicineControllerService,
-  CustomerControllerService,
-  SaleControllerService,
+  MedicineService,
+  CustomerService,
+  SaleService,
   MedicineResponseDto,
   CustomerResponseDto,
   SaleCreateDto
@@ -67,9 +67,9 @@ export class PosComponent implements OnInit {
   loading = false;
 
   constructor(
-    private medicineService: MedicineControllerService,
-    private customerService: CustomerControllerService,
-    private saleService: SaleControllerService,
+    private medicineService: MedicineService,
+    private customerService: CustomerService,
+    private saleService: SaleService,
     private messageService: MessageService
   ) {}
 
@@ -86,7 +86,7 @@ export class PosComponent implements OnInit {
     this.loading = true;
 
     // --- Medicines ---
-    this.medicineService.getAll3().subscribe({
+    this.medicineService.getAllMedicines().subscribe({
       next: (response: any) => {
         console.log('Raw Medicines Response:', response);
 
@@ -106,7 +106,7 @@ export class PosComponent implements OnInit {
     });
 
     // --- Customers ---
-    this.customerService.getAll4().subscribe({
+    this.customerService.getAllCustomers().subscribe({
       next: (response: any) => {
         console.log('Raw Customers Response:', response);
 
@@ -217,7 +217,7 @@ export class PosComponent implements OnInit {
       }))
     };
 
-    this.saleService.create1(saleDto).subscribe({
+    this.saleService.createSale(saleDto).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Sale processed successfully' });
         this.resetForm();

@@ -9,7 +9,7 @@ import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TooltipModule } from 'primeng/tooltip';
-import { MedicineControllerService } from '../../api';
+import { MedicineService } from '../../api';
 import { MedicineResponseDto } from '../../api';
 
 @Component({
@@ -35,7 +35,7 @@ export class MedicinesComponent implements OnInit {
   loading = true;
   searchValue: string | undefined;
 
-  constructor(private medicineService: MedicineControllerService) {}
+  constructor(private medicineService: MedicineService) {}
 
   ngOnInit() {
     this.loadMedicines();
@@ -47,7 +47,7 @@ export class MedicinesComponent implements OnInit {
    */
   loadMedicines() {
     this.loading = true;
-    this.medicineService.getAll3().subscribe({
+    this.medicineService.getAllMedicines().subscribe({
       next: (data: MedicineResponseDto[]) => {
         this.medicines = data;
         this.loading = false;
