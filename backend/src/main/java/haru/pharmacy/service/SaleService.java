@@ -1,6 +1,7 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.SaleCreateDto;
+import haru.pharmacy.dto.SaleResponseDto;
 import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
@@ -119,5 +120,46 @@ public class SaleService {
         sale.setTotalAmount(totalAmount);
 
         saleRepository.save(sale);
+    }
+
+    /**
+     * Retrieves the full sales history ordered by date (newest first).
+     */
+    @Transactional(readOnly = true)
+    public List<SaleResponseDto> getAllSales() {
+        List<Sale> sales = saleRepository.findAllByOrderBySaleDateTimeDesc();
+
+        return sales.stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    private SaleResponseDto mapToDto(Sale sale) {
+        String sellerName = (sale.getEmployee() != null)
+                ? sale.getEmployee().getFirstName() + " " + sale.getEmployee().getLastName()
+                : "Unknown";
+
+        // Обработка случая, если клиента удалили или это анонимная продажа
+        String customerName = (sale.getCustomer() != null)
+                ? sale.getCustomer().getFirstName() + " " + sale.getCustomer().getLastName()
+                : "Guest";
+
+        List<SaleResponseDto.SaleItemDto> itemDtos = sale.getItems().stream()
+                .map(item -> new SaleResponseDto.SaleItemDto(
+                        item.getMedicine().getName(),
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                ))
+                .toList();
+
+        return new SaleResponseDto(
+                sale.getId(),
+                sale.getSaleDateTime(),
+                sellerName,
+                customerName,
+                sale.getTotalAmount(),
+                itemDtos
+        );
     }
 }
