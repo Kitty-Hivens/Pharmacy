@@ -24,10 +24,14 @@ model/medicine-create-dto.ts
 model/medicine-response-dto.ts
 model/medicine-update-dto.ts
 model/models.ts
+model/page-sale-response-dto.ts
+model/pageable-object.ts
+model/pageable.ts
 model/sale-create-dto.ts
 model/sale-item-dto.ts
 model/sale-item-request.ts
 model/sale-response-dto.ts
+model/sort-object.ts
 model/supplier-dto.ts
 model/user-create-dto.ts
 model/user-response-dto.ts

@@ -17,9 +17,11 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { SaleCreateDto } from '../model/sale-create-dto';
+import { PageSaleResponseDto } from '../model/page-sale-response-dto';
 // @ts-ignore
-import { SaleResponseDto } from '../model/sale-response-dto';
+import { Pageable } from '../model/pageable';
+// @ts-ignore
+import { SaleCreateDto } from '../model/sale-create-dto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -106,16 +108,31 @@ export class SaleService extends BaseService {
     }
 
     /**
-     * Get all sales history
+     * Get sales history (paginated)
      * @endpoint get /api/sales
+     * @param pageable 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public getAllSales(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<Array<SaleResponseDto>>;
-    public getAllSales(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SaleResponseDto>>>;
-    public getAllSales(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SaleResponseDto>>>;
-    public getAllSales(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getAllSales(pageable: Pageable, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<PageSaleResponseDto>;
+    public getAllSales(pageable: Pageable, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PageSaleResponseDto>>;
+    public getAllSales(pageable: Pageable, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PageSaleResponseDto>>;
+    public getAllSales(pageable: Pageable, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (pageable === null || pageable === undefined) {
+            throw new Error('Required parameter pageable was null or undefined when calling getAllSales.');
+        }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'pageable',
+            <any>pageable,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -147,9 +164,10 @@ export class SaleService extends BaseService {
 
         let localVarPath = `/api/sales`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<SaleResponseDto>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<PageSaleResponseDto>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
