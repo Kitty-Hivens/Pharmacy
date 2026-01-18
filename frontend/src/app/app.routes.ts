@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { MedicinesComponent } from './pages/medicines/medicines';
 import { PosComponent } from './pages/pos/pos';
+import { PlaceholderComponent } from './pages/placeholder/placeholder';
 import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
@@ -30,6 +31,21 @@ export const routes: Routes = [
       {
         path: 'pos',
         component: PosComponent
+      },
+      {
+        path: 'inventory', component: PlaceholderComponent
+      },
+      {
+        path: 'sales', component: PlaceholderComponent
+      },
+      {
+        path: 'customers', component: PlaceholderComponent
+      },
+      {
+        path: 'suppliers', component: PlaceholderComponent
+      },
+      {
+        path: 'users', component: PlaceholderComponent
       }
     ]
   },

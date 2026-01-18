@@ -1,9 +1,9 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 // PrimeNG Imports
-// Убрали SidebarModule, так как он не используется в HTML
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { AvatarModule } from 'primeng/avatar';
@@ -14,6 +14,10 @@ import { MenuItem } from 'primeng/api';
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+/**
+ * Main application layout component.
+ * Handles the sidebar, topbar, responsive behavior, and navigation menu.
+ */
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -31,12 +35,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent implements OnInit, OnDestroy {
   sidebarVisible = true;
   isMobileScreen = false;
 
   menuItems: MenuItem[] | undefined;
   userMenuItems: MenuItem[] | undefined;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
@@ -46,6 +52,16 @@ export class MainLayoutComponent implements OnInit {
   ngOnInit() {
     this.checkScreenSize();
     this.initMenu();
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.initMenu();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -55,7 +71,6 @@ export class MainLayoutComponent implements OnInit {
 
   checkScreenSize() {
     this.isMobileScreen = window.innerWidth <= 991;
-    // На мобилках меню по умолчанию скрыто, на десктопе открыто
     if (this.isMobileScreen) {
       this.sidebarVisible = false;
     } else {
@@ -67,8 +82,12 @@ export class MainLayoutComponent implements OnInit {
     this.sidebarVisible = !this.sidebarVisible;
   }
 
+  /**
+   * Switches the global application language (EN <-> RU).
+   * The actual text update in the menu is handled by the subscription in ngOnInit.
+   */
   switchLanguage() {
-    const current = this.translate.currentLang;
+    const current = this.translate.getCurrentLang();
     const next = current === 'en' ? 'ru' : 'en';
     this.translate.use(next);
     localStorage.setItem('lang', next);
@@ -79,67 +98,70 @@ export class MainLayoutComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Generates the menu structure using current translations.
+   * Uses translate.instant() to get synchronous translation values.
+   */
   initMenu() {
-    // Структура меню на основе твоих контроллеров
     this.menuItems = [
       {
-        label: 'Pharmacy',
+        label: this.translate.instant('MENU.PHARMACY'),
         items: [
           {
-            label: 'Dashboard',
+            label: this.translate.instant('MENU.DASHBOARD'),
             icon: 'pi pi-home',
             routerLink: '/dashboard'
           },
           {
-            label: 'POS Terminal',
+            label: this.translate.instant('MENU.POS_TERMINAL'),
             icon: 'pi pi-calculator',
             routerLink: '/pos',
-            styleClass: 'text-primary font-bold' // Выделим кассу цветом
+            styleClass: 'text-primary font-bold'
           }
         ]
       },
       {
-        label: 'Inventory',
+        label: this.translate.instant('MENU.INVENTORY'),
         items: [
           {
-            label: 'Medicines',
+            label: this.translate.instant('MENU.MEDICINES'),
             icon: 'pi pi-box',
             routerLink: '/medicines'
           },
           {
-            label: 'Stock Alert',
+            label: this.translate.instant('MENU.STOCK_ALERT'),
             icon: 'pi pi-exclamation-circle',
             routerLink: '/inventory',
-            badge: '12', // Пример бейджика
+            badge: '12',
             badgeStyleClass: 'p-badge-danger'
           }
         ]
       },
       {
-        label: 'Business',
+        label: this.translate.instant('MENU.BUSINESS'),
         items: [
           {
-            label: 'Sales History',
+            label: this.translate.instant('MENU.SALES_HISTORY'),
             icon: 'pi pi-history',
             routerLink: '/sales'
           },
           {
-            label: 'Customers',
+            label: this.translate.instant('MENU.CUSTOMERS'),
             icon: 'pi pi-users',
             routerLink: '/customers'
           },
           {
-            label: 'Suppliers',
+            label: this.translate.instant('MENU.SUPPLIERS'),
             icon: 'pi pi-truck',
             routerLink: '/suppliers'
           }
         ]
       },
       {
-        label: 'Admin',
+        label: this.translate.instant('MENU.ADMIN'),
         items: [
           {
-            label: 'Employees',
+            label: this.translate.instant('MENU.EMPLOYEES'),
             icon: 'pi pi-id-card',
             routerLink: '/users'
           }
@@ -149,18 +171,18 @@ export class MainLayoutComponent implements OnInit {
 
     this.userMenuItems = [
       {
-        label: 'Profile',
+        label: this.translate.instant('MENU.PROFILE'),
         icon: 'pi pi-user'
       },
       {
-        label: 'Settings',
+        label: this.translate.instant('MENU.SETTINGS'),
         icon: 'pi pi-cog'
       },
       {
         separator: true
       },
       {
-        label: 'Logout',
+        label: this.translate.instant('MENU.LOGOUT'),
         icon: 'pi pi-sign-out',
         command: () => this.logout()
       }
