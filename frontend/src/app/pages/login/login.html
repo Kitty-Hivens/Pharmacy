@@ -1,5 +1,4 @@
 <div class="flex min-h-screen">
-  <!-- ЛЕВАЯ ЧАСТЬ: Брендинг / Картинка -->
   <div class="hidden lg:flex w-6 flex-column justify-content-between align-items-center px-6 py-6 bg-primary-reverse"
        style="background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);">
 
@@ -9,9 +8,9 @@
     </div>
 
     <div class="flex flex-column align-items-center gap-3 text-center">
-      <h1 class="text-5xl font-bold text-white m-0">Portfolio Project</h1>
+      <h1 class="text-5xl font-bold text-white m-0">{{ 'LOGIN.BRANDING_TITLE' | translate }}</h1>
       <p class="text-white-alpha-90 text-xl m-0 line-height-3 max-w-30rem">
-        Fullstack Pharmacy Management System powered by Spring Boot 3 & Angular 19.
+        {{ 'LOGIN.BRANDING_SUBTITLE' | translate }}
       </p>
     </div>
 
@@ -20,16 +19,14 @@
     </div>
   </div>
 
-  <!-- ПРАВАЯ ЧАСТЬ: Форма -->
   <div class="w-full lg:w-6 flex align-items-center justify-content-center p-6 surface-card">
     <div class="w-full max-w-25rem">
 
-      <!-- Переключатель языка (Мелкий, сверху справа) -->
       <div class="flex justify-content-end mb-5 gap-2">
-                <span class="cursor-pointer text-sm font-medium"
-                      [class.text-primary]="translate.currentLang === 'en'"
-                      [class.text-500]="translate.currentLang !== 'en'"
-                      (click)="switchLanguage('en')">EN</span>
+        <span class="cursor-pointer text-sm font-medium"
+              [class.text-primary]="translate.currentLang === 'en'"
+              [class.text-500]="translate.currentLang !== 'en'"
+              (click)="switchLanguage('en')">EN</span>
         <span class="text-300">|</span>
         <span class="cursor-pointer text-sm font-medium"
               [class.text-primary]="translate.currentLang === 'ru'"
@@ -39,11 +36,10 @@
 
       <div class="text-center mb-5">
         <div class="text-900 text-3xl font-medium mb-3">{{ 'LOGIN.TITLE' | translate }}</div>
-        <span class="text-600 font-medium line-height-3">Don't have an account?</span>
-        <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Contact Admin</a>
+        <span class="text-600 font-medium line-height-3">{{ 'LOGIN.NO_ACCOUNT' | translate }}</span>
+        <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">{{ 'LOGIN.CONTACT_ADMIN' | translate }}</a>
       </div>
 
-      <!-- Сама форма -->
       <div>
         <label for="username" class="block text-900 font-medium mb-2">{{ 'LOGIN.USERNAME' | translate }}</label>
         <input id="username" type="text" pInputText [(ngModel)]="authRequest.username" class="w-full mb-3" style="padding:1rem">
@@ -54,9 +50,9 @@
         <div class="flex align-items-center justify-content-between mb-6">
           <div class="flex align-items-center">
             <p-checkbox id="rememberme" [binary]="true" styleClass="mr-2"></p-checkbox>
-            <label for="rememberme" class="text-900">Remember me</label>
+            <label for="rememberme" class="text-900">{{ 'LOGIN.REMEMBER_ME' | translate }}</label>
           </div>
-          <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot password?</a>
+          <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
         </div>
 
         <p-button [label]="'LOGIN.SIGN_IN' | translate" (onClick)="login()" [loading]="loading" styleClass="w-full p-3 text-lg"></p-button>

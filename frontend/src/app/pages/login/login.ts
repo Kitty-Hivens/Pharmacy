@@ -12,6 +12,10 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../api';
 import { AuthRequest } from '../../api';
 
+/**
+ * Login Page Component.
+ * Handles user authentication and token storage.
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -63,19 +67,17 @@ export class LoginComponent {
       { httpHeaderAccept: 'application/json' as any }
     ).subscribe({
       next: (response) => {
-        console.log('Login success:', response);
-
         if (response.token) {
           localStorage.setItem('token', response.token);
           this.router.navigate(['/dashboard']);
         } else {
-          this.errorMessage = 'Login succeeded but token is missing';
+          this.errorMessage = 'LOGIN.ERROR';
         }
         this.loading = false;
       },
       error: (err) => {
         console.error('Login error:', err);
-        this.errorMessage = err.error?.message || 'LOGIN.ERROR';
+        this.errorMessage = 'LOGIN.ERROR';
         this.loading = false;
       }
     });
