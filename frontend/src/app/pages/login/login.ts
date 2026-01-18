@@ -2,19 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-// PrimeNG
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
 import { MessageModule } from 'primeng/message';
-
-// i18n
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-
-// API
 import { AuthControllerService } from '../../api';
 import { AuthRequest } from '../../api';
 
@@ -62,19 +56,25 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.authRequest).subscribe({
+    this.authService.login(
+      this.authRequest,
+      'body',
+      false,
+      { httpHeaderAccept: 'application/json' as any }
+    ).subscribe({
       next: (response) => {
-        // 1. Проверяем, пришел ли токен
+        console.log('Login success:', response);
+
         if (response.token) {
-          // 2. Сохраняем токен
           localStorage.setItem('token', response.token);
           this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage = 'Login succeeded but token is missing';
         }
         this.loading = false;
       },
       error: (err) => {
-        console.error('Ошибка входа:', err);
-        // Пытаемся достать текст ошибки с бэкенда, иначе показываем дефолтную
+        console.error('Login error:', err);
         this.errorMessage = err.error?.message || 'LOGIN.ERROR';
         this.loading = false;
       }
