@@ -1,30 +1,23 @@
 <div class="card">
-  <!-- Панель инструментов -->
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
-        label="New Medicine"
+        [label]="'MEDICINES.NEW_MEDICINE' | translate"
         icon="pi pi-plus"
         severity="success"
         styleClass="mr-2"
-        pTooltip="Add new item to inventory"
-        tooltipPosition="bottom"
-      ></p-button>
-      <p-button
-        label="Delete"
-        icon="pi pi-trash"
-        severity="danger"
-        [disabled]="true"
+        (onClick)="openNew()"
       ></p-button>
     </ng-template>
 
     <ng-template pTemplate="right">
-      <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" (onClick)="loadMedicines()" pTooltip="Refresh Data"></p-button>
-      <p-button icon="pi pi-upload" [rounded]="true" [text]="true" severity="help" pTooltip="Export"></p-button>
+      <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" (onClick)="loadMedicines()" pTooltip="Refresh"></p-button>
     </ng-template>
   </p-toolbar>
 
-  <!-- Таблица -->
   <p-table
     #dt
     [value]="medicines"
@@ -34,34 +27,30 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [rowHover]="true"
     dataKey="id"
+    [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-    [loading]="loading"
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0 text-xl font-semibold">Inventory Management</h5>
+        <h5 class="m-0 text-xl font-semibold">{{ 'MEDICINES.TITLE' | translate }}</h5>
         <span class="p-input-icon-left">
-                    <i class="pi pi-search"></i>
-          <!-- Обрати внимание на ($event.target).value - это важно для поиска -->
-                    <input
-                      pInputText
-                      type="text"
-                      (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                      placeholder="Search..."
-                    />
-                </span>
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            [placeholder]="'COMMON.SEARCH' | translate"
+          />
+        </span>
       </div>
     </ng-template>
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem">
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
-        <th pSortableColumn="name" style="min-width:15rem">Name <p-sortIcon field="name"></p-sortIcon></th>
-        <th pSortableColumn="manufacturer">Manufacturer <p-sortIcon field="manufacturer"></p-sortIcon></th>
-        <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
+        <th pSortableColumn="name" style="min-width:15rem">{{ 'MEDICINES.NAME' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }} <p-sortIcon field="manufacturer"></p-sortIcon></th>
+        <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
         <th pSortableColumn="quantity">Status <p-sortIcon field="quantity"></p-sortIcon></th>
         <th style="min-width:10rem">Actions</th>
       </tr>
@@ -69,9 +58,6 @@
 
     <ng-template pTemplate="body" let-medicine>
       <tr>
-        <td>
-          <p-tableCheckbox [value]="medicine"></p-tableCheckbox>
-        </td>
         <td class="font-bold">{{ medicine.name }}</td>
         <td>{{ medicine.manufacturer }}</td>
         <td>{{ medicine.price | currency:'USD' }}</td>
@@ -80,19 +66,56 @@
             [value]="getStatus(medicine.quantity)"
             [severity]="getSeverity(medicine.quantity)"
           ></p-tag>
-          <span class="ml-2 text-sm text-500">({{medicine.quantity}} pcs)</span>
+          <span class="ml-2 text-sm text-500" *ngIf="medicine.quantity">({{medicine.quantity}} pcs)</span>
         </td>
         <td>
-          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" styleClass="mr-2"></p-button>
-          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"></p-button>
+          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" styleClass="mr-2" (onClick)="editMedicine(medicine)"></p-button>
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="deleteMedicine(medicine)"></p-button>
         </td>
       </tr>
     </ng-template>
+  </p-table>
 
-    <ng-template pTemplate="summary">
-      <div class="flex align-items-center justify-content-between">
-        In total there are {{ medicines ? medicines.length : 0 }} medicines.
+  <p-dialog
+    [(visible)]="medicineDialog"
+    [style]="{width: '450px'}"
+    [header]="(medicine.id ? 'MEDICINES.EDIT_MEDICINE' : 'MEDICINES.NEW_MEDICINE') | translate"
+    [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+      <div class="field mb-3">
+        <label for="name">{{ 'MEDICINES.NAME' | translate }}</label>
+        <input type="text" pInputText id="name" [(ngModel)]="medicine.name" required autofocus />
+        <small class="p-error" *ngIf="submitted && !medicine.name">Name is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }}</label>
+        <input type="text" pInputText id="manufacturer" [(ngModel)]="medicine.manufacturer" required />
+        <small class="p-error" *ngIf="submitted && !medicine.manufacturer">Manufacturer is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="price">{{ 'MEDICINES.PRICE' | translate }}</label>
+        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" required></p-inputNumber>
+        <small class="p-error" *ngIf="submitted && !medicine.price">Price is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="description">{{ 'MEDICINES.DESCRIPTION' | translate }}</label>
+        <textarea id="description" pInputTextarea [(ngModel)]="medicine.description" rows="3" cols="20"></textarea>
+      </div>
+
+      <div class="field-checkbox mb-3 flex align-items-center gap-2">
+        <p-checkbox id="prescription" [(ngModel)]="medicine.prescriptionRequired" [binary]="true" inputId="binary"></p-checkbox>
+        <label for="binary" class="m-0">{{ 'MEDICINES.PRESCRIPTION_REQUIRED' | translate }}</label>
       </div>
     </ng-template>
-  </p-table>
+
+    <ng-template pTemplate="footer">
+      <p-button [label]="'COMMON.CANCEL' | translate" icon="pi pi-times" [text]="true" (onClick)="hideDialog()"></p-button>
+      <p-button [label]="'COMMON.SAVE' | translate" icon="pi pi-check" [text]="true" (onClick)="saveMedicine()"></p-button>
+    </ng-template>
+  </p-dialog>
 </div>

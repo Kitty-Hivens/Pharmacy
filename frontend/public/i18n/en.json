@@ -77,6 +77,31 @@
       "TRANSACTION_FAILED": "Transaction failed. Please check stock levels."
     }
   },
+  "MEDICINES": {
+    "TITLE": "Inventory Management",
+    "NEW_MEDICINE": "New Medicine",
+    "EDIT_MEDICINE": "Edit Medicine",
+    "NAME": "Name",
+    "MANUFACTURER": "Manufacturer",
+    "PRICE": "Price",
+    "DESCRIPTION": "Description",
+    "PRESCRIPTION_REQUIRED": "Prescription Required",
+    "DELETE_CONFIRM": "Are you sure you want to delete {{name}}?",
+    "DELETE_HEADER": "Confirm Delete",
+    "MESSAGES": {
+      "CREATED": "Medicine Created",
+      "UPDATED": "Medicine Updated",
+      "DELETED": "Medicine Deleted"
+    }
+  },
+  "COMMON": {
+    "YES": "Yes",
+    "NO": "No",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "SEARCH": "Search..."
+  },
   "LANG": {
     "SWITCH": "RU"
   }

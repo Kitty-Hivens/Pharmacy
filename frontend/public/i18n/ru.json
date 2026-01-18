@@ -77,6 +77,31 @@
       "TRANSACTION_FAILED": "Ошибка транзакции. Проверьте остатки."
     }
   },
+  "MEDICINES": {
+    "TITLE": "Управление складом",
+    "NEW_MEDICINE": "Новое лекарство",
+    "EDIT_MEDICINE": "Редактирование",
+    "NAME": "Название",
+    "MANUFACTURER": "Производитель",
+    "PRICE": "Цена",
+    "DESCRIPTION": "Описание",
+    "PRESCRIPTION_REQUIRED": "Нужен рецепт",
+    "DELETE_CONFIRM": "Вы уверены, что хотите удалить {{name}}?",
+    "DELETE_HEADER": "Подтверждение",
+    "MESSAGES": {
+      "CREATED": "Лекарство создано",
+      "UPDATED": "Лекарство обновлено",
+      "DELETED": "Лекарство удалено"
+    }
+  },
+  "COMMON": {
+    "YES": "Да",
+    "NO": "Нет",
+    "SAVE": "Сохранить",
+    "CANCEL": "Отмена",
+    "DELETE": "Удалить",
+    "SEARCH": "Поиск..."
+  },
   "LANG": {
     "SWITCH": "EN"
   }

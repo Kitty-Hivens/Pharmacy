@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+// PrimeNG Imports
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,8 +11,17 @@ import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TooltipModule } from 'primeng/tooltip';
-import { MedicineService } from '../../api';
-import { MedicineResponseDto } from '../../api';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TextareaModule } from 'primeng/textarea';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputNumberModule } from 'primeng/inputnumber';
+
+// Services
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MedicineService, MedicineResponseDto, MedicineCreateDto, MedicineUpdateDto } from '../../api';
 
 /**
  * Component responsible for managing and displaying the medicine inventory.
@@ -31,8 +42,16 @@ import { MedicineResponseDto } from '../../api';
     TagModule,
     IconFieldModule,
     InputIconModule,
-    TooltipModule
+    TooltipModule,
+    DialogModule,
+    ToastModule,
+    ConfirmDialogModule,
+    TextareaModule,
+    CheckboxModule,
+    InputNumberModule,
+    TranslateModule
   ],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './medicines.html',
   styleUrl: './medicines.scss'
 })
@@ -45,8 +64,18 @@ export class MedicinesComponent implements OnInit {
 
   /** Current value of the global search filter. */
   searchValue: string | undefined;
+  // Dialog State
+  medicineDialog = false;
+  submitted = false;
 
-  constructor(private medicineService: MedicineService) {}
+  medicine: Partial<MedicineResponseDto & MedicineCreateDto> = {};
+
+  constructor(
+    private medicineService: MedicineService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private translate: TranslateService
+  ) {}
 
   /**
    * Lifecycle hook that is called after data-bound properties of a directive are initialized.
@@ -66,27 +95,106 @@ export class MedicinesComponent implements OnInit {
   loadMedicines() {
     this.loading = true;
     this.medicineService.getAllMedicines().subscribe({
-      next: (data: MedicineResponseDto[]) => {
+      next: (data) => {
         this.medicines = data;
         this.loading = false;
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Failed to load medicines', err);
         this.loading = false;
       }
     });
   }
 
-  /**
-   * Determines the severity color for the status tag based on stock quantity.
-   * Used primarily by PrimeNG Tag component.
-   *
-   * @param quantity - The current stock level of the medicine.
-   * @returns The PrimeNG severity string:
-   * - 'success' for > 50 units
-   * - 'warn' for > 10 units
-   * - 'danger' for <= 10 units or undefined
-   */
+  // --- CRUD Actions ---
+
+  openNew() {
+    this.medicine = {
+      prescriptionRequired: false // Default value
+    };
+    this.submitted = false;
+    this.medicineDialog = true;
+  }
+
+  editMedicine(med: MedicineResponseDto) {
+    this.medicine = { ...med };
+    this.medicineDialog = true;
+  }
+
+  deleteMedicine(med: MedicineResponseDto) {
+    this.confirmationService.confirm({
+      message: this.translate.instant('MEDICINES.DELETE_CONFIRM', { name: med.name }),
+      header: this.translate.instant('MEDICINES.DELETE_HEADER'),
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.medicineService.deleteMedicine(med.id!).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: this.translate.instant('MEDICINES.MESSAGES.DELETED')
+            });
+            this.loadMedicines(); // Refresh list
+          },
+          error: () => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete' });
+          }
+        });
+      }
+    });
+  }
+
+  saveMedicine() {
+    this.submitted = true;
+
+    if (!this.medicine.name?.trim() || !this.medicine.price) {
+      return;
+    }
+
+    if (this.medicine.id) {
+      // UPDATE
+      const updateDto: MedicineUpdateDto = {
+        name: this.medicine.name,
+        manufacturer: this.medicine.manufacturer,
+        description: this.medicine.description,
+        price: this.medicine.price,
+        prescriptionRequired: this.medicine.prescriptionRequired
+      };
+
+      this.medicineService.updateMedicine(this.medicine.id, updateDto).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: this.translate.instant('MEDICINES.MESSAGES.UPDATED') });
+          this.hideDialog();
+          this.loadMedicines();
+        }
+      });
+    } else {
+      // CREATE
+      const createDto: MedicineCreateDto = {
+        name: this.medicine.name!,
+        manufacturer: this.medicine.manufacturer!,
+        description: this.medicine.description,
+        price: this.medicine.price!,
+        prescriptionRequired: this.medicine.prescriptionRequired || false
+      };
+
+      this.medicineService.createMedicine(createDto).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: this.translate.instant('MEDICINES.MESSAGES.CREATED') });
+          this.hideDialog();
+          this.loadMedicines();
+        }
+      });
+    }
+  }
+
+  hideDialog() {
+    this.medicineDialog = false;
+    this.submitted = false;
+  }
+
+  // --- Helpers ---
+
   getSeverity(quantity?: number): "success" | "warn" | "danger" | "info" | "secondary" | "contrast" | undefined {
     if (!quantity) return 'danger';
     if (quantity > 50) return 'success';

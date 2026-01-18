@@ -13,7 +13,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/auth.interceptor';1
+import { authInterceptor } from './core/auth.interceptor';
+import { Configuration } from './api';
+
+export class FixBlobConfiguration extends Configuration {
+  override isJsonMime(mime: string): boolean {
+    if (!mime || mime === '*/*') {
+      return true;
+    }
+    return super.isJsonMime(mime);
+  }
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
 
+    { provide: Configuration, useClass: FixBlobConfiguration },
     providePrimeNG({
       theme: {
         preset: Aura,
@@ -33,7 +44,7 @@ export const appConfig: ApplicationConfig = {
 
     importProvidersFrom(
       TranslateModule.forRoot({
-        defaultLanguage: 'en'
+        defaultLanguage: localStorage.getItem('lang') || 'en'
       })
     ),
 
