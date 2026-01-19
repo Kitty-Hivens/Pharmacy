@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +80,16 @@ public class SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
-            // FEFO strategy: find batches ordered by expiration date ASC
-            List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
-            int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
 
-            if (totalStock < quantityToSell) {
+            // Strict FEFO (checks expiration date)
+            List<Inventory> batches = inventoryRepository.findValidBatchesForSale(medicine.getId(), LocalDate.now());
+
+            // Calculate total VALID stock
+            int totalValidStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
+
+            if (totalValidStock < quantityToSell) {
                 throw new BusinessConstraintException("error.inventory.insufficient",
-                        medicine.getName(), quantityToSell, totalStock);
+                        medicine.getName(), quantityToSell, totalValidStock);
             }
 
             for (Inventory batch : batches) {
@@ -125,11 +129,11 @@ public class SaleService {
     }
 
     /**
-     * Retrieves a paginated list of sales history.
+     * Retrieves a paginated list of sales history with optional date filtering.
      */
     @Transactional(readOnly = true)
-    public Page<SaleResponseDto> getAllSales(Pageable pageable) {
-        Page<Sale> salesPage = saleRepository.findAll(pageable);
+    public Page<SaleResponseDto> getAllSales(LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        Page<Sale> salesPage = saleRepository.findAllWithFilter(from, to, pageable);
         return salesPage.map(this::mapToDto);
     }
 

@@ -9,6 +9,8 @@ import haru.pharmacy.repository.InventoryRepository;
 import haru.pharmacy.repository.MedicineRepository;
 import haru.pharmacy.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +58,17 @@ public class InventoryService {
         inventory.setExpirationDate(dto.expirationDate());
 
         inventoryRepository.save(inventory);
+    }
+
+    /**
+     * Retrieves a paginated list of inventory items, optionally filtered by a search query.
+     *
+     * @param search   A keyword to filter by Medicine Name or Batch Number (can be null/empty).
+     * @param pageable Pagination and sorting information.
+     * @return A page of Inventory entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Inventory> getAll(String search, Pageable pageable) {
+        return inventoryRepository.searchByMedicineOrBatch(search, pageable);
     }
 }

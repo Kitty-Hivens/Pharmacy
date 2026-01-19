@@ -15,10 +15,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,7 +36,7 @@ import static org.mockito.Mockito.*;
  * validation of related entities (Medicine, Supplier).
  *
  * @author Haru
- * @version 2.0
+ * @version 3.0
  */
 @ExtendWith(MockitoExtension.class)
 class InventoryServiceTest {
@@ -100,5 +106,24 @@ class InventoryServiceTest {
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> inventoryService.addStock(dto));
         verify(inventoryRepository, never()).save(any());
+    }
+    @Test
+    @DisplayName("GetAll should delegate to repository search method")
+    void getAll_ShouldCallSearchRepository() {
+        // Given
+        String searchQuery = "Aspirin";
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Inventory> expectedPage = new PageImpl<>(List.of(new Inventory()));
+
+        // We expect the service to call searchByMedicineOrBatch
+        when(inventoryRepository.searchByMedicineOrBatch(searchQuery, pageable))
+                .thenReturn(expectedPage);
+
+        // When
+        Page<Inventory> result = inventoryService.getAll(searchQuery, pageable);
+
+        // Then
+        assertEquals(1, result.getTotalElements());
+        verify(inventoryRepository).searchByMedicineOrBatch(searchQuery, pageable);
     }
 }

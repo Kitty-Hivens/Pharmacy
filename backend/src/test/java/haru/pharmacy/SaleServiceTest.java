@@ -1,6 +1,7 @@
 package haru.pharmacy;
 
 import haru.pharmacy.dto.SaleCreateDto;
+import haru.pharmacy.dto.SaleResponseDto;
 import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
@@ -12,14 +13,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +42,7 @@ import static org.mockito.Mockito.*;
  * </ul>
  *
  * @author Haru
- * @version 2.0
+ * @version 3.0
  */
 @ExtendWith(MockitoExtension.class)
 class SaleServiceTest {
@@ -99,7 +105,7 @@ class SaleServiceTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(mockUser));
         when(customerRepository.findById(1L)).thenReturn(Optional.of(new Customer()));
         when(medicineRepository.findById(medicineId)).thenReturn(Optional.of(mockMedicine));
-        when(inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicineId))
+        when(inventoryRepository.findValidBatchesForSale(eq(medicineId), any(LocalDate.class)))
                 .thenReturn(List.of(batch1, batch2));
 
         // When
@@ -124,7 +130,36 @@ class SaleServiceTest {
      * total available stock is less than the requested quantity.
      */
     @Test
-    @DisplayName("Should throw BusinessConstraintException when stock is insufficient")
+    @DisplayName("GetAllSales should use repository filter method and return mapped DTOs")
+    void getAllSales_ShouldReturnMappedDtos() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime now = LocalDateTime.now();
+
+        Sale sale = new Sale();
+        sale.setId(1L);
+        sale.setSaleDateTime(now);
+        sale.setTotalAmount(BigDecimal.valueOf(100));
+        sale.setEmployee(new Employee());
+        sale.setItems(List.of()); // Empty items for simplicity
+        Page<Sale> page = new PageImpl<>(List.of(sale));
+        when(saleRepository.findAllWithFilter(any(), any(), eq(pageable))).thenReturn(page);
+
+        // When
+        Page<SaleResponseDto> result = saleService.getAllSales(null, null, pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(BigDecimal.valueOf(100), result.getContent().getFirst().totalAmount());
+
+        verify(saleRepository).findAllWithFilter(null, null, pageable);
+    }
+
+    // --- Error Scenarios ---
+
+    @Test
+    @DisplayName("Should throw BusinessConstraintException when valid stock is insufficient")
     void createSale_ShouldThrow_WhenNotEnoughStock() {
         // Given
         String username = "admin";
@@ -146,7 +181,7 @@ class SaleServiceTest {
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(new UserAccount()));
         when(medicineRepository.findById(medicineId)).thenReturn(Optional.of(mockMedicine));
-        when(inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicineId))
+        when(inventoryRepository.findValidBatchesForSale(eq(medicineId), any(LocalDate.class)))
                 .thenReturn(List.of(batch));
 
         // When & Then
