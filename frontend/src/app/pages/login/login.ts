@@ -76,7 +76,7 @@ export class LoginComponent {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Login error:', err);
+        console.error();
         this.errorMessage = 'LOGIN.ERROR';
         this.loading = false;
       }

@@ -17,17 +17,26 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DatePickerModule } from 'primeng/datepicker';
 
-// Services
+// Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MedicineService, MedicineResponseDto, MedicineCreateDto, MedicineUpdateDto } from '../../api';
+import {
+  MedicineService,
+  InventoryService,
+  MedicineResponseDto,
+  MedicineCreateDto,
+  MedicineUpdateDto,
+  InventoryAddDto
+} from '../../api';
 
 /**
- * Component responsible for managing and displaying the medicine inventory.
- * Provides functionality for listing, searching, and visualizing stock status.
+ * Component responsible for managing the medicine catalog and inventory supply.
+ * Provides functionality for CRUD operations on medicines and adding stock (supply).
  *
  * @see MedicineService
+ * @see InventoryService
  */
 @Component({
   selector: 'app-medicines',
@@ -49,6 +58,7 @@ import { MedicineService, MedicineResponseDto, MedicineCreateDto, MedicineUpdate
     TextareaModule,
     CheckboxModule,
     InputNumberModule,
+    DatePickerModule,
     TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
@@ -59,38 +69,46 @@ export class MedicinesComponent implements OnInit {
   /** List of medicines retrieved from the backend. */
   medicines: MedicineResponseDto[] = [];
 
-  /** Loading state indicator for UI spinners or skeletons. */
+  /** Loading state indicator for UI spinners. */
   loading = true;
 
   /** Current value of the global search filter. */
   searchValue: string | undefined;
-  // Dialog State
-  medicineDialog = false;
-  submitted = false;
 
+  // --- Medicine Dialog State ---
+  /** Controls visibility of the creation/edit medicine dialog. */
+  medicineDialog = false;
+  /** Flag to indicate if the form has been submitted (for validation display). */
+  submitted = false;
+  /** The medicine object currently being created or edited. */
   medicine: Partial<MedicineResponseDto & MedicineCreateDto> = {};
+
+  // --- Supply Dialog State ---
+  /** Controls visibility of the add stock (supply) dialog. */
+  supplyDialog = false;
+  /** The supply data object being filled by the user. */
+  supply: Partial<InventoryAddDto & { expirationDateObj?: Date }> = {};
+  /** The medicine selected for stock replenishment. */
+  selectedMedicineForSupply: MedicineResponseDto | null = null;
 
   constructor(
     private medicineService: MedicineService,
+    private inventoryService: InventoryService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private translate: TranslateService
   ) {}
 
   /**
-   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
-   * Triggers the initial loading of medicine data.
+   * Lifecycle hook. Triggers initial data loading.
    */
   ngOnInit() {
     this.loadMedicines();
   }
 
   /**
-   * Fetches the complete list of medicines from the backend API.
-   * Updates the {@link medicines} array and handles the {@link loading} state.
-   *
-   * @remarks
-   * Uses the generated OpenAPI client {@link MedicineService}.
+   * Fetches the complete list of medicines from the backend.
+   * Updates {@link medicines} and handles the {@link loading} state.
    */
   loadMedicines() {
     this.loading = true;
@@ -99,8 +117,9 @@ export class MedicinesComponent implements OnInit {
         this.medicines = data;
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Failed to load medicines', err);
+      error: () => {
+        console.error();
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data' });
         this.loading = false;
       }
     });
@@ -108,19 +127,31 @@ export class MedicinesComponent implements OnInit {
 
   // --- CRUD Actions ---
 
+  /**
+   * Opens the dialog to create a new medicine.
+   * Resets the form state.
+   */
   openNew() {
     this.medicine = {
-      prescriptionRequired: false // Default value
+      prescriptionRequired: false
     };
     this.submitted = false;
     this.medicineDialog = true;
   }
 
+  /**
+   * Opens the dialog to edit an existing medicine.
+   * @param med - The medicine to edit.
+   */
   editMedicine(med: MedicineResponseDto) {
     this.medicine = { ...med };
     this.medicineDialog = true;
   }
 
+  /**
+   * Deletes a medicine after user confirmation.
+   * @param med - The medicine to delete.
+   */
   deleteMedicine(med: MedicineResponseDto) {
     this.confirmationService.confirm({
       message: this.translate.instant('MEDICINES.DELETE_CONFIRM', { name: med.name }),
@@ -134,7 +165,7 @@ export class MedicinesComponent implements OnInit {
               summary: 'Success',
               detail: this.translate.instant('MEDICINES.MESSAGES.DELETED')
             });
-            this.loadMedicines(); // Refresh list
+            this.loadMedicines();
           },
           error: () => {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete' });
@@ -144,10 +175,14 @@ export class MedicinesComponent implements OnInit {
     });
   }
 
+  /**
+   * Saves the current medicine (Create or Update).
+   * Validates required fields before sending request.
+   */
   saveMedicine() {
     this.submitted = true;
 
-    if (!this.medicine.name?.trim() || !this.medicine.price) {
+    if (!this.medicine.name?.trim() || !this.medicine.price || !this.medicine.manufacturer?.trim()) {
       return;
     }
 
@@ -166,6 +201,9 @@ export class MedicinesComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: this.translate.instant('MEDICINES.MESSAGES.UPDATED') });
           this.hideDialog();
           this.loadMedicines();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update' });
         }
       });
     } else {
@@ -183,18 +221,84 @@ export class MedicinesComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: this.translate.instant('MEDICINES.MESSAGES.CREATED') });
           this.hideDialog();
           this.loadMedicines();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create' });
         }
       });
     }
   }
 
+  /**
+   * Closes the medicine dialog and resets submission state.
+   */
   hideDialog() {
     this.medicineDialog = false;
     this.submitted = false;
   }
 
+  // --- Supply Actions (Inventory) ---
+
+  /**
+   * Opens the supply dialog for a specific medicine.
+   * @param med - The medicine to add stock to.
+   */
+  openSupply(med: MedicineResponseDto) {
+    this.selectedMedicineForSupply = med;
+    this.supply = {
+      medicineId: med.id,
+      quantity: 10,
+      batchNumber: '',
+      expirationDateObj: undefined // Temporary field for DatePicker
+    };
+    this.submitted = false;
+    this.supplyDialog = true;
+  }
+
+  /**
+   * Saves the supply (Adds inventory).
+   * Validates batch number, date, and quantity.
+   */
+  saveSupply() {
+    this.submitted = true;
+
+    if (!this.supply.quantity || !this.supply.expirationDateObj || !this.supply.batchNumber) {
+      return;
+    }
+
+    // Convert Date object to YYYY-MM-DD string for backend
+    const dateStr = this.supply.expirationDateObj.toISOString().split('T')[0];
+
+    const inventoryDto: InventoryAddDto = {
+      medicineId: this.selectedMedicineForSupply!.id!,
+      quantity: this.supply.quantity,
+      batchNumber: this.supply.batchNumber,
+      expirationDate: dateStr
+    };
+
+    this.inventoryService.restockInventory(inventoryDto).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Stock Updated',
+          detail: `Added ${this.supply.quantity} items to ${this.selectedMedicineForSupply?.name}`
+        });
+        this.supplyDialog = false;
+        this.loadMedicines(); // Refresh table to show new quantity
+      },
+      error: () => {
+        console.error();
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add stock' });
+      }
+    });
+  }
+
   // --- Helpers ---
 
+  /**
+   * Returns the severity color for the stock status tag.
+   * @param quantity - Current stock level.
+   */
   getSeverity(quantity?: number): "success" | "warn" | "danger" | "info" | "secondary" | "contrast" | undefined {
     if (!quantity) return 'danger';
     if (quantity > 50) return 'success';
@@ -204,9 +308,7 @@ export class MedicinesComponent implements OnInit {
 
   /**
    * Returns a localization key for the stock status.
-   *
-   * @param quantity - The current stock level.
-   * @returns A translation key string (e.g., 'INSTOCK', 'LOWSTOCK').
+   * @param quantity - Current stock level.
    */
   getStatus(quantity?: number): string {
     if (!quantity) return 'OUTOFSTOCK';

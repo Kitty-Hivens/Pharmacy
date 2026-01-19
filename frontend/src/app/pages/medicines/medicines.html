@@ -52,7 +52,7 @@
         <th pSortableColumn="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }} <p-sortIcon field="manufacturer"></p-sortIcon></th>
         <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
         <th pSortableColumn="quantity">Status <p-sortIcon field="quantity"></p-sortIcon></th>
-        <th style="min-width:10rem">Actions</th>
+        <th style="min-width:12rem">Actions</th>
       </tr>
     </ng-template>
 
@@ -69,8 +69,32 @@
           <span class="ml-2 text-sm text-500" *ngIf="medicine.quantity">({{medicine.quantity}} pcs)</span>
         </td>
         <td>
-          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="secondary" styleClass="mr-2" (onClick)="editMedicine(medicine)"></p-button>
-          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="deleteMedicine(medicine)"></p-button>
+          <p-button
+            icon="pi pi-box"
+            [rounded]="true"
+            [text]="true"
+            severity="success"
+            pTooltip="Add Stock"
+            styleClass="mr-1"
+            (onClick)="openSupply(medicine)">
+          </p-button>
+
+          <p-button
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            styleClass="mr-1"
+            (onClick)="editMedicine(medicine)">
+          </p-button>
+
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            (onClick)="deleteMedicine(medicine)">
+          </p-button>
         </td>
       </tr>
     </ng-template>
@@ -104,7 +128,7 @@
 
       <div class="field mb-3">
         <label for="description">{{ 'MEDICINES.DESCRIPTION' | translate }}</label>
-        <textarea id="description" pInputTextarea [(ngModel)]="medicine.description" rows="3" cols="20"></textarea>
+        <textarea id="description" pTextarea [(ngModel)]="medicine.description" rows="3" cols="20"></textarea>
       </div>
 
       <div class="field-checkbox mb-3 flex align-items-center gap-2">
@@ -116,6 +140,49 @@
     <ng-template pTemplate="footer">
       <p-button [label]="'COMMON.CANCEL' | translate" icon="pi pi-times" [text]="true" (onClick)="hideDialog()"></p-button>
       <p-button [label]="'COMMON.SAVE' | translate" icon="pi pi-check" [text]="true" (onClick)="saveMedicine()"></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="supplyDialog"
+    [style]="{width: '400px'}"
+    header="Add Stock (Supply)"
+    [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+      <div class="field mb-3" *ngIf="selectedMedicineForSupply">
+        <label class="font-bold text-lg text-primary">{{ selectedMedicineForSupply.name }}</label>
+        <div class="text-sm text-500">{{ selectedMedicineForSupply.manufacturer }}</div>
+      </div>
+
+      <div class="field mb-3">
+        <label for="batch">Batch Number</label>
+        <input type="text" pInputText id="batch" [(ngModel)]="supply.batchNumber" required placeholder="e.g. BATCH-001" />
+        <small class="p-error" *ngIf="submitted && !supply.batchNumber">Batch is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="quantity">Quantity</label>
+        <p-inputNumber id="quantity" [(ngModel)]="supply.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal"></p-inputNumber>
+      </div>
+
+      <div class="field mb-3">
+        <label for="expiry">Expiration Date (FEFO)</label>
+        <p-datepicker
+        id="expiry"
+        [(ngModel)]="supply.expirationDateObj"
+        dateFormat="yy-mm-dd"
+        appendTo="body"
+        [showIcon]="true">
+      </p-datepicker>
+        <small class="p-error" *ngIf="submitted && !supply.expirationDateObj">Date is required.</small>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="supplyDialog = false"></p-button>
+      <p-button label="Add Stock" icon="pi pi-check" [text]="true" severity="success" (onClick)="saveSupply()"></p-button>
     </ng-template>
   </p-dialog>
 </div>

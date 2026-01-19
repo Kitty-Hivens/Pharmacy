@@ -118,7 +118,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: (err) => {
-          console.error('Error loading medicines', err);
+          console.error();
           this.showError('POS.ERRORS.LOAD_MEDICINES');
           this.allMedicines = [];
           this.loading = false;
@@ -137,7 +137,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.allCustomers = Array.isArray(data) ? data : [];
         },
         error: (err) => {
-          console.error('Error loading customers', err);
+          console.error();
           this.showError('POS.ERRORS.LOAD_CUSTOMERS');
         }
       });
@@ -269,7 +269,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.resetForm();
         },
         error: (err: any) => {
-          console.error(err);
+          console.error();
           this.showError('POS.ERRORS.TRANSACTION_FAILED');
           this.loading = false;
         }
