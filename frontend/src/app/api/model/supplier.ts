@@ -9,9 +9,11 @@
  */
 
 
-export interface SortObject { 
-    unsorted?: boolean;
-    sorted?: boolean;
-    empty?: boolean;
+export interface Supplier { 
+    id?: number;
+    email?: string;
+    name?: string;
+    contactPerson?: string;
+    phone?: string;
 }
 

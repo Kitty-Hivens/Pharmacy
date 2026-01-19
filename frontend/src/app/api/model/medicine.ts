@@ -9,9 +9,13 @@
  */
 
 
-export interface SortObject { 
-    unsorted?: boolean;
-    sorted?: boolean;
-    empty?: boolean;
+export interface Medicine { 
+    id?: number;
+    price?: number;
+    name?: string;
+    description?: string;
+    manufacturer?: string;
+    prescriptionRequired?: boolean;
+    isArchived?: boolean;
 }
 
