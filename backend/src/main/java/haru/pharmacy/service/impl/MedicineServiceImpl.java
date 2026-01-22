@@ -10,6 +10,7 @@ import haru.pharmacy.repository.MedicineRepository;
 import haru.pharmacy.service.interfaces.MedicineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,30 +23,34 @@ public class MedicineServiceImpl implements MedicineService {
     @Override
     public MedicineResponseDto create(MedicineCreateDto dto) {
         Medicine entity = mapper.toEntity(dto);
-        return mapper.toDto(repository.save(entity));
+        Medicine saved = repository.save(entity);
+        return mapper.toDto(saved, 0L);
     }
 
     @Override
+    @Transactional
     public MedicineResponseDto update(Long id, MedicineUpdateDto dto) {
         Medicine entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", id));
 
         mapper.updateEntity(dto, entity);
-        return mapper.toDto(repository.save(entity));
-    }
+        repository.save(entity);
 
-    @Override
-    public MedicineResponseDto get(Long id) {
-        return repository.findById(id)
-                .map(mapper::toDto)
+        return repository.findDtoById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", id));
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public MedicineResponseDto get(Long id) {
+        return repository.findDtoById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<MedicineResponseDto> getAll() {
-        return repository.findAll().stream()
-                .map(mapper::toDto)
-                .toList();
+        return repository.findAllSummarized();
     }
 
     @Override

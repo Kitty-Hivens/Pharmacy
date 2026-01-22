@@ -1,0 +1,188 @@
+<div class="card">
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        [label]="'MEDICINES.NEW_MEDICINE' | translate"
+        icon="pi pi-plus"
+        severity="success"
+        styleClass="mr-2"
+        (onClick)="openNew()"
+      ></p-button>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <p-button icon="pi pi-refresh" [rounded]="true" [text]="true" (onClick)="loadMedicines()" pTooltip="Refresh"></p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="medicines"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'manufacturer', 'description']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="id"
+    [loading]="loading"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h5 class="m-0 text-xl font-semibold">{{ 'MEDICINES.TITLE' | translate }}</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            [placeholder]="'COMMON.SEARCH' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name" style="min-width:15rem">{{ 'MEDICINES.NAME' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
+        <th pSortableColumn="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }} <p-sortIcon field="manufacturer"></p-sortIcon></th>
+        <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
+        <th pSortableColumn="quantity">Status <p-sortIcon field="quantity"></p-sortIcon></th>
+        <th style="min-width:12rem">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-medicine>
+      <tr>
+        <td class="font-bold">{{ medicine.name }}</td>
+        <td>{{ medicine.manufacturer }}</td>
+        <td>{{ medicine.price | currency:'USD' }}</td>
+        <td>
+          <p-tag
+            [value]="getStatus(medicine.quantity)"
+            [severity]="getSeverity(medicine.quantity)"
+          ></p-tag>
+          <span class="ml-2 text-sm text-500" *ngIf="medicine.quantity">({{medicine.quantity}} pcs)</span>
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-box"
+            [rounded]="true"
+            [text]="true"
+            severity="success"
+            pTooltip="Add Stock"
+            styleClass="mr-1"
+            (onClick)="openSupply(medicine)">
+          </p-button>
+
+          <p-button
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            styleClass="mr-1"
+            (onClick)="editMedicine(medicine)">
+          </p-button>
+
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            (onClick)="deleteMedicine(medicine)">
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="medicineDialog"
+    [style]="{width: '450px'}"
+    [header]="(medicine.id ? 'MEDICINES.EDIT_MEDICINE' : 'MEDICINES.NEW_MEDICINE') | translate"
+    [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+      <div class="field mb-3">
+        <label for="name">{{ 'MEDICINES.NAME' | translate }}</label>
+        <input type="text" pInputText id="name" [(ngModel)]="medicine.name" required autofocus />
+        <small class="p-error" *ngIf="submitted && !medicine.name">Name is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }}</label>
+        <input type="text" pInputText id="manufacturer" [(ngModel)]="medicine.manufacturer" required />
+        <small class="p-error" *ngIf="submitted && !medicine.manufacturer">Manufacturer is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="price">{{ 'MEDICINES.PRICE' | translate }}</label>
+        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" required></p-inputNumber>
+        <small class="p-error" *ngIf="submitted && !medicine.price">Price is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="description">{{ 'MEDICINES.DESCRIPTION' | translate }}</label>
+        <textarea id="description" pTextarea [(ngModel)]="medicine.description" rows="3" cols="20"></textarea>
+      </div>
+
+      <div class="field-checkbox mb-3 flex align-items-center gap-2">
+        <p-checkbox id="prescription" [(ngModel)]="medicine.prescriptionRequired" [binary]="true" inputId="binary"></p-checkbox>
+        <label for="binary" class="m-0">{{ 'MEDICINES.PRESCRIPTION_REQUIRED' | translate }}</label>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button [label]="'COMMON.CANCEL' | translate" icon="pi pi-times" [text]="true" (onClick)="hideDialog()"></p-button>
+      <p-button [label]="'COMMON.SAVE' | translate" icon="pi pi-check" [text]="true" (onClick)="saveMedicine()"></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="supplyDialog"
+    [style]="{width: '400px'}"
+    header="Add Stock (Supply)"
+    [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+      <div class="field mb-3" *ngIf="selectedMedicineForSupply">
+        <label class="font-bold text-lg text-primary">{{ selectedMedicineForSupply.name }}</label>
+        <div class="text-sm text-500">{{ selectedMedicineForSupply.manufacturer }}</div>
+      </div>
+
+      <div class="field mb-3">
+        <label for="batch">Batch Number</label>
+        <input type="text" pInputText id="batch" [(ngModel)]="supply.batchNumber" required placeholder="e.g. BATCH-001" />
+        <small class="p-error" *ngIf="submitted && !supply.batchNumber">Batch is required.</small>
+      </div>
+
+      <div class="field mb-3">
+        <label for="quantity">Quantity</label>
+        <p-inputNumber id="quantity" [(ngModel)]="supply.quantity" [min]="1" [showButtons]="true" buttonLayout="horizontal"></p-inputNumber>
+      </div>
+
+      <div class="field mb-3">
+        <label for="expiry">Expiration Date (FEFO)</label>
+        <p-datepicker
+        id="expiry"
+        [(ngModel)]="supply.expirationDateObj"
+        dateFormat="yy-mm-dd"
+        appendTo="body"
+        [showIcon]="true">
+      </p-datepicker>
+        <small class="p-error" *ngIf="submitted && !supply.expirationDateObj">Date is required.</small>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button label="Cancel" icon="pi pi-times" [text]="true" (onClick)="supplyDialog = false"></p-button>
+      <p-button label="Add Stock" icon="pi pi-check" [text]="true" severity="success" (onClick)="saveSupply()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

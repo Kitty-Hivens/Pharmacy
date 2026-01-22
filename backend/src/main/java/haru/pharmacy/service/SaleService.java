@@ -1,15 +1,19 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.SaleCreateDto;
+import haru.pharmacy.dto.SaleResponseDto;
 import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.*;
 import haru.pharmacy.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,13 +80,16 @@ public class SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", itemRequest.medicineId()));
 
             int quantityToSell = itemRequest.quantity();
-            // FEFO strategy: find batches ordered by expiration date ASC
-            List<Inventory> batches = inventoryRepository.findByMedicineIdOrderByExpirationDateAsc(medicine.getId());
-            int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
 
-            if (totalStock < quantityToSell) {
+            // Strict FEFO (checks expiration date)
+            List<Inventory> batches = inventoryRepository.findValidBatchesForSale(medicine.getId(), LocalDate.now());
+
+            // Calculate total VALID stock
+            int totalValidStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
+
+            if (totalValidStock < quantityToSell) {
                 throw new BusinessConstraintException("error.inventory.insufficient",
-                        medicine.getName(), quantityToSell, totalStock);
+                        medicine.getName(), quantityToSell, totalValidStock);
             }
 
             for (Inventory batch : batches) {
@@ -119,5 +126,43 @@ public class SaleService {
         sale.setTotalAmount(totalAmount);
 
         saleRepository.save(sale);
+    }
+
+    /**
+     * Retrieves a paginated list of sales history with optional date filtering.
+     */
+    @Transactional(readOnly = true)
+    public Page<SaleResponseDto> getAllSales(LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        Page<Sale> salesPage = saleRepository.findAllWithFilter(from, to, pageable);
+        return salesPage.map(this::mapToDto);
+    }
+
+    private SaleResponseDto mapToDto(Sale sale) {
+        String sellerName = (sale.getEmployee() != null)
+                ? sale.getEmployee().getFirstName() + " " + sale.getEmployee().getLastName()
+                : "Unknown";
+
+        // Обработка случая, если клиента удалили или это анонимная продажа
+        String customerName = (sale.getCustomer() != null)
+                ? sale.getCustomer().getFirstName() + " " + sale.getCustomer().getLastName()
+                : "Guest";
+
+        List<SaleResponseDto.SaleItemDto> itemDtos = sale.getItems().stream()
+                .map(item -> new SaleResponseDto.SaleItemDto(
+                        item.getMedicine().getName(),
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                ))
+                .toList();
+
+        return new SaleResponseDto(
+                sale.getId(),
+                sale.getSaleDateTime(),
+                sellerName,
+                customerName,
+                sale.getTotalAmount(),
+                itemDtos
+        );
     }
 }

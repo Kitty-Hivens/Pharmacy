@@ -28,9 +28,10 @@ import static org.mockito.Mockito.*;
  * <p>
  * Verifies the behavior of medicine management operations, including
  * creation, retrieval, updates, and deletion.
+ * Matches the optimized architecture (DTO projections).
  *
  * @author Haru
- * @version 2.0
+ * @version 3.0
  */
 @ExtendWith(MockitoExtension.class)
 class MedicineServiceTest {
@@ -42,8 +43,9 @@ class MedicineServiceTest {
     private MedicineServiceImpl service;
 
     @Test
-    @DisplayName("Create should save entity and return DTO")
+    @DisplayName("Create should save entity and return DTO with 0 quantity")
     void create_ShouldSave() {
+        // Given
         MedicineCreateDto dto = new MedicineCreateDto(
                 "Aspirin", BigDecimal.TEN, "Bayer", "Desc", false
         );
@@ -51,50 +53,24 @@ class MedicineServiceTest {
         Medicine saved = new Medicine();
         saved.setId(1L);
         MedicineResponseDto responseDto = new MedicineResponseDto(
-                1L, "Aspirin", BigDecimal.TEN, "Bayer", "Desc", false
+                1L, "Aspirin", BigDecimal.TEN, "Bayer", "Desc", false, 0L
         );
 
         when(mapper.toEntity(dto)).thenReturn(entity);
         when(repository.save(entity)).thenReturn(saved);
-        when(mapper.toDto(saved)).thenReturn(responseDto);
-
-        MedicineResponseDto result = service.create(dto);
-
-        assertEquals(1L, result.id());
-        verify(repository).save(entity);
-    }
-
-    @Test
-    @DisplayName("Create should save medicine and return mapped DTO")
-    void create_ShouldSaveAndReturnDto() {
-        // Given
-        MedicineCreateDto dto = new MedicineCreateDto(
-                "Aspirin", BigDecimal.TEN, "Bayer", "Pain reliever", false
-        );
-        Medicine entity = new Medicine();
-        Medicine savedEntity = new Medicine();
-        savedEntity.setId(1L);
-
-        MedicineResponseDto expectedResponse = new MedicineResponseDto(
-                1L, "Aspirin", BigDecimal.TEN, "Bayer", "Pain reliever", false
-        );
-
-        when(mapper.toEntity(dto)).thenReturn(entity);
-        when(repository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toDto(savedEntity)).thenReturn(expectedResponse);
+        when(mapper.toDto(saved, 0L)).thenReturn(responseDto);
 
         // When
         MedicineResponseDto result = service.create(dto);
 
         // Then
-        assertNotNull(result);
         assertEquals(1L, result.id());
-        assertEquals("Aspirin", result.name());
+        assertEquals(0L, result.quantity());
         verify(repository).save(entity);
     }
 
     @Test
-    @DisplayName("Update should modify entity when found")
+    @DisplayName("Update should modify entity and fetch updated DTO via projection")
     void update_ShouldUpdate_WhenFound() {
         Long id = 1L;
         MedicineUpdateDto dto = new MedicineUpdateDto(
@@ -103,17 +79,24 @@ class MedicineServiceTest {
         Medicine existing = new Medicine();
         existing.setId(id);
 
+        MedicineResponseDto updatedDto = new MedicineResponseDto(
+                id, "NewName", BigDecimal.ONE, "NewManuf", "Desc", true, 50L
+        );
+
         when(repository.findById(id)).thenReturn(Optional.of(existing));
         when(repository.save(existing)).thenReturn(existing);
+        when(repository.findDtoById(id)).thenReturn(Optional.of(updatedDto));
 
-        when(mapper.toDto(existing)).thenReturn(new MedicineResponseDto(
-                id, "NewName", BigDecimal.ONE, "NewManuf", "Desc", true
-        ));
+        // When
+        MedicineResponseDto result = service.update(id, dto);
 
-        service.update(id, dto);
+        // Then
+        assertEquals("NewName", result.name());
+        assertEquals(50L, result.quantity());
 
         verify(mapper).updateEntity(dto, existing);
         verify(repository).save(existing);
+        verify(repository).findDtoById(id);
     }
 
     @Test
@@ -129,45 +112,43 @@ class MedicineServiceTest {
     }
 
     @Test
-    @DisplayName("Get should return DTO when found")
+    @DisplayName("Get should return DTO from optimized query")
     void get_ShouldReturnDto_WhenFound() {
         Long id = 1L;
-        Medicine entity = new Medicine();
-        when(repository.findById(id)).thenReturn(Optional.of(entity));
-        when(mapper.toDto(entity)).thenReturn(new MedicineResponseDto(
-                id, "Test", BigDecimal.ONE, "Test", "Test", false));
+        MedicineResponseDto dtoFromDb = new MedicineResponseDto(
+                id, "Test", BigDecimal.ONE, "Test", "Test", false, 100L);
+
+        when(repository.findDtoById(id)).thenReturn(Optional.of(dtoFromDb));
 
         MedicineResponseDto result = service.get(id);
 
         assertNotNull(result);
         assertEquals(id, result.id());
+        assertEquals(100L, result.quantity());
+        verify(mapper, never()).toDto(any(Medicine.class));
     }
 
     @Test
     @DisplayName("Get should throw exception when not found")
     void get_ShouldThrow_WhenMissing() {
         Long id = 99L;
-        when(repository.findById(id)).thenReturn(Optional.empty());
+        when(repository.findDtoById(id)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> service.get(id));
     }
 
     @Test
-    @DisplayName("Get should throw exception when not found")
-    void get_ShouldThrow_WhenNotFound() {
-        Long id = 99L;
-        when(repository.findById(id)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> service.get(id));
-    }
-
-    @Test
-    @DisplayName("GetAll should return list")
+    @DisplayName("GetAll should return list using optimized query")
     void getAll_ShouldReturnList() {
-        when(repository.findAll()).thenReturn(List.of(new Medicine()));
+        MedicineResponseDto item = new MedicineResponseDto(
+                1L, "A", BigDecimal.ONE, "M", "D", false, 10L
+        );
+        when(repository.findAllSummarized()).thenReturn(List.of(item));
 
         List<MedicineResponseDto> result = service.getAll();
 
         assertFalse(result.isEmpty());
-        verify(mapper, atLeastOnce()).toDto(any());
+        assertEquals(10L, result.getFirst().quantity());
+        verify(repository).findAllSummarized();
     }
 
     @Test

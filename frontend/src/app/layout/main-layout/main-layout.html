@@ -1,0 +1,97 @@
+<div class="flex min-h-screen surface-ground">
+
+  <!-- SIDEBAR -->
+  <!-- Логика классов:
+       - fixed + z-index: чтобы на мобилке перекрывал контент
+       - static: на десктопе занимает свое место
+  -->
+  <div
+    class="bg-white shadow-2 flex-shrink-0 flex flex-column transition-all transition-duration-200"
+    [class.fixed]="isMobileScreen"
+    [class.h-full]="isMobileScreen"
+    [style.width.rem]="18"
+    [style.zIndex]="1100"
+    [style.left.px]="sidebarVisible ? 0 : -300"
+    [class.hidden]="!sidebarVisible && !isMobileScreen"
+    *ngIf="sidebarVisible || isMobileScreen"
+  >
+
+    <!-- Logo Area -->
+    <div class="flex align-items-center gap-2 px-4 h-5rem border-bottom-1 surface-border">
+      <div class="flex align-items-center justify-content-center bg-primary border-round" style="width: 2.5rem; height: 2.5rem">
+        <i class="pi pi-heart-fill text-xl text-white"></i>
+      </div>
+      <span class="text-xl font-bold text-900">Haru Pharmacy</span>
+    </div>
+
+    <!-- Menu Scroll Area -->
+    <div class="flex-1 overflow-y-auto py-3 px-2">
+      <p-menu [model]="menuItems" styleClass="w-full border-none"></p-menu>
+    </div>
+
+    <!-- User Profile Bottom -->
+    <div class="p-3 border-top-1 surface-border mt-auto">
+      <div class="flex align-items-center gap-3 cursor-pointer p-2 border-round hover:surface-100 transition-colors transition-duration-150" (click)="userMenu.toggle($event)">
+        <p-avatar label="AD" shape="circle" size="large" styleClass="bg-blue-100 text-blue-700 font-bold"></p-avatar>
+        <div class="flex flex-column">
+          <span class="font-bold text-900 text-sm">Super Admin</span>
+          <span class="text-xs text-600">admin&#64;pharmacy.com</span>
+        </div>
+        <i class="pi pi-chevron-up ml-auto text-600 text-xs"></i>
+      </div>
+      <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
+    </div>
+  </div>
+
+  <!-- Overlay for Mobile (Затемнение фона при открытом меню) -->
+  <div
+    *ngIf="isMobileScreen && sidebarVisible"
+    class="fixed top-0 left-0 w-full h-full bg-black-alpha-40"
+    style="z-index: 1000"
+    (click)="sidebarVisible = false">
+  </div>
+
+  <!-- MAIN CONTENT WRAPPER -->
+  <div class="flex flex-column flex-1 min-w-0 transition-all transition-duration-200"
+       [style.marginLeft.rem]="(!isMobileScreen && sidebarVisible) ? 0 : 0">
+
+    <!-- TOPBAR -->
+    <div class="flex justify-content-between align-items-center px-4 h-5rem bg-white shadow-1 relative z-1">
+
+      <!-- Left: Toggle & Title -->
+      <div class="flex align-items-center gap-3">
+        <p-button
+          icon="pi pi-bars"
+          [text]="true"
+          [rounded]="true"
+          severity="secondary"
+          (onClick)="toggleSidebar()">
+        </p-button>
+        <span class="text-xl font-medium text-900 hidden sm:inline">Dashboard</span>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="flex align-items-center gap-2 sm:gap-3">
+
+        <!-- Language Switcher -->
+        <button pButton pRipple type="button"
+                class="p-button-text p-button-rounded p-button-secondary font-bold"
+                (click)="switchLanguage()">
+          {{ translate.currentLang | uppercase }}
+        </button>
+
+        <!-- Notifications -->
+        <p-button icon="pi pi-bell" [text]="true" [rounded]="true" severity="secondary" pBadge value="3" severity="danger"></p-button>
+
+        <!-- Settings -->
+        <p-button icon="pi pi-cog" [text]="true" [rounded]="true" severity="secondary"></p-button>
+      </div>
+    </div>
+
+    <!-- ROUTER OUTLET (Pages go here) -->
+    <div class="flex-1 p-3 sm:p-5 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</div>

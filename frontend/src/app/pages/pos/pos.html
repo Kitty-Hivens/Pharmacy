@@ -1,0 +1,155 @@
+<div class="grid p-3" style="min-height: calc(100vh - 9rem);">
+  <p-toast></p-toast>
+
+  <div class="col-12 lg:col-8">
+    <div class="surface-card shadow-2 border-round h-full p-4 flex flex-column">
+
+      <div class="flex align-items-center justify-content-between mb-4">
+        <h2 class="text-900 font-bold text-2xl m-0">{{ 'POS.CURRENT_ORDER' | translate }}</h2>
+        <span class="text-500">{{ cart.length }} {{ 'POS.ITEMS' | translate }}</span>
+      </div>
+
+      <p-table [value]="cart" [scrollable]="true" scrollHeight="500px" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 200px">{{ 'POS.TABLE.MEDICINE' | translate }}</th>
+            <th>{{ 'POS.TABLE.PRICE' | translate }}</th>
+            <th style="width: 150px">{{ 'POS.TABLE.QUANTITY' | translate }}</th>
+            <th>{{ 'POS.TABLE.TOTAL' | translate }}</th>
+            <th style="width: 50px"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>
+              <div class="font-bold">{{ item.medicine.name }}</div>
+              <div class="text-sm text-500">{{ item.medicine.manufacturer }}</div>
+            </td>
+            <td>{{ item.medicine.price | currency:'USD' }}</td>
+            <td>
+              <p-inputNumber
+                [(ngModel)]="item.quantity"
+                [min]="1"
+                [max]="item.medicine.quantity"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                inputStyleClass="w-3rem text-center p-0"
+                (onInput)="onQuantityChange(item)">
+              </p-inputNumber>
+              <div class="text-xs text-500 mt-1 ml-1">{{ 'POS.STOCK' | translate }}: {{item.medicine.quantity}}</div>
+            </td>
+            <td class="font-bold text-lg">{{ item.total | currency:'USD' }}</td>
+            <td>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
+                      (click)="removeFromCart(item)"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center p-6">
+              <i class="pi pi-shopping-cart text-500 text-6xl mb-3"></i>
+              <div class="text-500 font-medium">{{ 'POS.EMPTY_CART' | translate }}</div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-4">
+    <div class="flex flex-column gap-3 h-full">
+
+      <div class="surface-card shadow-2 border-round p-4" style="min-height: 11rem"> <label class="block text-900 font-medium mb-2">{{ 'POS.CUSTOMER_LABEL' | translate }}</label>
+
+        <p-autoComplete *ngIf="!selectedCustomer"
+                        [(ngModel)]="selectedCustomer"
+                        [suggestions]="filteredCustomers"
+                        (completeMethod)="filterCustomers($event)"
+                        field="lastName"
+                        [placeholder]="'POS.SEARCH_CUSTOMER' | translate"
+                        [dropdown]="true"
+                        styleClass="w-full"
+                        inputStyleClass="w-full">
+          <ng-template let-customer pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-user"></i>
+              <div>
+                <span class="font-bold">{{ customer.firstName }} {{ customer.lastName }}</span>
+                <div class="text-sm text-500">{{ customer.phone }}</div>
+              </div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+
+        <div *ngIf="selectedCustomer" class="h-full flex flex-column justify-content-center animate-fade-in">
+          <div class="p-3 bg-blue-50 border-round flex align-items-center gap-3">
+            <p-avatar label="C" shape="circle" size="large" styleClass="bg-blue-500 text-white"></p-avatar>
+            <div>
+              <div class="font-bold text-blue-900">{{selectedCustomer.firstName}} {{selectedCustomer.lastName}}</div>
+              <div class="text-sm text-blue-700">{{ 'POS.DISCOUNT' | translate }}: {{selectedCustomer.discountRate}}%</div>
+            </div>
+            <button pButton icon="pi pi-times" class="p-button-text p-button-rounded p-button-danger ml-auto"
+                    (click)="selectedCustomer = null" pTooltip="Change Customer"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="surface-card shadow-2 border-round p-4">
+        <label class="block text-900 font-bold mb-2 text-xl">{{ 'POS.FIND_MEDICINE' | translate }}</label>
+        <p-autoComplete
+          [(ngModel)]="selectedMedicine"
+          [suggestions]="filteredMedicines"
+          (completeMethod)="filterMedicines($event)"
+          (onSelect)="addToCart()"
+          field="name"
+          [placeholder]="'POS.TYPE_PRODUCT' | translate"
+          styleClass="w-full"
+          inputStyleClass="w-full p-3 text-lg">
+          <ng-template let-med pTemplate="item">
+            <div class="flex justify-content-between align-items-center w-full">
+              <div>
+                <div class="font-bold">{{ med.name }}</div>
+                <div class="text-xs text-500">{{ med.manufacturer }}</div>
+              </div>
+              <div class="text-right">
+                <div class="font-bold text-green-600">{{ med.price | currency:'USD' }}</div>
+                <div class="text-xs" [class.text-red-500]="med.quantity < 5" [class.text-500]="med.quantity >= 5">
+                  {{ 'POS.STOCK' | translate }}: {{ med.quantity }}
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        <div class="text-500 text-sm mt-2">{{ 'POS.SELECT_HINT' | translate }}</div>
+      </div>
+
+      <div class="surface-card shadow-2 border-round p-4 mt-auto">
+        <div class="flex justify-content-between align-items-center mb-2">
+          <span class="text-lg text-600">{{ 'POS.SUBTOTAL' | translate }}</span>
+          <span class="text-lg font-medium">{{ grandTotal | currency:'USD' }}</span>
+        </div>
+        <div class="flex justify-content-between align-items-center mb-4">
+          <span class="text-lg text-600">{{ 'POS.TAX' | translate }} (0%)</span> <span class="text-lg font-medium">$0.00</span>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="flex justify-content-between align-items-center mb-4">
+          <span class="text-2xl font-bold text-900">{{ 'POS.TOTAL' | translate }}</span>
+          <span class="text-3xl font-bold text-primary">{{ grandTotal | currency:'USD' }}</span>
+        </div>
+
+        <button pButton
+                [label]="'POS.PROCESS_PAYMENT' | translate"
+                icon="pi pi-wallet"
+                class="w-full p-3 text-xl font-bold"
+                [disabled]="cart.length === 0"
+                [loading]="loading"
+                (click)="checkout()">
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

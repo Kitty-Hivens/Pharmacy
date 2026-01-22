@@ -1,0 +1,108 @@
+{
+  "LOGIN": {
+    "TITLE": "Welcome Back",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "SIGN_IN": "Sign In",
+    "SUCCESS": "Login successful!",
+    "ERROR": "Invalid credentials",
+    "NO_ACCOUNT": "Don't have an account?",
+    "CONTACT_ADMIN": "Contact Admin",
+    "REMEMBER_ME": "Remember me",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "BRANDING_TITLE": "Portfolio Project",
+    "BRANDING_SUBTITLE": "Fullstack Pharmacy Management System powered by Spring Boot 4 & Angular 21."
+  },
+  "MENU": {
+    "PHARMACY": "Pharmacy",
+    "DASHBOARD": "Dashboard",
+    "POS_TERMINAL": "POS Terminal",
+    "INVENTORY": "Inventory",
+    "MEDICINES": "Medicines",
+    "STOCK_ALERT": "Stock Alert",
+    "BUSINESS": "Business",
+    "SALES_HISTORY": "Sales History",
+    "CUSTOMERS": "Customers",
+    "SUPPLIERS": "Suppliers",
+    "ADMIN": "Admin",
+    "EMPLOYEES": "Employees",
+    "PROFILE": "Profile",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Logout"
+  },
+  "DASHBOARD": {
+    "TOTAL_SALES": "Total Sales",
+    "SINCE_LAST_MONTH": "since last month",
+    "CUSTOMERS": "Customers",
+    "NEW_REGISTRATIONS": "new registrations",
+    "LOW_STOCK": "Low Stock",
+    "ITEMS": "Items",
+    "ACTION_NEEDED": "Action Needed",
+    "MESSAGES": "Messages",
+    "UNREAD": "Unread",
+    "RECENT_TRANSACTIONS": "Recent Transactions",
+    "QUICK_ACTIONS": "Quick Actions",
+    "BTN_NEW_SALE": "New Sale (POS)",
+    "BTN_ADD_MEDICINE": "Add Medicine",
+    "BTN_REGISTER_CUSTOMER": "Register Customer"
+  },
+  "POS": {
+    "CURRENT_ORDER": "Current Order",
+    "ITEMS": "items",
+    "TABLE": {
+      "MEDICINE": "Medicine",
+      "PRICE": "Price",
+      "QUANTITY": "Quantity",
+      "TOTAL": "Total"
+    },
+    "STOCK": "Stock",
+    "EMPTY_CART": "Cart is empty. Scan or search items.",
+    "CUSTOMER_LABEL": "Customer (Optional)",
+    "SEARCH_CUSTOMER": "Search by phone or name...",
+    "DISCOUNT": "Discount",
+    "FIND_MEDICINE": "Find Medicine",
+    "TYPE_PRODUCT": "Type product name...",
+    "SELECT_HINT": "Select item to add instantly.",
+    "SUBTOTAL": "Subtotal",
+    "TAX": "Tax",
+    "TOTAL": "Total",
+    "PROCESS_PAYMENT": "Process Payment",
+    "SUCCESS_TITLE": "Success",
+    "SUCCESS_DETAIL": "Sale processed successfully",
+    "ERRORS": {
+      "LOAD_MEDICINES": "Failed to load medicines list",
+      "LOAD_CUSTOMERS": "Failed to load customers list",
+      "NOT_ENOUGH_STOCK": "Not enough stock available!",
+      "STOCK_LIMIT_REACHED": "Max stock available is {{max}}",
+      "TRANSACTION_FAILED": "Transaction failed. Please check stock levels."
+    }
+  },
+  "MEDICINES": {
+    "TITLE": "Inventory Management",
+    "NEW_MEDICINE": "New Medicine",
+    "EDIT_MEDICINE": "Edit Medicine",
+    "NAME": "Name",
+    "MANUFACTURER": "Manufacturer",
+    "PRICE": "Price",
+    "DESCRIPTION": "Description",
+    "PRESCRIPTION_REQUIRED": "Prescription Required",
+    "DELETE_CONFIRM": "Are you sure you want to delete {{name}}?",
+    "DELETE_HEADER": "Confirm Delete",
+    "MESSAGES": {
+      "CREATED": "Medicine Created",
+      "UPDATED": "Medicine Updated",
+      "DELETED": "Medicine Deleted"
+    }
+  },
+  "COMMON": {
+    "YES": "Yes",
+    "NO": "No",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "SEARCH": "Search..."
+  },
+  "LANG": {
+    "SWITCH": "RU"
+  }
+}

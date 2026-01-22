@@ -1,0 +1,108 @@
+{
+  "LOGIN": {
+    "TITLE": "Добро пожаловать",
+    "USERNAME": "Имя пользователя",
+    "PASSWORD": "Пароль",
+    "SIGN_IN": "Войти",
+    "SUCCESS": "Вход выполнен!",
+    "ERROR": "Неверный логин или пароль",
+    "NO_ACCOUNT": "Нет аккаунта?",
+    "CONTACT_ADMIN": "Свяжитесь с админом",
+    "REMEMBER_ME": "Запомнить меня",
+    "FORGOT_PASSWORD": "Забыли пароль?",
+    "BRANDING_TITLE": "Портфолио Проект",
+    "BRANDING_SUBTITLE": "Система управления аптекой на Spring Boot 4 и Angular 21."
+  },
+  "MENU": {
+    "PHARMACY": "Аптека",
+    "DASHBOARD": "Главная",
+    "POS_TERMINAL": "Касса (POS)",
+    "INVENTORY": "Склад",
+    "MEDICINES": "Лекарства",
+    "STOCK_ALERT": "Критические остатки",
+    "BUSINESS": "Бизнес",
+    "SALES_HISTORY": "История продаж",
+    "CUSTOMERS": "Клиенты",
+    "SUPPLIERS": "Поставщики",
+    "ADMIN": "Администрирование",
+    "EMPLOYEES": "Сотрудники",
+    "PROFILE": "Профиль",
+    "SETTINGS": "Настройки",
+    "LOGOUT": "Выход"
+  },
+  "DASHBOARD": {
+    "TOTAL_SALES": "Продажи",
+    "SINCE_LAST_MONTH": "с прошлого месяца",
+    "CUSTOMERS": "Клиенты",
+    "NEW_REGISTRATIONS": "новых регистраций",
+    "LOW_STOCK": "Мало на складе",
+    "ITEMS": "Тов.",
+    "ACTION_NEEDED": "Требует внимания",
+    "MESSAGES": "Сообщения",
+    "UNREAD": "Непрочитанных",
+    "RECENT_TRANSACTIONS": "Недавние транзакции",
+    "QUICK_ACTIONS": "Быстрые действия",
+    "BTN_NEW_SALE": "Новая продажа",
+    "BTN_ADD_MEDICINE": "Добавить товар",
+    "BTN_REGISTER_CUSTOMER": "Новый клиент"
+  },
+  "POS": {
+    "CURRENT_ORDER": "Текущий заказ",
+    "ITEMS": "тов.",
+    "TABLE": {
+      "MEDICINE": "Препарат",
+      "PRICE": "Цена",
+      "QUANTITY": "Кол-во",
+      "TOTAL": "Сумма"
+    },
+    "STOCK": "Склад",
+    "EMPTY_CART": "Корзина пуста. Сканируйте или ищите товар.",
+    "CUSTOMER_LABEL": "Клиент (Опционально)",
+    "SEARCH_CUSTOMER": "Поиск по имени или телефону...",
+    "DISCOUNT": "Скидка",
+    "FIND_MEDICINE": "Поиск товара",
+    "TYPE_PRODUCT": "Введите название...",
+    "SELECT_HINT": "Выберите товар для добавления.",
+    "SUBTOTAL": "Подытог",
+    "TAX": "Налог",
+    "TOTAL": "Итого",
+    "PROCESS_PAYMENT": "Оплатить",
+    "SUCCESS_TITLE": "Успешно",
+    "SUCCESS_DETAIL": "Продажа успешно проведена",
+    "ERRORS": {
+      "LOAD_MEDICINES": "Ошибка загрузки списка лекарств",
+      "LOAD_CUSTOMERS": "Ошибка загрузки списка клиентов",
+      "NOT_ENOUGH_STOCK": "Недостаточно товара на складе!",
+      "STOCK_LIMIT_REACHED": "Максимум на складе: {{max}}",
+      "TRANSACTION_FAILED": "Ошибка транзакции. Проверьте остатки."
+    }
+  },
+  "MEDICINES": {
+    "TITLE": "Управление складом",
+    "NEW_MEDICINE": "Новое лекарство",
+    "EDIT_MEDICINE": "Редактирование",
+    "NAME": "Название",
+    "MANUFACTURER": "Производитель",
+    "PRICE": "Цена",
+    "DESCRIPTION": "Описание",
+    "PRESCRIPTION_REQUIRED": "Нужен рецепт",
+    "DELETE_CONFIRM": "Вы уверены, что хотите удалить {{name}}?",
+    "DELETE_HEADER": "Подтверждение",
+    "MESSAGES": {
+      "CREATED": "Лекарство создано",
+      "UPDATED": "Лекарство обновлено",
+      "DELETED": "Лекарство удалено"
+    }
+  },
+  "COMMON": {
+    "YES": "Да",
+    "NO": "Нет",
+    "SAVE": "Сохранить",
+    "CANCEL": "Отмена",
+    "DELETE": "Удалить",
+    "SEARCH": "Поиск..."
+  },
+  "LANG": {
+    "SWITCH": "EN"
+  }
+}

@@ -1,116 +1,101 @@
-# 🏥 Pharmacy POS System
+# Haru Pharmacy: Enterprise Management System
 
-Enterprise-grade backend for pharmaceutical retail management.
-Designed for high reliability, strict data validation, and secure role-based access.
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.1-brightgreen?style=for-the-badge&logo=springboot)
+![Angular](https://img.shields.io/badge/Angular-21.1.0-dd0031?style=for-the-badge&logo=angular)
+![Java](https://img.shields.io/badge/Java-21_(LTS)-orange?style=for-the-badge&logo=openjdk)
+![Docker](https://img.shields.io/badge/Deployment-Docker-2496ed?style=for-the-badge&logo=docker)
 
-> **Stack:** Java 21, Spring Boot 3, MariaDB, Docker, JWT.
-> **Status:** v1.0 (MVP Ready)
+> **A Next-Generation Point of Sale (POS) & Inventory System.**
+> Built to demonstrate a strict **Contract-First** architecture using the bleeding edge of the Java ecosystem.
 
 ---
 
-## ⚡ Quick Start (Docker)
+## 🏗 Key Architectural Decisions
 
-**Prerequisites:** Docker & Docker Compose installed.
+This project implements strict engineering patterns to ensure scalability, type safety, and maintainability.
 
-Run the full stack (Backend + Database) with a single command from the project root:
+### 1. Contract-First Development (OpenAPI)
+Instead of manually matching frontend and backend types, the project treats the **API Specification** as the absolute source of truth.
+* **Why:** To eliminate regression bugs caused by silent API changes (e.g., renamed fields).
+* **How:** The Backend exposes a live OpenAPI v3 spec. The Frontend client is **auto-generated** (`npm run generate-api`), ensuring 100% synchronization at compile time.
+
+### 2. Deterministic Data State
+* **Database Migrations:** Schema changes are versioned via **Flyway** (`V1__init_schema.sql`). This guarantees identical database structures across Development, Testing, and Production environments.
+* **DTO Mapping:** Usage of **MapStruct** for compile-time, zero-overhead mapping between Entities and Data Transfer Objects.
+
+### 3. Stateless Security Model
+* **Mechanism:** JWT (JSON Web Token) with per-request filters (`JwtFilter`).
+* **Access Control:** Role-Based Access Control (RBAC) separating Admin and Pharmacist privileges.
+
+---
+
+## ⚡ Tech Stack (Bleeding Edge 2026)
+
+The system leverages the latest stable and rolling releases available as of Q1 2026.
+
+| Layer        | Technology         | Version      | Rationale                                                 |
+|:-------------|:-------------------|:-------------|:----------------------------------------------------------|
+| **Backend**  | **Spring Boot**    | **4.0.1**    | Virtual Threads, Spring Framework 7, Structured Logging.  |
+| **Language** | **Java**           | **21 (LTS)** | Records, Pattern Matching, Sequenced Collections.         |
+| **Frontend** | **Angular**        | **21.1.0**   | **Zoneless** Change Detection, Signals-based Reactivity.  |
+| **Database** | **MariaDB**        | **12.1.2**   | Rolling release with advanced vector search capabilities. |
+| **DevOps**   | **Docker Compose** | **Spec v2**  | Full infrastructure instantiation (Database + API).       |
+
+---
+
+## 🛠 Developer Workflow
+
+### Prerequisites
+* Java 21 JDK
+* Node.js 22+
+* Docker & Docker Compose
+
+### 🚀 Quick Start (Full Environment)
+
+The fastest way to get the system running (Database + Backend + Frontend):
 
 ```bash
-docker-compose up --build
-````
+# 1. Clone the repository
+git clone https://github.com/Kitty-Hivens/pharmacy.git
 
-The system will start automatically:
+# 2. Spin up Infrastructure (Database)
+docker-compose up -d
 
-* **Backend API:** `http://localhost:8080`
-* **Database:** `localhost:3306` (inside container)
+# 3. Start Backend (Terminal 1)
+cd backend
+./gradlew bootRun
 
-### 📖 API Documentation
+# 4. Start Frontend (Terminal 2)
+cd frontend
+npm install
+ng serve
 
-Interactive Swagger UI is available at:
-👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
+```
 
------
+* **App URL:** `http://localhost:4200`
+* **Swagger API Docs:** `http://localhost:8080/swagger-ui/index.html`
 
-## 📂 Project Structure
+### 🔄 Regenerating API Client
 
-This is a monorepo containing:
+If you modify the Backend DTOs/Controllers, run this to sync the Frontend:
 
-* **`backend/`** - Spring Boot application (Java 21).
-* **`frontend/`** - Vue.js POS interface (in development).
-* **`docker-compose.yml`** - Orchestration for the entire system.
+```bash
+cd frontend
+npm run generate-api
 
------
+```
 
-## 🔐 Access & Credentials
+---
 
-The system is secured with **Stateless JWT**.
+## 🔮 Project Roadmap
 
-### 1\. Default Admin
+* [x] **Core:** User Management, Security, JWT, Database Migrations.
+* [x] **Inventory:** SKU tracking, Stock Management, Supplier Relations.
+* [x] **POS Logic:** Sale processing, Transaction Atomicity.
+* [ ] **Dashboard UI:** Advanced Charts & Analytics (Active Development).
+* [ ] **Notification Service:** Low-stock alerts via WebSocket.
 
-Created automatically on first launch:
+## ⚖️ License
 
-* **Login:** `admin`
-* **Password:** `admin` (or check console logs if randomized)
-
-### 2\. Authentication Flow
-
-1.  **Login:** `POST /auth/login`
-2.  **Get Token:** Response `{ "token": "eyJ...", "role": "ADMIN" }`
-3.  **Use Token:** Add header to requests: `Authorization: Bearer <token>`
-
------
-
-## 🛠️ Key Features
-
-### 📦 Inventory (FEFO Strategy)
-
-Implements **First Expired, First Out** logic.
-
-* Tracks goods by **Batches** (expiration dates).
-* Automatically finds and deducts stock from the oldest batch during sales.
-
-### 🛡️ Security (RBAC)
-
-* **ADMIN:** Full control (Users, Inventory, Suppliers).
-* **PHARMACIST:** Operational access (Sales, Customers).
-
-### ✅ Reliability
-
-* **Validation:** Strict `JSR-380` validation on all DTOs.
-* **Error Handling:** Global handler returning standardized JSON errors.
-* **i18n:** Localized error messages (EN/RU).
-
------
-
-## 🧪 Development (Manual Mode)
-
-If you want to run the **Backend** manually (without Docker):
-
-1.  **Navigate to backend directory:**
-    ```bash
-    cd backend
-    ```
-2.  **Configure Database:** Ensure MariaDB is running on `localhost:3306`.
-3.  **Run Tests:**
-    ```bash
-    ./gradlew test
-    ```
-4.  **Run App:**
-    ```bash
-    ./gradlew bootRun
-    ```
-
------
-
-## 📂 Project Structure
-
-* `config/` - Security (JWT), Swagger, Global Exception Handler.
-* `controller/` - REST Endpoints (secured via `@PreAuthorize`).
-* `dto/` - Data Transfer Objects (Records) with Validation annotations.
-* `mapper/` - MapStruct interfaces for DTO \<-\> Entity mapping.
-* `service/` - Business Logic (Transactional).
-* `repository/` - Spring Data JPA interfaces.
-* `model/` - JPA Entities.
-
------
-
-© 2026 Haru Pharmacy Inc.
+**MIT License**.
+Developed by **Haru (Vitalii)** as a professional portfolio project.

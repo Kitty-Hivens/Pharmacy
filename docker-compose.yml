@@ -9,6 +9,7 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=root
       - JWT_SECRET=MySuperSecretKeyForDockerComposeThatIsSecure123
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_BATCH_FETCH_SIZE=50
     depends_on:
       db:
         condition: service_healthy

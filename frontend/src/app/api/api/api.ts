@@ -1,0 +1,15 @@
+export * from './auth.service';
+import { AuthService } from './auth.service';
+export * from './customer.service';
+import { CustomerService } from './customer.service';
+export * from './inventory.service';
+import { InventoryService } from './inventory.service';
+export * from './medicine.service';
+import { MedicineService } from './medicine.service';
+export * from './sale.service';
+import { SaleService } from './sale.service';
+export * from './supplier.service';
+import { SupplierService } from './supplier.service';
+export * from './user.service';
+import { UserService } from './user.service';
+export const APIS = [AuthService, CustomerService, InventoryService, MedicineService, SaleService, SupplierService, UserService];
