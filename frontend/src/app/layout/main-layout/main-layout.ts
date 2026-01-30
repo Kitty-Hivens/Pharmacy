@@ -87,10 +87,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
    * The actual text update in the menu is handled by the subscription in ngOnInit.
    */
   switchLanguage() {
-    const current = this.translate.getCurrentLang();
-    const next = current === 'en' ? 'ru' : 'en';
-    this.translate.use(next);
-    localStorage.setItem('lang', next);
+    const currentLang = this.translate.getCurrentLang();
+    const newLang = currentLang === 'en' ? 'ru' : 'en';
+    this.translate.use(newLang);
+    localStorage.setItem('app-lang', newLang);
   }
 
   logout() {
