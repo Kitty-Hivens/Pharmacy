@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { MedicinesComponent } from './pages/medicines/medicines';
 import { PosComponent } from './pages/pos/pos';
+import { SalesHistoryComponent } from './pages/sales-history/sales-history';
 import { PlaceholderComponent } from './pages/placeholder/placeholder';
 import { authGuard } from './core/auth.guard';
 
@@ -36,7 +37,7 @@ export const routes: Routes = [
         path: 'inventory', component: PlaceholderComponent
       },
       {
-        path: 'sales', component: PlaceholderComponent
+        path: 'sales', component: SalesHistoryComponent
       },
       {
         path: 'customers', component: PlaceholderComponent

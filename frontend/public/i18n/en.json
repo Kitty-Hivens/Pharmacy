@@ -77,6 +77,33 @@
       "TRANSACTION_FAILED": "Transaction failed. Please check stock levels."
     }
   },
+  "SALES": {
+    "TITLE": "Sales History",
+    "SALE_ID": "Sale ID",
+    "DATE_TIME": "Date & Time",
+    "SELLER": "Seller",
+    "CUSTOMER": "Customer",
+    "ITEMS": "Items",
+    "TOTAL_AMOUNT": "Total Amount",
+    "ACTIONS": "Actions",
+    "VIEW_DETAILS": "View Details",
+    "PRINT_RECEIPT": "Print Receipt",
+    "SALE_ITEMS": "Sale Items",
+    "MEDICINE_NAME": "Medicine Name",
+    "UNIT_PRICE": "Unit Price",
+    "QUANTITY": "Quantity",
+    "TOTAL_PRICE": "Total Price",
+    "SUBTOTAL": "Subtotal",
+    "NO_SALES": "No sales found",
+    "FILTER_TIP": "Try adjusting your filters or date range",
+    "FROM_DATE": "From Date",
+    "TO_DATE": "To Date",
+    "APPLY_FILTER": "Apply",
+    "CLEAR_FILTER": "Clear",
+    "DETAILS_TITLE": "Sale Details",
+    "PURCHASED_ITEMS": "Purchased Items",
+    "CLOSE": "Close"
+  },
   "MEDICINES": {
     "TITLE": "Inventory Management",
     "NEW_MEDICINE": "New Medicine",

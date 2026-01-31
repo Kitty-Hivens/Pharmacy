@@ -77,6 +77,33 @@
       "TRANSACTION_FAILED": "Ошибка транзакции. Проверьте остатки."
     }
   },
+  "SALES": {
+    "TITLE": "История продаж",
+    "SALE_ID": "ID продажи",
+    "DATE_TIME": "Дата и время",
+    "SELLER": "Продавец",
+    "CUSTOMER": "Клиент",
+    "ITEMS": "Товары",
+    "TOTAL_AMOUNT": "Общая сумма",
+    "ACTIONS": "Действия",
+    "VIEW_DETAILS": "Подробнее",
+    "PRINT_RECEIPT": "Печать чека",
+    "SALE_ITEMS": "Товары продажи",
+    "MEDICINE_NAME": "Название товара",
+    "UNIT_PRICE": "Цена за шт.",
+    "QUANTITY": "Количество",
+    "TOTAL_PRICE": "Итого",
+    "SUBTOTAL": "Подытог",
+    "NO_SALES": "Продажи не найдены",
+    "FILTER_TIP": "Попробуйте изменить фильтры или даты",
+    "FROM_DATE": "Дата начала",
+    "TO_DATE": "Дата окончания",
+    "APPLY_FILTER": "Применить",
+    "CLEAR_FILTER": "Очистить",
+    "DETAILS_TITLE": "Детали продажи",
+    "PURCHASED_ITEMS": "Проданные товары",
+    "CLOSE": "Закрыть"
+  },
   "MEDICINES": {
     "TITLE": "Управление складом",
     "NEW_MEDICINE": "Новое лекарство",
