@@ -1,0 +1,19 @@
+:host {
+  ::ng-deep {
+    .p-datatable {
+      .p-datatable-thead > tr > th {
+        background-color: var(--surface-50);
+        font-weight: 600;
+      }
+    }
+
+    .p-toolbar {
+      border-radius: 12px;
+    }
+
+    .p-tag {
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+  }
+}

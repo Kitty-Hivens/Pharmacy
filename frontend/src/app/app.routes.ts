@@ -5,7 +5,10 @@ import { DashboardComponent } from './pages/dashboard/dashboard';
 import { MedicinesComponent } from './pages/medicines/medicines';
 import { PosComponent } from './pages/pos/pos';
 import { SalesHistoryComponent } from './pages/sales-history/sales-history';
-import { PlaceholderComponent } from './pages/placeholder/placeholder';
+import { InventoryComponent } from './pages/inventory/inventory';
+import { CustomersComponent } from './pages/customers/customers';
+import { SuppliersComponent } from './pages/suppliers/suppliers';
+import { UsersComponent } from './pages/users/users';
 import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
@@ -34,19 +37,24 @@ export const routes: Routes = [
         component: PosComponent
       },
       {
-        path: 'inventory', component: PlaceholderComponent
+        path: 'inventory',
+        component: InventoryComponent
       },
       {
-        path: 'sales', component: SalesHistoryComponent
+        path: 'sales',
+        component: SalesHistoryComponent
       },
       {
-        path: 'customers', component: PlaceholderComponent
+        path: 'customers',
+        component: CustomersComponent
       },
       {
-        path: 'suppliers', component: PlaceholderComponent
+        path: 'suppliers',
+        component: SuppliersComponent
       },
       {
-        path: 'users', component: PlaceholderComponent
+        path: 'users',
+        component: UsersComponent
       }
     ]
   },

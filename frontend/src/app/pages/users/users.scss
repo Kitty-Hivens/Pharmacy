@@ -1,0 +1,30 @@
+:host {
+  ::ng-deep {
+    .p-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .p-password {
+      width: 100%;
+
+      input {
+        width: 100%;
+      }
+    }
+
+    .surface-100 {
+      background-color: var(--surface-100);
+      border: 1px solid var(--surface-200);
+    }
+
+    .field {
+      label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+    }
+  }
+}

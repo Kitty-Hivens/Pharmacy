@@ -1,0 +1,18 @@
+:host {
+  ::ng-deep {
+    .p-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 0.9rem;
+    }
+
+    a {
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

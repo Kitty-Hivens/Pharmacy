@@ -1,0 +1,27 @@
+:host {
+  ::ng-deep {
+    .p-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .p-dialog {
+      .p-dialog-header {
+        padding: 1.5rem;
+      }
+
+      .p-dialog-content {
+        padding: 0 1.5rem 2rem 1.5rem;
+      }
+    }
+
+    .field {
+      label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+    }
+  }
+}

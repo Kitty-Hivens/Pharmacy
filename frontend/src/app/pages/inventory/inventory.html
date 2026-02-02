@@ -1,0 +1,115 @@
+<div class="card">
+  <p-toast></p-toast>
+
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <h2 class="text-900 font-bold text-2xl m-0">Stock Inventory</h2>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <span class="p-input-icon-left mr-2">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="searchValue"
+          (input)="onSearch()"
+          placeholder="Search by name or batch..."
+        />
+      </span>
+      <p-button
+        icon="pi pi-refresh"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="loadInventory()"
+        pTooltip="Refresh">
+      </p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    [value]="inventory"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    (onLazyLoad)="loadInventory($event)"
+    [first]="first"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="id"
+    styleClass="p-datatable-striped">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="medicine.name" style="min-width:15rem">
+          Medicine
+          <p-sortIcon field="medicine.name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="batchNumber">
+          Batch Number
+          <p-sortIcon field="batchNumber"></p-sortIcon>
+        </th>
+        <th pSortableColumn="stockQuantity">
+          Stock
+          <p-sortIcon field="stockQuantity"></p-sortIcon>
+        </th>
+        <th pSortableColumn="expirationDate">
+          Expiration Date
+          <p-sortIcon field="expirationDate"></p-sortIcon>
+        </th>
+        <th>Supplier</th>
+        <th>Status</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>
+          <div class="font-bold">{{ item.medicine?.name }}</div>
+          <div class="text-sm text-500">{{ item.medicine?.manufacturer }}</div>
+        </td>
+        <td>
+          <span class="font-mono">{{ item.batchNumber }}</span>
+        </td>
+        <td>
+          <span class="font-bold text-lg">{{ item.stockQuantity }}</span>
+        </td>
+        <td>
+          <div class="flex flex-column gap-1">
+            <span>{{ item.expirationDate }}</span>
+            <span
+              class="text-xs"
+              [class.text-red-500]="isExpiringSoon(item.expirationDate)"
+              [class.text-500]="!isExpiringSoon(item.expirationDate)">
+              {{ getDaysUntilExpiry(item.expirationDate) }}
+            </span>
+          </div>
+        </td>
+        <td>
+          <span *ngIf="item.supplier">{{ item.supplier.name }}</span>
+          <span *ngIf="!item.supplier" class="text-500">-</span>
+        </td>
+        <td>
+          <p-tag
+            [value]="getStockStatus(item.stockQuantity)"
+            [severity]="getStockSeverity(item.stockQuantity)">
+          </p-tag>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="text-center p-6">
+          <i class="pi pi-inbox text-500 text-6xl mb-3"></i>
+          <div class="text-500 font-medium text-xl">No inventory items found</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
