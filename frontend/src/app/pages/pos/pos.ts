@@ -172,31 +172,68 @@ export class PosComponent implements OnInit, OnDestroy {
 
   /**
    * Adds the currently selected medicine to the cart.
-   * If the item exists, increments quantity (respecting stock limits).
+   * Performs a LIVE stock check against the server to prevent race conditions.
    */
   addToCart() {
-    if (!this.selectedMedicine) return;
+    if (!this.selectedMedicine?.id) return;
 
-    const existingItem = this.cart.find(i => i.medicine.id === this.selectedMedicine?.id);
-    const currentStock = this.selectedMedicine.quantity || 0;
+    // Block UI to prevent multiple clicks
+    this.loading = true;
 
-    if (existingItem) {
-      if (existingItem.quantity + 1 <= currentStock) {
-        existingItem.quantity++;
-        this.recalculateItemTotal(existingItem);
-      } else {
-        this.showError('POS.ERRORS.NOT_ENOUGH_STOCK');
-      }
-    } else {
-      this.cart.push({
-        medicine: this.selectedMedicine,
-        quantity: 1,
-        total: this.selectedMedicine.price || 0
+    // 1. Request fresh stock data from server
+    this.medicineService.getMedicine(this.selectedMedicine.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          // Extract body from response (handle ResponseEntity wrapper if present)
+          const freshMedicine: MedicineResponseDto = response.body || response;
+          const currentRealStock = freshMedicine.quantity || 0;
+
+          // 2. Find item in local cart
+          const existingItem = this.cart.find(i => i.medicine.id === freshMedicine.id);
+          const quantityInCart = existingItem ? existingItem.quantity : 0;
+
+          // 3. Check: (cart qty + 1) <= real stock
+          if (quantityInCart + 1 <= currentRealStock) {
+
+            // If item not in cart - add new
+            if (!existingItem) {
+              this.cart.push({
+                medicine: freshMedicine, // Use fresh object
+                quantity: 1,
+                total: freshMedicine.price || 0
+              });
+            } else {
+              // If exists - increment
+              existingItem.quantity++;
+              // Update price just in case
+              existingItem.medicine.price = freshMedicine.price;
+              this.recalculateItemTotal(existingItem);
+            }
+
+            // Reset selection
+            this.selectedMedicine = null;
+          } else {
+            // Error: requested quantity exceeds server stock
+            // Uses existing i18n key: "Max stock available is {{max}}"
+            this.showError('POS.ERRORS.STOCK_LIMIT_REACHED', {
+              max: currentRealStock
+            });
+
+            // Update UI stock to reflect reality
+            if (this.selectedMedicine) {
+              this.selectedMedicine.quantity = currentRealStock;
+            }
+          }
+
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Failed to validate stock', err);
+          this.showError('POS.ERRORS.LOAD_MEDICINES');
+          this.loading = false;
+        }
       });
-    }
-
-    // Reset selection for rapid entry
-    this.selectedMedicine = null;
   }
 
   /**
