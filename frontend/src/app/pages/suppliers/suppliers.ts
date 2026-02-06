@@ -10,6 +10,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { AvatarModule } from 'primeng/avatar';
+import { TooltipModule } from 'primeng/tooltip';
 
 // Services & Models
 import { MessageService } from 'primeng/api';
@@ -29,7 +30,8 @@ import { SupplierService, SupplierDto } from '../../api';
     DialogModule,
     ToastModule,
     AvatarModule,
-    TranslateModule
+    TranslateModule,
+    TooltipModule
   ],
   providers: [MessageService],
   templateUrl: './suppliers.html',

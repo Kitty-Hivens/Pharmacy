@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AvatarModule } from 'primeng/avatar';
+import { TooltipModule } from 'primeng/tooltip';
 
 // Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -40,7 +41,8 @@ import {
     ConfirmDialogModule,
     InputNumberModule,
     AvatarModule,
-    TranslateModule
+    TranslateModule,
+    TooltipModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './customers.html',
