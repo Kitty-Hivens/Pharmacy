@@ -1,27 +1,116 @@
-:host {
-  ::ng-deep {
-    .p-avatar {
+.customers {
+  // Table Styles
+  .customers-table {
+    &__caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    &__title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    &__avatar-col {
+      width: 4rem;
+    }
+
+    &__actions-col {
+      min-width: 12rem;
+    }
+
+    &__avatar {
       width: 2.5rem;
       height: 2.5rem;
       font-size: 1rem;
+      background: var(--primary-color);
+      color: white;
+      font-weight: 700;
     }
 
-    .p-dialog {
-      .p-dialog-header {
-        padding: 1.5rem;
-      }
+    &__name {
+      font-weight: 600;
+      color: var(--text-color);
+    }
 
-      .p-dialog-content {
-        padding: 0 1.5rem 2rem 1.5rem;
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &__empty {
+      text-align: center;
+      padding: 4rem 1.5rem !important;
+
+      i {
+        display: block;
+        font-size: 4rem;
+        color: var(--text-color-secondary);
+        margin-bottom: 1rem;
+        opacity: 0.5;
       }
     }
 
-    .field {
+    &__empty-text {
+      font-size: 1.125rem;
+      color: var(--text-color-secondary);
+      font-weight: 500;
+    }
+  }
+
+  // Dialog Styles
+  .customer-dialog {
+    &__field {
+      margin-bottom: 1.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
       label {
+        display: block;
         font-weight: 600;
         margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-size: 0.875rem;
+      }
+
+      .p-error {
         display: block;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
       }
     }
+  }
+}
+
+// Global PrimeNG overrides for this component
+:host ::ng-deep {
+  .p-dialog {
+    .p-dialog-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+
+    .p-dialog-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--surface-border);
+    }
+  }
+
+  .p-tag {
+    font-weight: 600;
+    font-size: 0.875rem;
   }
 }

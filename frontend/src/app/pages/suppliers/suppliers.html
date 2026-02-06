@@ -1,10 +1,10 @@
-<div class="card">
+<div class="suppliers">
   <p-toast></p-toast>
 
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
-        label="New Supplier"
+        [label]="'SUPPLIERS.NEW_SUPPLIER' | translate"
         icon="pi pi-plus"
         severity="success"
         (onClick)="openNew()">
@@ -16,7 +16,8 @@
         icon="pi pi-refresh"
         [rounded]="true"
         [text]="true"
-        (onClick)="loadSuppliers()">
+        (onClick)="loadSuppliers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
       </p-button>
     </ng-template>
   </p-toolbar>
@@ -27,23 +28,23 @@
     [rows]="10"
     [paginator]="true"
     [globalFilterFields]="['name', 'contactPerson', 'email', 'phone']"
-    [tableStyle]="{ 'min-width': '60rem' }"
     [rowHover]="true"
     dataKey="id"
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    [showCurrentPageReport]="true">
+    [showCurrentPageReport]="true"
+    styleClass="suppliers-table">
 
     <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0 text-xl font-semibold">Supplier Directory</h5>
+      <div class="suppliers-table__caption">
+        <h5 class="suppliers-table__title">{{ 'SUPPLIERS.TITLE' | translate }}</h5>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-            placeholder="Search..."
+            [placeholder]="'COMMON.SEARCH' | translate"
           />
         </span>
       </div>
@@ -51,17 +52,17 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem"></th>
+        <th class="suppliers-table__avatar-col"></th>
         <th pSortableColumn="name">
-          Company
+          {{ 'SUPPLIERS.COMPANY_NAME' | translate }}
           <p-sortIcon field="name"></p-sortIcon>
         </th>
         <th pSortableColumn="contactPerson">
-          Contact Person
+          {{ 'SUPPLIERS.CONTACT_PERSON' | translate }}
           <p-sortIcon field="contactPerson"></p-sortIcon>
         </th>
-        <th>Email</th>
-        <th>Phone</th>
+        <th>{{ 'SUPPLIERS.EMAIL' | translate }}</th>
+        <th>{{ 'SUPPLIERS.PHONE' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -71,19 +72,19 @@
           <p-avatar
             [label]="getInitials(supplier.name)"
             shape="circle"
-            styleClass="bg-blue-100 text-blue-700 font-bold">
+            styleClass="suppliers-table__avatar">
           </p-avatar>
         </td>
-        <td class="font-bold">{{ supplier.name }}</td>
+        <td class="suppliers-table__company">{{ supplier.name }}</td>
         <td>{{ supplier.contactPerson || '-' }}</td>
         <td>
           <a
             *ngIf="supplier.email"
             [href]="'mailto:' + supplier.email"
-            class="text-primary no-underline">
+            class="suppliers-table__email">
             {{ supplier.email }}
           </a>
-          <span *ngIf="!supplier.email" class="text-500">-</span>
+          <span *ngIf="!supplier.email" class="suppliers-table__empty-value">-</span>
         </td>
         <td>{{ supplier.phone || '-' }}</td>
       </tr>
@@ -91,24 +92,25 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="text-center p-6">
-          <i class="pi pi-inbox text-500 text-6xl mb-3"></i>
-          <div class="text-500 font-medium text-xl">No suppliers found</div>
+        <td colspan="5" class="suppliers-table__empty">
+          <i class="pi pi-inbox"></i>
+          <div class="suppliers-table__empty-text">{{ 'SUPPLIERS.NO_SUPPLIERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
+  <!-- Create Dialog -->
   <p-dialog
     [(visible)]="supplierDialog"
     [style]="{width: '450px'}"
-    header="New Supplier"
+    [header]="'SUPPLIERS.NEW_SUPPLIER' | translate"
     [modal]="true"
-    styleClass="p-fluid">
+    styleClass="p-fluid supplier-dialog">
 
     <ng-template pTemplate="content">
-      <div class="field mb-3">
-        <label for="name">Company Name</label>
+      <div class="supplier-dialog__field">
+        <label for="name">{{ 'SUPPLIERS.COMPANY_NAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -122,8 +124,8 @@
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="contactPerson">Contact Person</label>
+      <div class="supplier-dialog__field">
+        <label for="contactPerson">{{ 'SUPPLIERS.CONTACT_PERSON' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -132,8 +134,8 @@
         />
       </div>
 
-      <div class="field mb-3">
-        <label for="email">Email</label>
+      <div class="supplier-dialog__field">
+        <label for="email">{{ 'SUPPLIERS.EMAIL' | translate }}</label>
         <input
           type="email"
           pInputText
@@ -143,8 +145,8 @@
         />
       </div>
 
-      <div class="field mb-3">
-        <label for="phone">Phone</label>
+      <div class="supplier-dialog__field">
+        <label for="phone">{{ 'SUPPLIERS.PHONE' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -157,13 +159,13 @@
 
     <ng-template pTemplate="footer">
       <p-button
-        label="Cancel"
+        [label]="'COMMON.CANCEL' | translate"
         icon="pi pi-times"
         [text]="true"
         (onClick)="hideDialog()">
       </p-button>
       <p-button
-        label="Save"
+        [label]="'COMMON.SAVE' | translate"
         icon="pi pi-check"
         [text]="true"
         (onClick)="saveSupplier()">

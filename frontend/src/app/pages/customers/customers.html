@@ -1,11 +1,11 @@
-<div class="card">
+<div class="customers">
   <p-toast></p-toast>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
-        label="New Customer"
+        [label]="'CUSTOMERS.NEW_CUSTOMER' | translate"
         icon="pi pi-plus"
         severity="success"
         (onClick)="openNew()">
@@ -17,7 +17,8 @@
         icon="pi pi-refresh"
         [rounded]="true"
         [text]="true"
-        (onClick)="loadCustomers()">
+        (onClick)="loadCustomers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
       </p-button>
     </ng-template>
   </p-toolbar>
@@ -28,23 +29,23 @@
     [rows]="10"
     [paginator]="true"
     [globalFilterFields]="['firstName', 'lastName', 'phone']"
-    [tableStyle]="{ 'min-width': '60rem' }"
     [rowHover]="true"
     dataKey="id"
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    [showCurrentPageReport]="true">
+    [showCurrentPageReport]="true"
+    styleClass="customers-table">
 
     <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0 text-xl font-semibold">Customer Management</h5>
+      <div class="customers-table__caption">
+        <h5 class="customers-table__title">{{ 'CUSTOMERS.TITLE' | translate }}</h5>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-            placeholder="Search..."
+            [placeholder]="'COMMON.SEARCH' | translate"
           />
         </span>
       </div>
@@ -52,20 +53,20 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem"></th>
+        <th class="customers-table__avatar-col"></th>
         <th pSortableColumn="firstName">
-          Name
+          {{ 'CUSTOMERS.FIRST_NAME' | translate }}
           <p-sortIcon field="firstName"></p-sortIcon>
         </th>
         <th pSortableColumn="phone">
-          Phone
+          {{ 'CUSTOMERS.PHONE' | translate }}
           <p-sortIcon field="phone"></p-sortIcon>
         </th>
         <th pSortableColumn="discountRate">
-          Discount
+          {{ 'CUSTOMERS.DISCOUNT_RATE' | translate }}
           <p-sortIcon field="discountRate"></p-sortIcon>
         </th>
-        <th style="min-width:12rem">Actions</th>
+        <th class="customers-table__actions-col">{{ 'COMMON.ACTIONS' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -75,11 +76,11 @@
           <p-avatar
             [label]="getInitials(customer.firstName, customer.lastName)"
             shape="circle"
-            class="bg-primary text-white font-bold">
+            styleClass="customers-table__avatar">
           </p-avatar>
         </td>
         <td>
-          <div class="font-bold">{{ customer.firstName }} {{ customer.lastName }}</div>
+          <div class="customers-table__name">{{ customer.firstName }} {{ customer.lastName }}</div>
         </td>
         <td>{{ customer.phone }}</td>
         <td>
@@ -89,36 +90,49 @@
           </p-tag>
         </td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            [rounded]="true"
-            [text]="true"
-            severity="secondary"
-            styleClass="mr-1"
-            (onClick)="editCustomer(customer)">
-          </p-button>
-          <p-button
-            icon="pi pi-trash"
-            [rounded]="true"
-            [text]="true"
-            severity="danger"
-            (onClick)="deleteCustomer(customer)">
-          </p-button>
+          <div class="customers-table__actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (onClick)="editCustomer(customer)"
+              pTooltip="Edit">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (onClick)="deleteCustomer(customer)"
+              [pTooltip]="'COMMON.DELETE' | translate">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="customers-table__empty">
+          <i class="pi pi-users"></i>
+          <div class="customers-table__empty-text">{{ 'CUSTOMERS.NO_CUSTOMERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
+  <!-- Create/Edit Dialog -->
   <p-dialog
     [(visible)]="customerDialog"
     [style]="{width: '450px'}"
-    [header]="(customer.id ? 'Edit Customer' : 'New Customer')"
+    [header]="(customer.id ? 'CUSTOMERS.EDIT_CUSTOMER' : 'CUSTOMERS.NEW_CUSTOMER') | translate"
     [modal]="true"
-    styleClass="p-fluid">
+    styleClass="p-fluid customer-dialog">
 
     <ng-template pTemplate="content">
-      <div class="field mb-3">
-        <label for="firstName">First Name</label>
+      <div class="customer-dialog__field">
+        <label for="firstName">{{ 'CUSTOMERS.FIRST_NAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -127,13 +141,13 @@
           required
           autofocus
         />
-        <small class="p-error" [@if]="submitted && !customer.firstName">
-          First name is required.
+        <small class="p-error" *ngIf="submitted && !customer.firstName">
+          {{ 'CUSTOMERS.FIRST_NAME' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="lastName">Last Name</label>
+      <div class="customer-dialog__field">
+        <label for="lastName">{{ 'CUSTOMERS.LAST_NAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -141,13 +155,13 @@
           [(ngModel)]="customer.lastName"
           required
         />
-        <small class="p-error" [@if]="submitted && !customer.lastName">
-          Last name is required.
+        <small class="p-error" *ngIf="submitted && !customer.lastName">
+          {{ 'CUSTOMERS.LAST_NAME' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="phone">Phone</label>
+      <div class="customer-dialog__field">
+        <label for="phone">{{ 'CUSTOMERS.PHONE' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -156,13 +170,13 @@
           required
           placeholder="+380991234567"
         />
-        <small class="p-error" [@if]="submitted && !customer.phone">
-          Phone is required.
+        <small class="p-error" *ngIf="submitted && !customer.phone">
+          {{ 'CUSTOMERS.PHONE' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="discount">Discount Rate (%)</label>
+      <div class="customer-dialog__field">
+        <label for="discount">{{ 'CUSTOMERS.DISCOUNT_RATE' | translate }}</label>
         <p-inputNumber
           id="discount"
           [(ngModel)]="customer.discountRate"
@@ -171,7 +185,7 @@
           suffix="%"
           [showButtons]="true">
         </p-inputNumber>
-        <small class="p-error" [@if]="submitted && customer.discountRate === undefined">
+        <small class="p-error" *ngIf="submitted && customer.discountRate === undefined">
           Discount is required.
         </small>
       </div>
@@ -179,13 +193,13 @@
 
     <ng-template pTemplate="footer">
       <p-button
-        label="Cancel"
+        [label]="'COMMON.CANCEL' | translate"
         icon="pi pi-times"
         [text]="true"
         (onClick)="hideDialog()">
       </p-button>
       <p-button
-        label="Save"
+        [label]="'COMMON.SAVE' | translate"
         icon="pi pi-check"
         [text]="true"
         (onClick)="saveCustomer()">

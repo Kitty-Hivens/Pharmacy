@@ -38,13 +38,20 @@
     "LOW_STOCK": "Мало на складе",
     "ITEMS": "Тов.",
     "ACTION_NEEDED": "Требует внимания",
-    "MESSAGES": "Сообщения",
-    "UNREAD": "Непрочитанных",
+    "TOTAL_MEDICINES": "Всего препаратов",
+    "IN_CATALOG": "в каталоге",
     "RECENT_TRANSACTIONS": "Недавние транзакции",
+    "NO_SALES": "Нет недавних продаж",
     "QUICK_ACTIONS": "Быстрые действия",
     "BTN_NEW_SALE": "Новая продажа",
     "BTN_ADD_MEDICINE": "Добавить товар",
-    "BTN_REGISTER_CUSTOMER": "Новый клиент"
+    "BTN_REGISTER_CUSTOMER": "Новый клиент",
+    "TABLE": {
+      "SALE_ID": "ID продажи",
+      "CUSTOMER": "Клиент",
+      "DATE": "Дата",
+      "AMOUNT": "Сумма"
+    }
   },
   "POS": {
     "CURRENT_ORDER": "Текущий заказ",
@@ -121,13 +128,75 @@
       "DELETED": "Лекарство удалено"
     }
   },
+  "INVENTORY": {
+    "TITLE": "Инвентарь склада",
+    "SEARCH": "Поиск по названию или партии...",
+    "MEDICINE": "Лекарство",
+    "BATCH_NUMBER": "Номер партии",
+    "STOCK": "Остаток",
+    "EXPIRATION_DATE": "Срок годности",
+    "SUPPLIER": "Поставщик",
+    "STATUS": "Статус",
+    "NO_ITEMS": "Товары не найдены"
+  },
+  "CUSTOMERS": {
+    "TITLE": "Управление клиентами",
+    "NEW_CUSTOMER": "Новый клиент",
+    "EDIT_CUSTOMER": "Редактировать клиента",
+    "FIRST_NAME": "Имя",
+    "LAST_NAME": "Фамилия",
+    "PHONE": "Телефон",
+    "DISCOUNT_RATE": "Скидка (%)",
+    "DELETE_CONFIRM": "Вы уверены, что хотите удалить {{name}}?",
+    "DELETE_HEADER": "Подтверждение удаления",
+    "NO_CUSTOMERS": "Клиенты не найдены",
+    "MESSAGES": {
+      "CREATED": "Клиент создан",
+      "UPDATED": "Клиент обновлен",
+      "DELETED": "Клиент удален"
+    }
+  },
+  "SUPPLIERS": {
+    "TITLE": "Справочник поставщиков",
+    "NEW_SUPPLIER": "Новый поставщик",
+    "COMPANY_NAME": "Название компании",
+    "CONTACT_PERSON": "Контактное лицо",
+    "EMAIL": "Email",
+    "PHONE": "Телефон",
+    "NO_SUPPLIERS": "Поставщики не найдены",
+    "MESSAGES": {
+      "CREATED": "Поставщик создан"
+    }
+  },
+  "USERS": {
+    "TITLE": "Управление сотрудниками",
+    "REGISTER": "Регистрация сотрудника",
+    "FIRST_NAME": "Имя",
+    "LAST_NAME": "Фамилия",
+    "USERNAME": "Логин",
+    "PASSWORD": "Пароль",
+    "POSITION": "Должность",
+    "ROLE": "Роль",
+    "DELETE_CONFIRM": "Вы уверены, что хотите удалить {{name}}?",
+    "DELETE_HEADER": "Подтверждение удаления",
+    "NO_USERS": "Пользователи не найдены",
+    "CANNOT_DELETE_ADMIN": "Нельзя удалить администратора",
+    "MESSAGES": {
+      "CREATED": "Сотрудник зарегистрирован",
+      "DELETED": "Сотрудник удален",
+      "PASSWORD_MIN": "Пароль должен содержать минимум 6 символов"
+    }
+  },
   "COMMON": {
     "YES": "Да",
     "NO": "Нет",
     "SAVE": "Сохранить",
     "CANCEL": "Отмена",
     "DELETE": "Удалить",
-    "SEARCH": "Поиск..."
+    "SEARCH": "Поиск...",
+    "ACTIONS": "Действия",
+    "LOADING": "Загрузка...",
+    "REFRESH": "Обновить"
   },
   "LANG": {
     "SWITCH": "EN"

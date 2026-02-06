@@ -1,0 +1,261 @@
+.pos {
+  min-height: calc(100vh - 9rem);
+
+  // Cart Section
+  &__cart {
+    background: var(--surface-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    height: 100%;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  &__cart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  &__cart-count {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+  }
+
+  &__cart-table {
+    flex: 1;
+    overflow: auto;
+  }
+
+  &__cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    span {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+
+  // Sidebar Section
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+  }
+
+  &__card {
+    background: var(--surface-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+
+    &--customer {
+      min-height: 11rem;
+    }
+
+    &--search {
+      flex: 1;
+    }
+
+    &--checkout {
+      margin-top: auto;
+    }
+  }
+
+  &__label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+  }
+
+  &__hint {
+    color: var(--text-color-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+
+  // Customer Card
+  &__customer-badge {
+    padding: 1rem;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeIn 0.3s ease-in-out;
+
+    &-avatar {
+      width: 3rem;
+      height: 3rem;
+      background: #3b82f6;
+      color: white;
+      font-weight: 700;
+    }
+
+    &-info {
+      flex: 1;
+    }
+
+    &-name {
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 0.25rem;
+    }
+
+    &-discount {
+      font-size: 0.875rem;
+      color: #1d4ed8;
+    }
+
+    &-remove {
+      margin-left: auto;
+    }
+  }
+
+  // Checkout Summary
+  &__summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    &--total {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--surface-border);
+    }
+  }
+
+  &__summary-label {
+    font-size: 1.125rem;
+    color: var(--text-color-secondary);
+
+    &--total {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+  }
+
+  &__summary-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-color);
+
+    &--total {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+
+  &__checkout-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+// Table customizations
+:host ::ng-deep {
+  .pos__cart-table {
+    .p-datatable-thead > tr > th {
+      background: var(--surface-50);
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .p-datatable-tbody > tr {
+      transition: background 0.2s;
+
+      &:hover {
+        background: var(--surface-hover);
+      }
+    }
+  }
+
+  .p-autocomplete {
+    width: 100%;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  .p-inputnumber {
+    .p-inputtext {
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive
+@media (max-width: 991px) {
+  .pos {
+    &__cart {
+      margin-bottom: 1rem;
+    }
+
+    &__sidebar {
+      gap: 1rem;
+    }
+
+    &__card {
+      padding: 1rem;
+    }
+
+    &__cart-title {
+      font-size: 1.25rem;
+    }
+
+    &__summary-value--total {
+      font-size: 1.5rem;
+    }
+  }
+}

@@ -1,11 +1,11 @@
-<div class="card">
+<div class="users">
   <p-toast></p-toast>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
   <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
-        label="Register Employee"
+        [label]="'USERS.REGISTER' | translate"
         icon="pi pi-user-plus"
         severity="success"
         (onClick)="openNew()">
@@ -17,7 +17,8 @@
         icon="pi pi-refresh"
         [rounded]="true"
         [text]="true"
-        (onClick)="loadUsers()">
+        (onClick)="loadUsers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
       </p-button>
     </ng-template>
   </p-toolbar>
@@ -28,23 +29,23 @@
     [rows]="10"
     [paginator]="true"
     [globalFilterFields]="['firstName', 'lastName', 'username', 'role']"
-    [tableStyle]="{ 'min-width': '60rem' }"
     [rowHover]="true"
     dataKey="id"
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    [showCurrentPageReport]="true">
+    [showCurrentPageReport]="true"
+    styleClass="users-table">
 
     <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-between">
-        <h5 class="m-0 text-xl font-semibold">Employee Management</h5>
+      <div class="users-table__caption">
+        <h5 class="users-table__title">{{ 'USERS.TITLE' | translate }}</h5>
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-            placeholder="Search..."
+            [placeholder]="'COMMON.SEARCH' | translate"
           />
         </span>
       </div>
@@ -52,20 +53,20 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 4rem"></th>
+        <th class="users-table__avatar-col"></th>
         <th pSortableColumn="firstName">
-          Name
+          {{ 'USERS.FIRST_NAME' | translate }}
           <p-sortIcon field="firstName"></p-sortIcon>
         </th>
         <th pSortableColumn="username">
-          Username
+          {{ 'USERS.USERNAME' | translate }}
           <p-sortIcon field="username"></p-sortIcon>
         </th>
         <th pSortableColumn="role">
-          Role
+          {{ 'USERS.ROLE' | translate }}
           <p-sortIcon field="role"></p-sortIcon>
         </th>
-        <th style="min-width:8rem">Actions</th>
+        <th class="users-table__actions-col">{{ 'COMMON.ACTIONS' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -75,14 +76,14 @@
           <p-avatar
             [label]="getInitials(user.firstName, user.lastName)"
             shape="circle"
-            class="'font-bold text-white ' + (user.role === 'ADMIN' ? 'bg-red-500' : 'bg-blue-500')">
+            [styleClass]="'users-table__avatar ' + (user.role === 'ADMIN' ? 'users-table__avatar--admin' : 'users-table__avatar--user')">
           </p-avatar>
         </td>
         <td>
-          <div class="font-bold">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="users-table__name">{{ user.firstName }} {{ user.lastName }}</div>
         </td>
         <td>
-          <span class="font-mono">{{ user.username }}</span>
+          <span class="users-table__username">{{ user.username }}</span>
         </td>
         <td>
           <p-tag
@@ -97,7 +98,7 @@
             [text]="true"
             severity="danger"
             [disabled]="user.username === 'admin'"
-            [pTooltip]="user.username === 'admin' ? 'Cannot delete admin user' : 'Delete user'"
+            [pTooltip]="user.username === 'admin' ? ('USERS.CANNOT_DELETE_ADMIN' | translate) : ('COMMON.DELETE' | translate)"
             (onClick)="deleteUser(user)">
           </p-button>
         </td>
@@ -106,24 +107,25 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="text-center p-6">
-          <i class="pi pi-users text-500 text-6xl mb-3"></i>
-          <div class="text-500 font-medium text-xl">No users found</div>
+        <td colspan="5" class="users-table__empty">
+          <i class="pi pi-users"></i>
+          <div class="users-table__empty-text">{{ 'USERS.NO_USERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
+  <!-- Register Dialog -->
   <p-dialog
     [(visible)]="userDialog"
     [style]="{width: '500px'}"
-    header="Register New Employee"
+    [header]="'USERS.REGISTER' | translate"
     [modal]="true"
-    styleClass="p-fluid">
+    styleClass="p-fluid user-dialog">
 
     <ng-template pTemplate="content">
-      <div class="field mb-3">
-        <label for="firstName">First Name</label>
+      <div class="user-dialog__field">
+        <label for="firstName">{{ 'USERS.FIRST_NAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -132,13 +134,13 @@
           required
           autofocus
         />
-        <small class="p-error" [@if]="submitted && !user.firstName">
-          First name is required.
+        <small class="p-error" *ngIf="submitted && !user.firstName">
+          {{ 'USERS.FIRST_NAME' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="lastName">Last Name</label>
+      <div class="user-dialog__field">
+        <label for="lastName">{{ 'USERS.LAST_NAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -146,13 +148,13 @@
           [(ngModel)]="user.lastName"
           required
         />
-        <small class="p-error" [@if]="submitted && !user.lastName">
-          Last name is required.
+        <small class="p-error" *ngIf="submitted && !user.lastName">
+          {{ 'USERS.LAST_NAME' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="position">Position</label>
+      <div class="user-dialog__field">
+        <label for="position">{{ 'USERS.POSITION' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -162,8 +164,8 @@
         />
       </div>
 
-      <div class="field mb-3">
-        <label for="username">Username</label>
+      <div class="user-dialog__field">
+        <label for="username">{{ 'USERS.USERNAME' | translate }}</label>
         <input
           type="text"
           pInputText
@@ -171,28 +173,32 @@
           [(ngModel)]="user.username"
           required
         />
-        <small class="p-error" [@if]="submitted && !user.username">
-          Username is required.
+        <small class="p-error" *ngIf="submitted && !user.username">
+          {{ 'USERS.USERNAME' | translate }} is required.
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="password">Password</label>
+      <div class="user-dialog__field">
+        <label for="password">{{ 'USERS.PASSWORD' | translate }}</label>
         <p-password
           id="password"
           [(ngModel)]="user.password"
           [toggleMask]="true"
           [feedback]="true"
           class="w-full"
-          inputStyleClass="w-full">
+          inputStyleClass="w-full"
+          [promptLabel]="'Enter password'"
+          [weakLabel]="'Weak'"
+          [mediumLabel]="'Medium'"
+          [strongLabel]="'Strong'">
         </p-password>
-        <small class="p-error" [@if]="submitted && !user.password">
-          Password is required (min 6 characters).
+        <small class="p-error" *ngIf="submitted && !user.password">
+          {{ 'USERS.MESSAGES.PASSWORD_MIN' | translate }}
         </small>
       </div>
 
-      <div class="field mb-3">
-        <label for="role">Role</label>
+      <div class="user-dialog__field">
+        <label for="role">{{ 'USERS.ROLE' | translate }}</label>
         <p-select
           id="role"
           [(ngModel)]="user.role"
@@ -202,33 +208,33 @@
           placeholder="Select role"
           class="w-full">
         </p-select>
-        <small class="p-error" [@if]="submitted && !user.role">
-          Role is required.
+        <small class="p-error" *ngIf="submitted && !user.role">
+          {{ 'USERS.ROLE' | translate }} is required.
         </small>
       </div>
 
-      <div class="surface-100 border-round p-3 mt-4">
-        <div class="text-sm font-medium text-700 mb-2">Role Permissions:</div>
-        <ul class="list-none p-0 m-0 text-sm text-600">
-          <li class="mb-1" [@if]="user.role === 'ADMIN'">✓ Full system access</li>
-          <li class="mb-1" [@if]="user.role === 'ADMIN'">✓ User management</li>
-          <li class="mb-1" [@if]="user.role === 'ADMIN'">✓ Inventory control</li>
-          <li class="mb-1" [@if]="user.role === 'PHARMACIST'">✓ POS terminal</li>
-          <li class="mb-1" [@if]="user.role === 'PHARMACIST'">✓ Sales processing</li>
-          <li class="mb-1" [@if]="user.role === 'PHARMACIST'">✓ View inventory</li>
+      <div class="user-dialog__permissions" *ngIf="user.role">
+        <div class="user-dialog__permissions-title">Role Permissions:</div>
+        <ul class="user-dialog__permissions-list">
+          <li *ngIf="user.role === 'ADMIN'">✓ Full system access</li>
+          <li *ngIf="user.role === 'ADMIN'">✓ User management</li>
+          <li *ngIf="user.role === 'ADMIN'">✓ Inventory control</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ POS terminal</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ Sales processing</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ View inventory</li>
         </ul>
       </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
       <p-button
-        label="Cancel"
+        [label]="'COMMON.CANCEL' | translate"
         icon="pi pi-times"
         [text]="true"
         (onClick)="hideDialog()">
       </p-button>
       <p-button
-        label="Register"
+        [label]="'USERS.REGISTER' | translate"
         icon="pi pi-check"
         [text]="true"
         (onClick)="saveUser()">
