@@ -77,37 +77,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loadDashboardData() {
     this.loading = true;
 
-    const pageable: Pageable = {
-      page: 0,
-      size: 5,
-      sort: ['saleDateTime,desc']
-    };
-
-    const inventoryPageable: Pageable = {
-      page: 0,
-      size: 1000,
-      sort: ['stockQuantity,asc']
-    };
-
     forkJoin({
-      sales: this.saleService.getAllSales(pageable),
+      sales: this.saleService.getAllSales({ page: 0, size: 1000, sort: ['saleDateTime,desc'] }),
       customers: this.customerService.getAllCustomers(),
       medicines: this.medicineService.getAllMedicines(),
-      inventory: this.inventoryService.getInventory(inventoryPageable)
+      inventory: this.inventoryService.getInventory({ page: 0, size: 1000 })
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
           // Recent sales
-          this.recentSales = data.sales.content || [];
+          const allSales = data.sales.content || [];
+          this.recentSales = allSales.slice(0, 10);
 
           // Calculate total sales amount
-          this.stats.totalSales = this.recentSales.reduce(
+          this.stats.totalSales = allSales.reduce(
             (sum, sale) => sum + (sale.totalAmount || 0),
             0
           );
 
-          // Mock growth (in real app, compare with previous period)
+          // Mock growth
           this.stats.salesGrowth = 15;
 
           // Customers
@@ -134,16 +123,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getSeverity(
     status: string
   ): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' | undefined {
-    switch (status) {
-      case 'Completed':
-        return 'success';
-      case 'Pending':
-        return 'warning';
-      case 'Cancelled':
-        return 'danger';
-      default:
-        return 'info';
-    }
+    return 'success';
   }
 
   formatCurrency(value: number): string {

@@ -14,10 +14,9 @@ import { MenuItem } from 'primeng/api';
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-/**
- * Main application layout component.
- * Handles the sidebar, topbar, responsive behavior, and navigation menu.
- */
+// API
+import { InventoryService } from '../../api';
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -42,16 +41,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] | undefined;
   userMenuItems: MenuItem[] | undefined;
 
+  lowStockCount: string = '0';
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private inventoryService: InventoryService
   ) {}
 
   ngOnInit() {
     this.checkScreenSize();
-    this.initMenu();
+    this.checkLowStock();
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -82,10 +84,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.sidebarVisible = !this.sidebarVisible;
   }
 
-  /**
-   * Switches the global application language (EN <-> RU).
-   * The actual text update in the menu is handled by the subscription in ngOnInit.
-   */
   switchLanguage() {
     const currentLang = this.translate.getCurrentLang();
     const newLang = currentLang === 'en' ? 'ru' : 'en';
@@ -98,10 +96,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Generates the menu structure using current translations.
-   * Uses translate.instant() to get synchronous translation values.
-   */
+  checkLowStock() {
+    this.inventoryService.getInventory({ page: 0, size: 1000 }).subscribe({
+      next: (res) => {
+        const count = (res.content || []).filter(i => (i.stockQuantity || 0) < 10).length;
+        this.lowStockCount = count.toString();
+        this.initMenu();
+      },
+      error: () => {
+        this.initMenu();
+      }
+    });
+  }
+
   initMenu() {
     this.menuItems = [
       {
@@ -132,7 +139,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
             label: this.translate.instant('MENU.STOCK_ALERT'),
             icon: 'pi pi-exclamation-circle',
             routerLink: '/inventory',
-            badge: '12',
+            badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
             badgeStyleClass: 'p-badge-danger'
           }
         ]

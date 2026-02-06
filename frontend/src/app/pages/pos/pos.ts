@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -55,7 +56,8 @@ interface CartItem {
     ToastModule,
     DividerModule,
     AvatarModule,
-    TranslateModule
+    TranslateModule,
+    DialogModule
   ],
   providers: [MessageService],
   templateUrl: './pos.html',
@@ -75,6 +77,9 @@ export class PosComponent implements OnInit, OnDestroy {
   cart: CartItem[] = [];
   loading = false;
 
+  showReceiptDialog = false;
+  lastSale: any = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -90,6 +95,7 @@ export class PosComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.loadData();
+    this.loadCartFromStorage();
   }
 
   ngOnDestroy() {
@@ -141,6 +147,19 @@ export class PosComponent implements OnInit, OnDestroy {
           this.showError('POS.ERRORS.LOAD_CUSTOMERS');
         }
       });
+  }
+
+  // --- Persistence ---
+
+  saveCartToStorage() {
+    localStorage.setItem('pos_cart', JSON.stringify(this.cart));
+  }
+
+  loadCartFromStorage() {
+    const saved = localStorage.getItem('pos_cart');
+    if (saved) {
+      this.cart = JSON.parse(saved);
+    }
   }
 
   // --- Search Logic ---
@@ -213,6 +232,7 @@ export class PosComponent implements OnInit, OnDestroy {
 
             // Reset selection
             this.selectedMedicine = null;
+            this.saveCartToStorage();
           } else {
             // Error: requested quantity exceeds server stock
             // Uses existing i18n key: "Max stock available is {{max}}"
@@ -244,6 +264,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const index = this.cart.indexOf(item);
     if (index > -1) {
       this.cart.splice(index, 1);
+      this.saveCartToStorage();
     }
   }
 
@@ -259,6 +280,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.showError('POS.ERRORS.STOCK_LIMIT_REACHED', { max: maxStock });
     }
     this.recalculateItemTotal(item);
+    this.saveCartToStorage();
   }
 
   /**
@@ -303,7 +325,16 @@ export class PosComponent implements OnInit, OnDestroy {
             summary: this.translate.instant('POS.SUCCESS_TITLE'),
             detail: this.translate.instant('POS.SUCCESS_DETAIL')
           });
+
+          this.lastSale = {
+            items: [...this.cart],
+            total: this.grandTotal,
+            date: new Date(),
+            customer: this.selectedCustomer
+          };
+
           this.resetForm();
+          this.showReceiptDialog = true;
         },
         error: (err: any) => {
           console.error();
@@ -315,11 +346,16 @@ export class PosComponent implements OnInit, OnDestroy {
 
   private resetForm() {
     this.cart = [];
+    this.saveCartToStorage();
     this.selectedCustomer = null;
     this.selectedMedicine = null;
     this.loading = false;
     // Refresh data to reflect updated stock levels
     this.loadData();
+  }
+
+  printReceipt() {
+    window.print();
   }
 
   /**
