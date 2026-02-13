@@ -10,6 +10,8 @@ services:
       - DB_PASSWORD=root
       - JWT_SECRET=MySuperSecretKeyForDockerComposeThatIsSecure123
       - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_BATCH_FETCH_SIZE=50
+      # Explicitly setting CORS to prove the env var works
+      - APP_CORS_ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
     depends_on:
       db:
         condition: service_healthy
@@ -17,7 +19,7 @@ services:
       - pharmacy-network
 
   db:
-    image: mariadb:latest
+    image: mariadb:10.11  # Pinned version for stability instead of 'latest'
     container_name: pharmacy-db
     environment:
       MYSQL_ROOT_PASSWORD: root
