@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -55,7 +56,8 @@ interface CartItem {
     ToastModule,
     DividerModule,
     AvatarModule,
-    TranslateModule
+    TranslateModule,
+    DialogModule
   ],
   providers: [MessageService],
   templateUrl: './pos.html',
@@ -75,6 +77,9 @@ export class PosComponent implements OnInit, OnDestroy {
   cart: CartItem[] = [];
   loading = false;
 
+  showReceiptDialog = false;
+  lastSale: any = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -90,6 +95,7 @@ export class PosComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.loadData();
+    this.loadCartFromStorage();
   }
 
   ngOnDestroy() {
@@ -143,6 +149,19 @@ export class PosComponent implements OnInit, OnDestroy {
       });
   }
 
+  // --- Persistence ---
+
+  saveCartToStorage() {
+    localStorage.setItem('pos_cart', JSON.stringify(this.cart));
+  }
+
+  loadCartFromStorage() {
+    const saved = localStorage.getItem('pos_cart');
+    if (saved) {
+      this.cart = JSON.parse(saved);
+    }
+  }
+
   // --- Search Logic ---
 
   /**
@@ -172,31 +191,69 @@ export class PosComponent implements OnInit, OnDestroy {
 
   /**
    * Adds the currently selected medicine to the cart.
-   * If the item exists, increments quantity (respecting stock limits).
+   * Performs a LIVE stock check against the server to prevent race conditions.
    */
   addToCart() {
-    if (!this.selectedMedicine) return;
+    if (!this.selectedMedicine?.id) return;
 
-    const existingItem = this.cart.find(i => i.medicine.id === this.selectedMedicine?.id);
-    const currentStock = this.selectedMedicine.quantity || 0;
+    // Block UI to prevent multiple clicks
+    this.loading = true;
 
-    if (existingItem) {
-      if (existingItem.quantity + 1 <= currentStock) {
-        existingItem.quantity++;
-        this.recalculateItemTotal(existingItem);
-      } else {
-        this.showError('POS.ERRORS.NOT_ENOUGH_STOCK');
-      }
-    } else {
-      this.cart.push({
-        medicine: this.selectedMedicine,
-        quantity: 1,
-        total: this.selectedMedicine.price || 0
+    // 1. Request fresh stock data from server
+    this.medicineService.getMedicine(this.selectedMedicine.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          // Extract body from response (handle ResponseEntity wrapper if present)
+          const freshMedicine: MedicineResponseDto = response.body || response;
+          const currentRealStock = freshMedicine.quantity || 0;
+
+          // 2. Find item in local cart
+          const existingItem = this.cart.find(i => i.medicine.id === freshMedicine.id);
+          const quantityInCart = existingItem ? existingItem.quantity : 0;
+
+          // 3. Check: (cart qty + 1) <= real stock
+          if (quantityInCart + 1 <= currentRealStock) {
+
+            // If item not in cart - add new
+            if (!existingItem) {
+              this.cart.push({
+                medicine: freshMedicine, // Use fresh object
+                quantity: 1,
+                total: freshMedicine.price || 0
+              });
+            } else {
+              // If exists - increment
+              existingItem.quantity++;
+              // Update price just in case
+              existingItem.medicine.price = freshMedicine.price;
+              this.recalculateItemTotal(existingItem);
+            }
+
+            // Reset selection
+            this.selectedMedicine = null;
+            this.saveCartToStorage();
+          } else {
+            // Error: requested quantity exceeds server stock
+            // Uses existing i18n key: "Max stock available is {{max}}"
+            this.showError('POS.ERRORS.STOCK_LIMIT_REACHED', {
+              max: currentRealStock
+            });
+
+            // Update UI stock to reflect reality
+            if (this.selectedMedicine) {
+              this.selectedMedicine.quantity = currentRealStock;
+            }
+          }
+
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Failed to validate stock', err);
+          this.showError('POS.ERRORS.LOAD_MEDICINES');
+          this.loading = false;
+        }
       });
-    }
-
-    // Reset selection for rapid entry
-    this.selectedMedicine = null;
   }
 
   /**
@@ -207,6 +264,7 @@ export class PosComponent implements OnInit, OnDestroy {
     const index = this.cart.indexOf(item);
     if (index > -1) {
       this.cart.splice(index, 1);
+      this.saveCartToStorage();
     }
   }
 
@@ -222,6 +280,7 @@ export class PosComponent implements OnInit, OnDestroy {
       this.showError('POS.ERRORS.STOCK_LIMIT_REACHED', { max: maxStock });
     }
     this.recalculateItemTotal(item);
+    this.saveCartToStorage();
   }
 
   /**
@@ -266,7 +325,16 @@ export class PosComponent implements OnInit, OnDestroy {
             summary: this.translate.instant('POS.SUCCESS_TITLE'),
             detail: this.translate.instant('POS.SUCCESS_DETAIL')
           });
+
+          this.lastSale = {
+            items: [...this.cart],
+            total: this.grandTotal,
+            date: new Date(),
+            customer: this.selectedCustomer
+          };
+
           this.resetForm();
+          this.showReceiptDialog = true;
         },
         error: (err: any) => {
           console.error();
@@ -278,11 +346,16 @@ export class PosComponent implements OnInit, OnDestroy {
 
   private resetForm() {
     this.cart = [];
+    this.saveCartToStorage();
     this.selectedCustomer = null;
     this.selectedMedicine = null;
     this.loading = false;
     // Refresh data to reflect updated stock levels
     this.loadData();
+  }
+
+  printReceipt() {
+    window.print();
   }
 
   /**

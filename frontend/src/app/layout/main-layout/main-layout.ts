@@ -10,14 +10,15 @@ import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-/**
- * Main application layout component.
- * Handles the sidebar, topbar, responsive behavior, and navigation menu.
- */
+// API
+import { InventoryService } from '../../api';
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -30,8 +31,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     AvatarModule,
     BadgeModule,
     TooltipModule,
+    ToastModule,
     TranslateModule
   ],
+  providers: [MessageService],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -42,15 +45,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] | undefined;
   userMenuItems: MenuItem[] | undefined;
 
+  lowStockCount: string = '0';
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private inventoryService: InventoryService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
     this.checkScreenSize();
+    this.checkLowStock();
     this.initMenu();
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
@@ -71,26 +79,27 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   checkScreenSize() {
     this.isMobileScreen = window.innerWidth <= 991;
-    if (this.isMobileScreen) {
-      this.sidebarVisible = false;
-    } else {
-      this.sidebarVisible = true;
-    }
+    this.sidebarVisible = !this.isMobileScreen;
   }
 
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
   }
 
-  /**
-   * Switches the global application language (EN <-> RU).
-   * The actual text update in the menu is handled by the subscription in ngOnInit.
-   */
   switchLanguage() {
-    const current = this.translate.getCurrentLang();
-    const next = current === 'en' ? 'ru' : 'en';
-    this.translate.use(next);
-    localStorage.setItem('lang', next);
+    const currentLang = this.translate.getCurrentLang();
+    const newLang = currentLang === 'en' ? 'ru' : 'en';
+    this.translate.use(newLang);
+    localStorage.setItem('app-lang', newLang);
+  }
+
+  openSettings() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Coming Soon',
+      detail: 'Settings page is under development',
+      life: 3000
+    });
   }
 
   logout() {
@@ -98,10 +107,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Generates the menu structure using current translations.
-   * Uses translate.instant() to get synchronous translation values.
-   */
+  checkLowStock() {
+    this.inventoryService.getInventory({ page: 0, size: 1000 }).subscribe({
+      next: (res) => {
+        const count = (res.content || []).filter(i => (i.stockQuantity || 0) < 10).length;
+        this.lowStockCount = count.toString();
+        this.initMenu();
+      },
+      error: () => {
+        this.initMenu();
+      }
+    });
+  }
+
   initMenu() {
     this.menuItems = [
       {
@@ -132,7 +150,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
             label: this.translate.instant('MENU.STOCK_ALERT'),
             icon: 'pi pi-exclamation-circle',
             routerLink: '/inventory',
-            badge: '12',
+            badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
             badgeStyleClass: 'p-badge-danger'
           }
         ]
@@ -176,7 +194,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       },
       {
         label: this.translate.instant('MENU.SETTINGS'),
-        icon: 'pi pi-cog'
+        icon: 'pi pi-cog',
+        command: () => this.openSettings()
       },
       {
         separator: true

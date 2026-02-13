@@ -1,7 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subject, forkJoin, takeUntil } from 'rxjs';
+
+// PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { SkeletonModule } from 'primeng/skeleton';
+import { CardModule } from 'primeng/card';
+
+// i18n
+import { TranslateModule } from '@ngx-translate/core';
+
+// API Services
+import {
+  SaleService,
+  CustomerService,
+  MedicineService,
+  InventoryService,
+  SaleResponseDto,
+  Pageable
+} from '../../api';
+
+interface DashboardStats {
+  totalSales: number;
+  salesGrowth: number;
+  totalCustomers: number;
+  newCustomers: number;
+  lowStockCount: number;
+  totalMedicines: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -9,30 +36,100 @@ import { TableModule } from 'primeng/table';
   imports: [
     CommonModule,
     ButtonModule,
-    TableModule
+    TableModule,
+    SkeletonModule,
+    CardModule,
+    TranslateModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class DashboardComponent {
-  recentSales = [
-    { product: 'Amoxicillin 500mg', date: '2026-01-17', amount: 12.50, status: 'Completed' },
-    { product: 'Vitamin C 1000mg', date: '2026-01-17', amount: 55.00, status: 'Pending' },
-    { product: 'N95 Masks (Box)', date: '2026-01-16', amount: 15.00, status: 'Cancelled' },
-    { product: 'Ibuprofen 400mg', date: '2026-01-16', amount: 8.50, status: 'Completed' },
-    { product: 'Thermometer Digital', date: '2026-01-15', amount: 45.00, status: 'Completed' }
-  ];
+export class DashboardComponent implements OnInit, OnDestroy {
+  stats: DashboardStats = {
+    totalSales: 0,
+    salesGrowth: 0,
+    totalCustomers: 0,
+    newCustomers: 0,
+    lowStockCount: 0,
+    totalMedicines: 0
+  };
 
-  getSeverity(status: string): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" | undefined {
-    switch (status) {
-      case 'Completed':
-        return 'success';
-      case 'Pending':
-        return 'warning';
-      case 'Cancelled':
-        return 'danger';
-      default:
-        return 'info';
-    }
+  recentSales: SaleResponseDto[] = [];
+  loading = true;
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private saleService: SaleService,
+    private customerService: CustomerService,
+    private medicineService: MedicineService,
+    private inventoryService: InventoryService
+  ) {}
+
+  ngOnInit() {
+    this.loadDashboardData();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadDashboardData() {
+    this.loading = true;
+
+    forkJoin({
+      sales: this.saleService.getAllSales({ page: 0, size: 1000, sort: ['saleDateTime,desc'] }),
+      customers: this.customerService.getAllCustomers(),
+      medicines: this.medicineService.getAllMedicines(),
+      inventory: this.inventoryService.getInventory({ page: 0, size: 1000 })
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          // Recent sales
+          const allSales = data.sales.content || [];
+          this.recentSales = allSales.slice(0, 10);
+
+          // Calculate total sales amount
+          this.stats.totalSales = allSales.reduce(
+            (sum, sale) => sum + (sale.totalAmount || 0),
+            0
+          );
+
+          // Mock growth
+          this.stats.salesGrowth = 15;
+
+          // Customers
+          this.stats.totalCustomers = data.customers.length;
+          this.stats.newCustomers = Math.floor(data.customers.length * 0.05);
+
+          // Medicines
+          this.stats.totalMedicines = data.medicines.length;
+
+          // Low stock items (quantity < 10)
+          this.stats.lowStockCount = (data.inventory.content || []).filter(
+            (item) => (item.stockQuantity || 0) < 10
+          ).length;
+
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load dashboard data:', err);
+          this.loading = false;
+        }
+      });
+  }
+
+  getSeverity(
+    status: string
+  ): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' | undefined {
+    return 'success';
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(value);
   }
 }

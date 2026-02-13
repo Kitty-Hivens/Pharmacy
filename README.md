@@ -38,6 +38,7 @@ The system leverages the latest stable and rolling releases available as of Q1 2
 | **Backend**  | **Spring Boot**    | **4.0.1**    | Virtual Threads, Spring Framework 7, Structured Logging.  |
 | **Language** | **Java**           | **21 (LTS)** | Records, Pattern Matching, Sequenced Collections.         |
 | **Frontend** | **Angular**        | **21.1.0**   | **Zoneless** Change Detection, Signals-based Reactivity.  |
+| **Testing**  | **Playwright**     | **Latest**   | End-to-End testing infrastructure.                        |
 | **Database** | **MariaDB**        | **12.1.2**   | Rolling release with advanced vector search capabilities. |
 | **DevOps**   | **Docker Compose** | **Spec v2**  | Full infrastructure instantiation (Database + API).       |
 
@@ -91,9 +92,11 @@ npm run generate-api
 
 * [x] **Core:** User Management, Security, JWT, Database Migrations.
 * [x] **Inventory:** SKU tracking, Stock Management, Supplier Relations.
-* [x] **POS Logic:** Sale processing, Transaction Atomicity.
-* [ ] **Dashboard UI:** Advanced Charts & Analytics (Active Development).
+* [x] **POS Logic:** Sale processing, Transaction Atomicity, Server-side Stock Validation.
+* [x] **Sales History:** Full history module with pagination & filters.
+* [x] **Dashboard UI:** Advanced Charts, Analytics & Stats.
 * [ ] **Notification Service:** Low-stock alerts via WebSocket.
+* [ ] **E2E Coverage:** Full critical path coverage with Playwright.
 
 ## ⚖️ License
 

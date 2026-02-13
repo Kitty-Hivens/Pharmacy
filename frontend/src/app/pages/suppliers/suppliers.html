@@ -1,0 +1,175 @@
+<div class="suppliers">
+  <p-toast></p-toast>
+
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        [label]="'SUPPLIERS.NEW_SUPPLIER' | translate"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="openNew()">
+      </p-button>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <p-button
+        icon="pi pi-refresh"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="loadSuppliers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
+      </p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="suppliers"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'contactPerson', 'email', 'phone']"
+    [rowHover]="true"
+    dataKey="id"
+    [loading]="loading"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    styleClass="suppliers-table">
+
+    <ng-template pTemplate="caption">
+      <div class="suppliers-table__caption">
+        <h5 class="suppliers-table__title">{{ 'SUPPLIERS.TITLE' | translate }}</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            [placeholder]="'COMMON.SEARCH' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="suppliers-table__avatar-col"></th>
+        <th pSortableColumn="name">
+          {{ 'SUPPLIERS.COMPANY_NAME' | translate }}
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="contactPerson">
+          {{ 'SUPPLIERS.CONTACT_PERSON' | translate }}
+          <p-sortIcon field="contactPerson"></p-sortIcon>
+        </th>
+        <th>{{ 'SUPPLIERS.EMAIL' | translate }}</th>
+        <th>{{ 'SUPPLIERS.PHONE' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-supplier>
+      <tr>
+        <td>
+          <p-avatar
+            [label]="getInitials(supplier.name)"
+            shape="circle"
+            styleClass="suppliers-table__avatar">
+          </p-avatar>
+        </td>
+        <td class="suppliers-table__company">{{ supplier.name }}</td>
+        <td>{{ supplier.contactPerson || '-' }}</td>
+        <td>
+          <a
+            *ngIf="supplier.email"
+            [href]="'mailto:' + supplier.email"
+            class="suppliers-table__email">
+            {{ supplier.email }}
+          </a>
+          <span *ngIf="!supplier.email" class="suppliers-table__empty-value">-</span>
+        </td>
+        <td>{{ supplier.phone || '-' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="suppliers-table__empty">
+          <i class="pi pi-inbox"></i>
+          <div class="suppliers-table__empty-text">{{ 'SUPPLIERS.NO_SUPPLIERS' | translate }}</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Create Dialog -->
+  <p-dialog
+    [(visible)]="supplierDialog"
+    [style]="{width: '450px'}"
+    [header]="'SUPPLIERS.NEW_SUPPLIER' | translate"
+    [modal]="true"
+    styleClass="p-fluid supplier-dialog">
+
+    <ng-template pTemplate="content">
+      <div class="supplier-dialog__field">
+        <label for="name">{{ 'SUPPLIERS.COMPANY_NAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="supplier.name"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !supplier.name">
+          Company name is required.
+        </small>
+      </div>
+
+      <div class="supplier-dialog__field">
+        <label for="contactPerson">{{ 'SUPPLIERS.CONTACT_PERSON' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="contactPerson"
+          [(ngModel)]="supplier.contactPerson"
+        />
+      </div>
+
+      <div class="supplier-dialog__field">
+        <label for="email">{{ 'SUPPLIERS.EMAIL' | translate }}</label>
+        <input
+          type="email"
+          pInputText
+          id="email"
+          [(ngModel)]="supplier.email"
+          placeholder="supplier@example.com"
+        />
+      </div>
+
+      <div class="supplier-dialog__field">
+        <label for="phone">{{ 'SUPPLIERS.PHONE' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="phone"
+          [(ngModel)]="supplier.phone"
+          placeholder="+380991234567"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="'COMMON.CANCEL' | translate"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()">
+      </p-button>
+      <p-button
+        [label]="'COMMON.SAVE' | translate"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveSupplier()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

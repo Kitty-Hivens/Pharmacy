@@ -1,0 +1,294 @@
+<div class="card">
+  <!-- Toolbar with Filters -->
+  <div class="surface-card shadow-1 border-round p-4 mb-4">
+    <div class="flex flex-column lg:flex-row gap-3 align-items-center justify-content-between">
+      <h2 class="text-900 font-bold text-2xl m-0">Sales History</h2>
+
+      <div class="flex flex-column sm:flex-row gap-3 w-full lg:w-auto">
+        <!-- Date From -->
+        <div class="flex flex-column">
+          <label class="text-sm font-medium text-600 mb-1">From Date</label>
+          <p-datepicker
+            [(ngModel)]="dateFrom"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            placeholder="Start date"
+            [showButtonBar]="true">
+          </p-datepicker>
+        </div>
+
+        <!-- Date To -->
+        <div class="flex flex-column">
+          <label class="text-sm font-medium text-600 mb-1">To Date</label>
+          <p-datepicker
+            [(ngModel)]="dateTo"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+            placeholder="End date"
+            [showButtonBar]="true">
+          </p-datepicker>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex gap-2 align-items-end">
+          <p-button
+            label="Apply"
+            icon="pi pi-filter"
+            (onClick)="applyFilters()"
+            severity="primary">
+          </p-button>
+          <p-button
+            label="Clear"
+            icon="pi pi-filter-slash"
+            (onClick)="clearFilters()"
+            [outlined]="true"
+            severity="secondary">
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Table -->
+  <p-table
+    [value]="sales"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    (onLazyLoad)="loadSales($event)"
+    [first]="first"
+    [rowsPerPageOptions]="[5, 10, 20, 50]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} sales"
+    [tableStyle]="{ 'min-width': '60rem' }"
+    styleClass="p-datatable-striped"
+    [rowHover]="true">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 4rem"></th>
+        <th pSortableColumn="id">Sale ID</th>
+        <th pSortableColumn="saleDateTime">Date & Time</th>
+        <th>Seller</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th pSortableColumn="totalAmount" class="text-right">Total Amount</th>
+        <th style="width: 8rem">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-sale let-expanded="expanded">
+      <tr>
+        <!-- Expand Icon -->
+        <td>
+          <p-button
+            type="button"
+            pRipple
+            [pRowToggler]="sale"
+            [text]="true"
+            [rounded]="true"
+            [plain]="true"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+          </p-button>
+        </td>
+
+        <!-- Sale ID -->
+        <td>
+          <span class="font-mono font-bold text-primary">#{{ sale.id }}</span>
+        </td>
+
+        <!-- Date & Time -->
+        <td>
+          <div class="flex flex-column gap-1">
+            <span class="font-medium">{{ formatDateTime(sale.dateTime) | slice:0:10 }}</span>
+            <span class="text-sm text-500">{{ formatDateTime(sale.dateTime) | slice:11:19 }}</span>
+          </div>
+        </td>
+
+        <!-- Seller -->
+        <td>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-user text-primary"></i>
+            <span class="font-medium">{{ sale.sellerName }}</span>
+          </div>
+        </td>
+
+        <!-- Customer -->
+        <td>
+          <div class="flex align-items-center gap-2">
+            <i class="pi pi-users text-600"></i>
+            <span>{{ sale.customerName }}</span>
+          </div>
+        </td>
+
+        <!-- Items Count -->
+        <td>
+          <p-tag
+            [value]="getTotalItems(sale) + ' items'"
+            severity="info">
+          </p-tag>
+        </td>
+
+        <!-- Total Amount -->
+        <td class="text-right">
+          <span class="font-bold text-xl text-green-600">
+            {{ sale.totalAmount | currency:'USD' }}
+          </span>
+        </td>
+
+        <!-- Actions -->
+        <td>
+          <div class="flex gap-2">
+            <p-button
+              icon="pi pi-eye"
+              [rounded]="true"
+              [text]="true"
+              severity="info"
+              pTooltip="View Details"
+              (onClick)="viewDetails(sale)">
+            </p-button>
+            <p-button
+              icon="pi pi-print"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              pTooltip="Print Receipt">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Row Expansion: Sale Items Details -->
+    <ng-template pTemplate="rowexpansion" let-sale>
+      <tr>
+        <td colspan="8">
+          <div class="p-4">
+            <h5 class="text-900 font-bold mb-3">Sale Items</h5>
+            <p-table [value]="sale.items || []" [tableStyle]="{ 'min-width': '40rem' }">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Medicine Name</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Quantity</th>
+                  <th class="text-right">Total Price</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>
+                    <span class="font-medium">{{ item.medicineName }}</span>
+                  </td>
+                  <td class="text-right">{{ item.unitPrice | currency:'USD' }}</td>
+                  <td class="text-right">{{ item.quantity }}</td>
+                  <td class="text-right font-bold">{{ item.totalPrice | currency:'USD' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr>
+                  <td colspan="3" class="text-right font-bold text-lg">Subtotal:</td>
+                  <td class="text-right font-bold text-xl text-green-600">
+                    {{ sale.totalAmount | currency:'USD' }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Empty State -->
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="text-center p-6">
+          <i class="pi pi-inbox text-500 text-6xl mb-3"></i>
+          <div class="text-500 font-medium text-xl">No sales found</div>
+          <div class="text-500 text-sm mt-2">Try adjusting your filters or date range</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Details Dialog -->
+  <p-dialog
+    [(visible)]="detailsVisible"
+    [style]="{ width: '50rem' }"
+    header="Sale Details"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false">
+
+    <ng-template pTemplate="content">
+      <div *ngIf="selectedSale" class="flex flex-column gap-4">
+        <!-- Sale Info Header -->
+        <div class="surface-50 border-round p-4">
+          <div class="grid">
+            <div class="col-12 md:col-6">
+              <div class="mb-3">
+                <span class="text-500 text-sm">Sale ID</span>
+                <div class="font-bold text-xl text-primary">#{{ selectedSale.id }}</div>
+              </div>
+              <div class="mb-3">
+                <span class="text-500 text-sm">Date & Time</span>
+                <div class="font-medium">{{ formatDateTime(selectedSale.dateTime) }}</div>
+              </div>
+            </div>
+            <div class="col-12 md:col-6">
+              <div class="mb-3">
+                <span class="text-500 text-sm">Seller</span>
+                <div class="font-medium">{{ selectedSale.sellerName }}</div>
+              </div>
+              <div class="mb-3">
+                <span class="text-500 text-sm">Customer</span>
+                <div class="font-medium">{{ selectedSale.customerName }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items List -->
+        <div>
+          <h5 class="text-900 font-bold mb-3">Purchased Items</h5>
+          <div class="flex flex-column gap-2">
+            <div
+              *ngFor="let item of selectedSale.items"
+              class="surface-card border-1 surface-border border-round p-3 flex justify-content-between align-items-center">
+              <div>
+                <div class="font-bold text-900">{{ item.medicineName }}</div>
+                <div class="text-sm text-500">{{ item.quantity }} × {{ item.unitPrice | currency:'USD' }}</div>
+              </div>
+              <div class="font-bold text-lg">{{ item.totalPrice | currency:'USD' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Summary -->
+        <div class="border-top-1 surface-border pt-3">
+          <div class="flex justify-content-between align-items-center">
+            <span class="text-xl font-bold text-900">Total Amount</span>
+            <span class="text-3xl font-bold text-green-600">
+              {{ selectedSale.totalAmount | currency:'USD' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Close"
+        icon="pi pi-times"
+        (onClick)="detailsVisible = false"
+        [text]="true">
+      </p-button>
+      <p-button
+        label="Print Receipt"
+        icon="pi pi-print"
+        severity="primary">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

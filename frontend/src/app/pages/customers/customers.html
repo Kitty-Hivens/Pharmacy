@@ -1,0 +1,209 @@
+<div class="customers">
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        [label]="'CUSTOMERS.NEW_CUSTOMER' | translate"
+        icon="pi pi-plus"
+        severity="success"
+        (onClick)="openNew()">
+      </p-button>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <p-button
+        icon="pi pi-refresh"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="loadCustomers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
+      </p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="customers"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['firstName', 'lastName', 'phone']"
+    [rowHover]="true"
+    dataKey="id"
+    [loading]="loading"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    styleClass="customers-table">
+
+    <ng-template pTemplate="caption">
+      <div class="customers-table__caption">
+        <h5 class="customers-table__title">{{ 'CUSTOMERS.TITLE' | translate }}</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            [placeholder]="'COMMON.SEARCH' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="customers-table__avatar-col"></th>
+        <th pSortableColumn="firstName">
+          {{ 'CUSTOMERS.FIRST_NAME' | translate }}
+          <p-sortIcon field="firstName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="phone">
+          {{ 'CUSTOMERS.PHONE' | translate }}
+          <p-sortIcon field="phone"></p-sortIcon>
+        </th>
+        <th pSortableColumn="discountRate">
+          {{ 'CUSTOMERS.DISCOUNT_RATE' | translate }}
+          <p-sortIcon field="discountRate"></p-sortIcon>
+        </th>
+        <th class="customers-table__actions-col">{{ 'COMMON.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-customer>
+      <tr>
+        <td>
+          <p-avatar
+            [label]="getInitials(customer.firstName, customer.lastName)"
+            shape="circle"
+            styleClass="customers-table__avatar">
+          </p-avatar>
+        </td>
+        <td>
+          <div class="customers-table__name">{{ customer.firstName }} {{ customer.lastName }}</div>
+        </td>
+        <td>{{ customer.phone }}</td>
+        <td>
+          <p-tag
+            [value]="customer.discountRate + '%'"
+            [severity]="getDiscountSeverity(customer.discountRate)">
+          </p-tag>
+        </td>
+        <td>
+          <div class="customers-table__actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (onClick)="editCustomer(customer)"
+              pTooltip="Edit">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (onClick)="deleteCustomer(customer)"
+              [pTooltip]="'COMMON.DELETE' | translate">
+            </p-button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="customers-table__empty">
+          <i class="pi pi-users"></i>
+          <div class="customers-table__empty-text">{{ 'CUSTOMERS.NO_CUSTOMERS' | translate }}</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Create/Edit Dialog -->
+  <p-dialog
+    [(visible)]="customerDialog"
+    [style]="{width: '450px'}"
+    [header]="(customer.id ? 'CUSTOMERS.EDIT_CUSTOMER' : 'CUSTOMERS.NEW_CUSTOMER') | translate"
+    [modal]="true"
+    styleClass="p-fluid customer-dialog">
+
+    <ng-template pTemplate="content">
+      <div class="customer-dialog__field">
+        <label for="firstName">{{ 'CUSTOMERS.FIRST_NAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="firstName"
+          [(ngModel)]="customer.firstName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !customer.firstName">
+          {{ 'CUSTOMERS.FIRST_NAME' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="customer-dialog__field">
+        <label for="lastName">{{ 'CUSTOMERS.LAST_NAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="lastName"
+          [(ngModel)]="customer.lastName"
+          required
+        />
+        <small class="p-error" *ngIf="submitted && !customer.lastName">
+          {{ 'CUSTOMERS.LAST_NAME' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="customer-dialog__field">
+        <label for="phone">{{ 'CUSTOMERS.PHONE' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="phone"
+          [(ngModel)]="customer.phone"
+          required
+          placeholder="+380991234567"
+        />
+        <small class="p-error" *ngIf="submitted && !customer.phone">
+          {{ 'CUSTOMERS.PHONE' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="customer-dialog__field">
+        <label for="discount">{{ 'CUSTOMERS.DISCOUNT_RATE' | translate }}</label>
+        <p-inputNumber
+          id="discount"
+          [(ngModel)]="customer.discountRate"
+          [min]="0"
+          [max]="100"
+          suffix="%"
+          [showButtons]="true">
+        </p-inputNumber>
+        <small class="p-error" *ngIf="submitted && customer.discountRate === undefined">
+          Discount is required.
+        </small>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="'COMMON.CANCEL' | translate"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()">
+      </p-button>
+      <p-button
+        [label]="'COMMON.SAVE' | translate"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveCustomer()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

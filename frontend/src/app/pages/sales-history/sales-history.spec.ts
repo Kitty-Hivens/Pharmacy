@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Placeholder } from './placeholder';
+import { SalesHistoryComponent } from './sales-history';
 
-describe('Placeholder', () => {
-  let component: Placeholder;
-  let fixture: ComponentFixture<Placeholder>;
+describe('SalesHistory', () => {
+  let component: SalesHistoryComponent;
+  let fixture: ComponentFixture<SalesHistoryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Placeholder]
+      imports: [SalesHistoryComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Placeholder);
+    fixture = TestBed.createComponent(SalesHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

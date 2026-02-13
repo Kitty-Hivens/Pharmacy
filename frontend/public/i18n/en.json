@@ -38,13 +38,20 @@
     "LOW_STOCK": "Low Stock",
     "ITEMS": "Items",
     "ACTION_NEEDED": "Action Needed",
-    "MESSAGES": "Messages",
-    "UNREAD": "Unread",
+    "TOTAL_MEDICINES": "Total Medicines",
+    "IN_CATALOG": "in catalog",
     "RECENT_TRANSACTIONS": "Recent Transactions",
+    "NO_SALES": "No recent sales",
     "QUICK_ACTIONS": "Quick Actions",
     "BTN_NEW_SALE": "New Sale (POS)",
     "BTN_ADD_MEDICINE": "Add Medicine",
-    "BTN_REGISTER_CUSTOMER": "Register Customer"
+    "BTN_REGISTER_CUSTOMER": "Register Customer",
+    "TABLE": {
+      "SALE_ID": "Sale ID",
+      "CUSTOMER": "Customer",
+      "DATE": "Date",
+      "AMOUNT": "Amount"
+    }
   },
   "POS": {
     "CURRENT_ORDER": "Current Order",
@@ -77,6 +84,33 @@
       "TRANSACTION_FAILED": "Transaction failed. Please check stock levels."
     }
   },
+  "SALES": {
+    "TITLE": "Sales History",
+    "SALE_ID": "Sale ID",
+    "DATE_TIME": "Date & Time",
+    "SELLER": "Seller",
+    "CUSTOMER": "Customer",
+    "ITEMS": "Items",
+    "TOTAL_AMOUNT": "Total Amount",
+    "ACTIONS": "Actions",
+    "VIEW_DETAILS": "View Details",
+    "PRINT_RECEIPT": "Print Receipt",
+    "SALE_ITEMS": "Sale Items",
+    "MEDICINE_NAME": "Medicine Name",
+    "UNIT_PRICE": "Unit Price",
+    "QUANTITY": "Quantity",
+    "TOTAL_PRICE": "Total Price",
+    "SUBTOTAL": "Subtotal",
+    "NO_SALES": "No sales found",
+    "FILTER_TIP": "Try adjusting your filters or date range",
+    "FROM_DATE": "From Date",
+    "TO_DATE": "To Date",
+    "APPLY_FILTER": "Apply",
+    "CLEAR_FILTER": "Clear",
+    "DETAILS_TITLE": "Sale Details",
+    "PURCHASED_ITEMS": "Purchased Items",
+    "CLOSE": "Close"
+  },
   "MEDICINES": {
     "TITLE": "Inventory Management",
     "NEW_MEDICINE": "New Medicine",
@@ -94,13 +128,75 @@
       "DELETED": "Medicine Deleted"
     }
   },
+  "INVENTORY": {
+    "TITLE": "Stock Inventory",
+    "SEARCH": "Search by name or batch...",
+    "MEDICINE": "Medicine",
+    "BATCH_NUMBER": "Batch Number",
+    "STOCK": "Stock",
+    "EXPIRATION_DATE": "Expiration Date",
+    "SUPPLIER": "Supplier",
+    "STATUS": "Status",
+    "NO_ITEMS": "No inventory items found"
+  },
+  "CUSTOMERS": {
+    "TITLE": "Customer Management",
+    "NEW_CUSTOMER": "New Customer",
+    "EDIT_CUSTOMER": "Edit Customer",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "PHONE": "Phone",
+    "DISCOUNT_RATE": "Discount Rate (%)",
+    "DELETE_CONFIRM": "Are you sure you want to delete {{name}}?",
+    "DELETE_HEADER": "Confirm Delete",
+    "NO_CUSTOMERS": "No customers found",
+    "MESSAGES": {
+      "CREATED": "Customer Created",
+      "UPDATED": "Customer Updated",
+      "DELETED": "Customer Deleted"
+    }
+  },
+  "SUPPLIERS": {
+    "TITLE": "Supplier Directory",
+    "NEW_SUPPLIER": "New Supplier",
+    "COMPANY_NAME": "Company Name",
+    "CONTACT_PERSON": "Contact Person",
+    "EMAIL": "Email",
+    "PHONE": "Phone",
+    "NO_SUPPLIERS": "No suppliers found",
+    "MESSAGES": {
+      "CREATED": "Supplier Created"
+    }
+  },
+  "USERS": {
+    "TITLE": "Employee Management",
+    "REGISTER": "Register Employee",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "POSITION": "Position",
+    "ROLE": "Role",
+    "DELETE_CONFIRM": "Are you sure you want to delete {{name}}?",
+    "DELETE_HEADER": "Confirm Delete",
+    "NO_USERS": "No users found",
+    "CANNOT_DELETE_ADMIN": "Cannot delete admin user",
+    "MESSAGES": {
+      "CREATED": "Employee Registered",
+      "DELETED": "Employee Deleted",
+      "PASSWORD_MIN": "Password must be at least 6 characters"
+    }
+  },
   "COMMON": {
     "YES": "Yes",
     "NO": "No",
     "SAVE": "Save",
     "CANCEL": "Cancel",
     "DELETE": "Delete",
-    "SEARCH": "Search..."
+    "SEARCH": "Search...",
+    "ACTIONS": "Actions",
+    "LOADING": "Loading...",
+    "REFRESH": "Refresh"
   },
   "LANG": {
     "SWITCH": "RU"

@@ -1,0 +1,244 @@
+<div class="users">
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+  <p-toolbar class="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <p-button
+        [label]="'USERS.REGISTER' | translate"
+        icon="pi pi-user-plus"
+        severity="success"
+        (onClick)="openNew()">
+      </p-button>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <p-button
+        icon="pi pi-refresh"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="loadUsers()"
+        [pTooltip]="'COMMON.REFRESH' | translate">
+      </p-button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="users"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['firstName', 'lastName', 'username', 'role']"
+    [rowHover]="true"
+    dataKey="id"
+    [loading]="loading"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    styleClass="users-table">
+
+    <ng-template pTemplate="caption">
+      <div class="users-table__caption">
+        <h5 class="users-table__title">{{ 'USERS.TITLE' | translate }}</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            [placeholder]="'COMMON.SEARCH' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="users-table__avatar-col"></th>
+        <th pSortableColumn="firstName">
+          {{ 'USERS.FIRST_NAME' | translate }}
+          <p-sortIcon field="firstName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="username">
+          {{ 'USERS.USERNAME' | translate }}
+          <p-sortIcon field="username"></p-sortIcon>
+        </th>
+        <th pSortableColumn="role">
+          {{ 'USERS.ROLE' | translate }}
+          <p-sortIcon field="role"></p-sortIcon>
+        </th>
+        <th class="users-table__actions-col">{{ 'COMMON.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>
+          <p-avatar
+            [label]="getInitials(user.firstName, user.lastName)"
+            shape="circle"
+            [styleClass]="'users-table__avatar ' + (user.role === 'ADMIN' ? 'users-table__avatar--admin' : 'users-table__avatar--user')">
+          </p-avatar>
+        </td>
+        <td>
+          <div class="users-table__name">{{ user.firstName }} {{ user.lastName }}</div>
+        </td>
+        <td>
+          <span class="users-table__username">{{ user.username }}</span>
+        </td>
+        <td>
+          <p-tag
+            [value]="user.role"
+            [severity]="user.role === 'ADMIN' ? 'danger' : 'info'">
+          </p-tag>
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            [disabled]="user.username === 'admin'"
+            [pTooltip]="user.username === 'admin' ? ('USERS.CANNOT_DELETE_ADMIN' | translate) : ('COMMON.DELETE' | translate)"
+            (onClick)="deleteUser(user)">
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="users-table__empty">
+          <i class="pi pi-users"></i>
+          <div class="users-table__empty-text">{{ 'USERS.NO_USERS' | translate }}</div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Register Dialog -->
+  <p-dialog
+    [(visible)]="userDialog"
+    [style]="{width: '500px'}"
+    [header]="'USERS.REGISTER' | translate"
+    [modal]="true"
+    styleClass="p-fluid user-dialog">
+
+    <ng-template pTemplate="content">
+      <div class="user-dialog__field">
+        <label for="firstName">{{ 'USERS.FIRST_NAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="firstName"
+          [(ngModel)]="user.firstName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !user.firstName">
+          {{ 'USERS.FIRST_NAME' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="user-dialog__field">
+        <label for="lastName">{{ 'USERS.LAST_NAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="lastName"
+          [(ngModel)]="user.lastName"
+          required
+        />
+        <small class="p-error" *ngIf="submitted && !user.lastName">
+          {{ 'USERS.LAST_NAME' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="user-dialog__field">
+        <label for="position">{{ 'USERS.POSITION' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="position"
+          [(ngModel)]="user.position"
+          placeholder="e.g. Senior Pharmacist"
+        />
+      </div>
+
+      <div class="user-dialog__field">
+        <label for="username">{{ 'USERS.USERNAME' | translate }}</label>
+        <input
+          type="text"
+          pInputText
+          id="username"
+          [(ngModel)]="user.username"
+          required
+        />
+        <small class="p-error" *ngIf="submitted && !user.username">
+          {{ 'USERS.USERNAME' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="user-dialog__field">
+        <label for="password">{{ 'USERS.PASSWORD' | translate }}</label>
+        <p-password
+          id="password"
+          [(ngModel)]="user.password"
+          [toggleMask]="true"
+          [feedback]="true"
+          class="w-full"
+          inputStyleClass="w-full"
+          [promptLabel]="'Enter password'"
+          [weakLabel]="'Weak'"
+          [mediumLabel]="'Medium'"
+          [strongLabel]="'Strong'">
+        </p-password>
+        <small class="p-error" *ngIf="submitted && !user.password">
+          {{ 'USERS.MESSAGES.PASSWORD_MIN' | translate }}
+        </small>
+      </div>
+
+      <div class="user-dialog__field">
+        <label for="role">{{ 'USERS.ROLE' | translate }}</label>
+        <p-select
+          id="role"
+          [(ngModel)]="user.role"
+          [options]="roles"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select role"
+          class="w-full">
+        </p-select>
+        <small class="p-error" *ngIf="submitted && !user.role">
+          {{ 'USERS.ROLE' | translate }} is required.
+        </small>
+      </div>
+
+      <div class="user-dialog__permissions" *ngIf="user.role">
+        <div class="user-dialog__permissions-title">Role Permissions:</div>
+        <ul class="user-dialog__permissions-list">
+          <li *ngIf="user.role === 'ADMIN'">✓ Full system access</li>
+          <li *ngIf="user.role === 'ADMIN'">✓ User management</li>
+          <li *ngIf="user.role === 'ADMIN'">✓ Inventory control</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ POS terminal</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ Sales processing</li>
+          <li *ngIf="user.role === 'PHARMACIST'">✓ View inventory</li>
+        </ul>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        [label]="'COMMON.CANCEL' | translate"
+        icon="pi pi-times"
+        [text]="true"
+        (onClick)="hideDialog()">
+      </p-button>
+      <p-button
+        [label]="'USERS.REGISTER' | translate"
+        icon="pi pi-check"
+        [text]="true"
+        (onClick)="saveUser()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>

@@ -1,115 +1,200 @@
-<!-- Статистика (Карточки) -->
-<div class="grid mb-4">
-
-  <!-- Card 1 -->
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-1 p-3 border-round h-full">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Total Sales</span>
-          <div class="text-900 font-medium text-xl">$45,200</div>
-        </div>
-        <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
-          <i class="pi pi-shopping-bag text-blue-500 text-xl"></i>
+<div class="dashboard">
+  <!-- Statistics Cards -->
+  <div class="grid mb-4">
+    <!-- Total Sales Card -->
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="stat-card">
+        <div class="stat-card__content">
+          <div class="stat-card__header">
+            <div>
+              <span class="stat-card__label">{{ 'DASHBOARD.TOTAL_SALES' | translate }}</span>
+              <div class="stat-card__value" *ngIf="!loading">
+                {{ formatCurrency(stats.totalSales) }}
+              </div>
+              <p-skeleton *ngIf="loading" width="8rem" height="2rem"></p-skeleton>
+            </div>
+            <div class="stat-card__icon stat-card__icon--blue">
+              <i class="pi pi-shopping-bag"></i>
+            </div>
+          </div>
+          <div class="stat-card__footer" *ngIf="!loading">
+            <span class="stat-card__growth stat-card__growth--positive">
+              +{{ stats.salesGrowth }}%
+            </span>
+            <span class="stat-card__footer-text">
+              {{ 'DASHBOARD.SINCE_LAST_MONTH' | translate }}
+            </span>
+          </div>
+          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
         </div>
       </div>
-      <span class="text-green-500 font-medium">+15% </span>
-      <span class="text-500">since last month</span>
+    </div>
+
+    <!-- Customers Card -->
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="stat-card">
+        <div class="stat-card__content">
+          <div class="stat-card__header">
+            <div>
+              <span class="stat-card__label">{{ 'DASHBOARD.CUSTOMERS' | translate }}</span>
+              <div class="stat-card__value" *ngIf="!loading">
+                {{ stats.totalCustomers | number }}
+              </div>
+              <p-skeleton *ngIf="loading" width="6rem" height="2rem"></p-skeleton>
+            </div>
+            <div class="stat-card__icon stat-card__icon--orange">
+              <i class="pi pi-users"></i>
+            </div>
+          </div>
+          <div class="stat-card__footer" *ngIf="!loading">
+            <span class="stat-card__growth stat-card__growth--positive">
+              +{{ stats.newCustomers }}
+            </span>
+            <span class="stat-card__footer-text">
+              {{ 'DASHBOARD.NEW_REGISTRATIONS' | translate }}
+            </span>
+          </div>
+          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Stock Card -->
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="stat-card">
+        <div class="stat-card__content">
+          <div class="stat-card__header">
+            <div>
+              <span class="stat-card__label">{{ 'DASHBOARD.LOW_STOCK' | translate }}</span>
+              <div class="stat-card__value" *ngIf="!loading">
+                {{ stats.lowStockCount }} {{ 'DASHBOARD.ITEMS' | translate }}
+              </div>
+              <p-skeleton *ngIf="loading" width="7rem" height="2rem"></p-skeleton>
+            </div>
+            <div class="stat-card__icon stat-card__icon--red">
+              <i class="pi pi-exclamation-triangle"></i>
+            </div>
+          </div>
+          <div class="stat-card__footer" *ngIf="!loading">
+            <span class="stat-card__growth stat-card__growth--negative">
+              {{ 'DASHBOARD.ACTION_NEEDED' | translate }}
+            </span>
+          </div>
+          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Medicines Card -->
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="stat-card">
+        <div class="stat-card__content">
+          <div class="stat-card__header">
+            <div>
+              <span class="stat-card__label">{{ 'DASHBOARD.TOTAL_MEDICINES' | translate }}</span>
+              <div class="stat-card__value" *ngIf="!loading">
+                {{ stats.totalMedicines | number }}
+              </div>
+              <p-skeleton *ngIf="loading" width="5rem" height="2rem"></p-skeleton>
+            </div>
+            <div class="stat-card__icon stat-card__icon--purple">
+              <i class="pi pi-box"></i>
+            </div>
+          </div>
+          <div class="stat-card__footer" *ngIf="!loading">
+            <span class="stat-card__footer-text">
+              {{ 'DASHBOARD.IN_CATALOG' | translate }}
+            </span>
+          </div>
+          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Card 2 -->
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-1 p-3 border-round h-full">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Customers</span>
-          <div class="text-900 font-medium text-xl">2,450</div>
+  <!-- Recent Transactions & Quick Actions -->
+  <div class="grid">
+    <!-- Recent Transactions Table -->
+    <div class="col-12 lg:col-8">
+      <div class="dashboard-card">
+        <div class="dashboard-card__header">
+          <h5 class="dashboard-card__title">
+            {{ 'DASHBOARD.RECENT_TRANSACTIONS' | translate }}
+          </h5>
+          <p-button
+            icon="pi pi-ellipsis-v"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary">
+          </p-button>
         </div>
-        <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
-          <i class="pi pi-users text-orange-500 text-xl"></i>
-        </div>
-      </div>
-      <span class="text-green-500 font-medium">+5% </span>
-      <span class="text-500">new registrations</span>
-    </div>
-  </div>
 
-  <!-- Card 3 -->
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-1 p-3 border-round h-full">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Low Stock</span>
-          <div class="text-900 font-medium text-xl">15 Items</div>
-        </div>
-        <div class="flex align-items-center justify-content-center bg-red-100 border-round" style="width:2.5rem;height:2.5rem">
-          <i class="pi pi-exclamation-triangle text-red-500 text-xl"></i>
-        </div>
+        <p-table
+          [value]="recentSales"
+          [loading]="loading"
+          styleClass="dashboard-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>{{ 'DASHBOARD.TABLE.SALE_ID' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.CUSTOMER' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.DATE' | translate }}</th>
+              <th>{{ 'DASHBOARD.TABLE.AMOUNT' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-sale>
+            <tr>
+              <td class="dashboard-table__id">#{{ sale.id }}</td>
+              <td>{{ sale.customerName || 'Walk-in' }}</td>
+              <td>{{ sale.dateTime | date: 'short' }}</td>
+              <td class="dashboard-table__amount">
+                {{ sale.totalAmount | currency: 'USD' }}
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="dashboard-table__empty">
+                <i class="pi pi-inbox"></i>
+                <span>{{ 'DASHBOARD.NO_SALES' | translate }}</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
-      <span class="text-red-500 font-medium">Action Needed </span>
     </div>
-  </div>
 
-  <!-- Card 4 -->
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="surface-card shadow-1 p-3 border-round h-full">
-      <div class="flex justify-content-between mb-3">
-        <div>
-          <span class="block text-500 font-medium mb-3">Messages</span>
-          <div class="text-900 font-medium text-xl">152 Unread</div>
+    <!-- Quick Actions -->
+    <div class="col-12 lg:col-4">
+      <div class="dashboard-card dashboard-card--full-height">
+        <div class="dashboard-card__header">
+          <h5 class="dashboard-card__title">
+            {{ 'DASHBOARD.QUICK_ACTIONS' | translate }}
+          </h5>
         </div>
-        <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
-          <i class="pi pi-comment text-purple-500 text-xl"></i>
+        <div class="quick-actions">
+          <button
+            pButton
+            [label]="'DASHBOARD.BTN_NEW_SALE' | translate"
+            icon="pi pi-plus"
+            class="quick-actions__button"
+            routerLink="/pos">
+          </button>
+          <button
+            pButton
+            [label]="'DASHBOARD.BTN_ADD_MEDICINE' | translate"
+            icon="pi pi-box"
+            class="quick-actions__button quick-actions__button--secondary"
+            routerLink="/medicines">
+          </button>
+          <button
+            pButton
+            [label]="'DASHBOARD.BTN_REGISTER_CUSTOMER' | translate"
+            icon="pi pi-user-plus"
+            class="quick-actions__button quick-actions__button--info"
+            routerLink="/customers">
+          </button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Таблица (Секция) -->
-<div class="grid">
-  <div class="col-12 lg:col-8">
-    <div class="surface-card shadow-1 border-round p-4">
-      <div class="flex align-items-center justify-content-between mb-4">
-        <h5 class="m-0 text-xl">Recent Transactions</h5>
-        <p-button icon="pi pi-ellipsis-v" [text]="true" [rounded]="true" severity="secondary"></p-button>
-      </div>
-
-      <p-table [value]="recentSales" [tableStyle]="{'min-width': '30rem'}">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Product</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-sale>
-          <tr>
-            <td>{{sale.product}}</td>
-            <td>{{sale.date}}</td>
-            <td>{{sale.amount | currency:'USD'}}</td>
-            <td>
-              <span [class]="'p-badge p-badge-' + getSeverity(sale.status)">{{sale.status}}</span>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
-
-  <div class="col-12 lg:col-4">
-    <div class="surface-card shadow-1 border-round p-4 h-full">
-      <div class="flex align-items-center justify-content-between mb-4">
-        <h5 class="m-0 text-xl">Quick Actions</h5>
-      </div>
-      <div class="flex flex-column gap-3">
-        <button pButton label="New Sale (POS)" icon="pi pi-plus" class="p-button-outlined w-full"></button>
-        <button pButton label="Add Medicine" icon="pi pi-box" class="p-button-outlined p-button-secondary w-full"></button>
-        <button pButton label="Register Customer" icon="pi pi-user-plus" class="p-button-outlined p-button-info w-full"></button>
-      </div>
-    </div>
-  </div>
-</div>
-
