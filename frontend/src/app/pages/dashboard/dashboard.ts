@@ -86,11 +86,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         label: 'Refresh Data',
         icon: 'pi pi-refresh',
         command: () => this.loadDashboardData()
-      },
-      {
-        label: 'Export Report',
-        icon: 'pi pi-download',
-        command: () => console.log('Export clicked')
       }
     ];
   }

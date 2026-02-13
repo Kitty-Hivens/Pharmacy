@@ -154,7 +154,8 @@
               [rounded]="true"
               [text]="true"
               severity="secondary"
-              pTooltip="Print Receipt">
+              pTooltip="Print Receipt"
+              (onClick)="printReceipt(sale)">
             </p-button>
           </div>
         </td>
@@ -287,7 +288,8 @@
       <p-button
         label="Print Receipt"
         icon="pi pi-print"
-        severity="primary">
+        severity="primary"
+        (onClick)="printReceipt()">
       </p-button>
     </ng-template>
   </p-dialog>
