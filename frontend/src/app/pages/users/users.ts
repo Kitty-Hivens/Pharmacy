@@ -13,13 +13,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { PasswordModule } from 'primeng/password';
-import { Select } from 'primeng/select';
+import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 
 // Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateModule } from '@ngx-translate/core';
 import { UserService, UserResponseDto, UserCreateDto } from '../../api';
-import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-users',
@@ -37,9 +37,9 @@ import {Tooltip} from 'primeng/tooltip';
     AvatarModule,
     TagModule,
     PasswordModule,
-    Select,
-    TranslateModule,
-    Tooltip
+    SelectModule,
+    TooltipModule,
+    TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './users.html',

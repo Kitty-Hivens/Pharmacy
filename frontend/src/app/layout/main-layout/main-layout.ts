@@ -10,6 +10,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -29,8 +31,10 @@ import { InventoryService } from '../../api';
     AvatarModule,
     BadgeModule,
     TooltipModule,
+    ToastModule,
     TranslateModule
   ],
+  providers: [MessageService],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -48,12 +52,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     public translate: TranslateService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
     this.checkScreenSize();
     this.checkLowStock();
+    this.initMenu();
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -73,11 +79,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   checkScreenSize() {
     this.isMobileScreen = window.innerWidth <= 991;
-    if (this.isMobileScreen) {
-      this.sidebarVisible = false;
-    } else {
-      this.sidebarVisible = true;
-    }
+    this.sidebarVisible = !this.isMobileScreen;
   }
 
   toggleSidebar() {
@@ -89,6 +91,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     const newLang = currentLang === 'en' ? 'ru' : 'en';
     this.translate.use(newLang);
     localStorage.setItem('app-lang', newLang);
+  }
+
+  openSettings() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Coming Soon',
+      detail: 'Settings page is under development',
+      life: 3000
+    });
   }
 
   logout() {
@@ -183,7 +194,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       },
       {
         label: this.translate.instant('MENU.SETTINGS'),
-        icon: 'pi pi-cog'
+        icon: 'pi pi-cog',
+        command: () => this.openSettings()
       },
       {
         separator: true
