@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
 
 // PrimeNG Modules
@@ -7,6 +8,8 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CardModule } from 'primeng/card';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 // i18n
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,8 +20,7 @@ import {
   CustomerService,
   MedicineService,
   InventoryService,
-  SaleResponseDto,
-  Pageable
+  SaleResponseDto
 } from '../../api';
 
 interface DashboardStats {
@@ -39,6 +41,7 @@ interface DashboardStats {
     TableModule,
     SkeletonModule,
     CardModule,
+    MenuModule,
     TranslateModule
   ],
   templateUrl: './dashboard.html',
@@ -56,22 +59,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   recentSales: SaleResponseDto[] = [];
   loading = true;
+  menuItems: MenuItem[] = [];
   private destroy$ = new Subject<void>();
 
   constructor(
     private saleService: SaleService,
     private customerService: CustomerService,
     private medicineService: MedicineService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    this.initMenu();
     this.loadDashboardData();
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private initMenu() {
+    this.menuItems = [
+      {
+        label: 'Refresh Data',
+        icon: 'pi pi-refresh',
+        command: () => this.loadDashboardData()
+      },
+      {
+        label: 'Export Report',
+        icon: 'pi pi-download',
+        command: () => console.log('Export clicked')
+      }
+    ];
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 
   loadDashboardData() {
@@ -118,12 +143,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
-  }
-
-  getSeverity(
-    status: string
-  ): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' | undefined {
-    return 'success';
   }
 
   formatCurrency(value: number): string {

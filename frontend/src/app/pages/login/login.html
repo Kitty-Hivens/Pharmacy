@@ -37,7 +37,7 @@
       <div class="text-center mb-5">
         <div class="text-900 text-3xl font-medium mb-3">{{ 'LOGIN.TITLE' | translate }}</div>
         <span class="text-600 font-medium line-height-3">{{ 'LOGIN.NO_ACCOUNT' | translate }}</span>
-        <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">{{ 'LOGIN.CONTACT_ADMIN' | translate }}</a>
+        <a href="mailto:admin@pharmacy.com?subject=Account Request" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">{{ 'LOGIN.CONTACT_ADMIN' | translate }}</a>
       </div>
 
       <div>
@@ -52,7 +52,7 @@
             <p-checkbox id="rememberme" [binary]="true" styleClass="mr-2"></p-checkbox>
             <label for="rememberme" class="text-900">{{ 'LOGIN.REMEMBER_ME' | translate }}</label>
           </div>
-          <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
+          <a href="mailto:admin@pharmacy.com?subject=Password Reset Request" class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
         </div>
 
         <p-button [label]="'LOGIN.SIGN_IN' | translate" (onClick)="login()" [loading]="loading" styleClass="w-full p-3 text-lg"></p-button>
