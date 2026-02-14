@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'Google Sans Flex';
+  src: url('/assets/fonts/GoogleSansFlex-VF.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-family: 'Google Sans Flex', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'JetBrainsMono NF', monospace;
+}
+
+body {
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:host ::ng-deep {
+  .p-component, .p-inputtext, .p-button, .p-element {
+    font-family: var(--font-family);
+  }
+}
