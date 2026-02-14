@@ -35,7 +35,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
      * @param pageable Pagination and sorting options.
      * @return A page of sales matching the criteria.
      */
-    @EntityGraph(attributePaths = {"employee", "customer", "items", "items.medicine"})
+    @EntityGraph(attributePaths = {"employee", "customer"})
     @Query("""
         SELECT s FROM Sale s
         WHERE (:from IS NULL OR s.saleDateTime >= :from)
@@ -49,10 +49,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
 
     /**
      * Overrides standard findAll to ensure EntityGraph is applied.
-     * Added 'items' and 'items.medicine' to attributePaths to ensure full DTO mapping support.
      */
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"employee", "customer", "items", "items.medicine"})
+    @EntityGraph(attributePaths = {"employee", "customer"})
     Page<Sale> findAll(@NonNull Pageable pageable);
 }
