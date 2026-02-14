@@ -18,6 +18,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DatePickerModule } from 'primeng/datepicker';
+import { SelectModule } from 'primeng/select';
 
 // Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -25,10 +26,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   MedicineService,
   InventoryService,
+  SupplierService,
   MedicineResponseDto,
   MedicineCreateDto,
   MedicineUpdateDto,
-  InventoryAddDto
+  InventoryAddDto,
+  SupplierDto
 } from '../../api';
 
 /**
@@ -59,6 +62,7 @@ import {
     CheckboxModule,
     InputNumberModule,
     DatePickerModule,
+    SelectModule,
     TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
@@ -68,6 +72,9 @@ import {
 export class MedicinesComponent implements OnInit {
   /** List of medicines retrieved from the backend. */
   medicines: MedicineResponseDto[] = [];
+
+  /** List of suppliers for the supply dialog. */
+  suppliers: SupplierDto[] = [];
 
   /** Loading state indicator for UI spinners. */
   loading = true;
@@ -94,6 +101,7 @@ export class MedicinesComponent implements OnInit {
   constructor(
     private medicineService: MedicineService,
     private inventoryService: InventoryService,
+    private supplierService: SupplierService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private translate: TranslateService
@@ -104,6 +112,7 @@ export class MedicinesComponent implements OnInit {
    */
   ngOnInit() {
     this.loadMedicines();
+    this.loadSuppliers();
   }
 
   /**
@@ -121,6 +130,21 @@ export class MedicinesComponent implements OnInit {
         console.error();
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data' });
         this.loading = false;
+      }
+    });
+  }
+
+  /**
+   * Fetches the complete list of suppliers for the supply dialog.
+   */
+  loadSuppliers() {
+    this.supplierService.getAllSuppliers().subscribe({
+      next: (data) => {
+        this.suppliers = data;
+      },
+      error: () => {
+        console.error();
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load suppliers' });
       }
     });
   }
@@ -249,6 +273,7 @@ export class MedicinesComponent implements OnInit {
       medicineId: med.id,
       quantity: 10,
       batchNumber: '',
+      supplierId: undefined,
       expirationDateObj: undefined // Temporary field for DatePicker
     };
     this.submitted = false;
@@ -273,7 +298,8 @@ export class MedicinesComponent implements OnInit {
       medicineId: this.selectedMedicineForSupply!.id!,
       quantity: this.supply.quantity,
       batchNumber: this.supply.batchNumber,
-      expirationDate: dateStr
+      expirationDate: dateStr,
+      supplierId: this.supply.supplierId
     };
 
     this.inventoryService.restockInventory(inventoryDto).subscribe({

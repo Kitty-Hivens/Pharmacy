@@ -135,10 +135,19 @@
       <div class="surface-card shadow-2 border-round p-4 mt-auto">
         <div class="flex justify-content-between align-items-center mb-2">
           <span class="text-lg text-600">{{ 'POS.SUBTOTAL' | translate }}</span>
-          <span class="text-lg font-medium">{{ grandTotal | currency:'USD' }}</span>
+          <span class="text-lg font-medium">{{ subtotal | currency:'USD' }}</span>
         </div>
+
+        <div class="flex justify-content-between align-items-center mb-2" *ngIf="selectedCustomer && discountAmount > 0">
+          <span class="text-lg text-600">
+            {{ 'POS.DISCOUNT' | translate }} ({{ selectedCustomer.discountRate }}%)
+          </span>
+          <span class="text-lg font-medium text-orange-500">-{{ discountAmount | currency:'USD' }}</span>
+        </div>
+
         <div class="flex justify-content-between align-items-center mb-4">
-          <span class="text-lg text-600">{{ 'POS.TAX' | translate }} (0%)</span> <span class="text-lg font-medium">$0.00</span>
+          <span class="text-lg text-600">{{ 'POS.TAX' | translate }} (0%)</span>
+          <span class="text-lg font-medium">$0.00</span>
         </div>
 
         <p-divider></p-divider>

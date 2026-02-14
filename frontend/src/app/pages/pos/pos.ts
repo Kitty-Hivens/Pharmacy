@@ -292,10 +292,25 @@ export class PosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Calculates the grand total of the cart.
+   * Calculates the subtotal (before discount).
+   */
+  get subtotal(): number {
+    return this.cart.reduce((acc, item) => acc + item.total, 0);
+  }
+
+  /**
+   * Calculates the discount amount based on selected customer.
+   */
+  get discountAmount(): number {
+    if (!this.selectedCustomer?.discountRate) return 0;
+    return this.subtotal * (this.selectedCustomer.discountRate / 100);
+  }
+
+  /**
+   * Calculates the grand total (subtotal - discount).
    */
   get grandTotal(): number {
-    return this.cart.reduce((acc, item) => acc + item.total, 0);
+    return this.subtotal - this.discountAmount;
   }
 
   // --- Checkout Process ---
