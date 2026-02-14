@@ -1,10 +1,6 @@
 <div class="flex min-h-screen surface-ground">
 
   <!-- SIDEBAR -->
-  <!-- Логика классов:
-       - fixed + z-index: чтобы на мобилке перекрывал контент
-       - static: на десктопе занимает свое место
-  -->
   <div
     class="bg-white shadow-2 flex-shrink-0 flex flex-column transition-all transition-duration-200"
     [class.fixed]="isMobileScreen"
@@ -43,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Overlay for Mobile (Затемнение фона при открытом меню) -->
+  <!-- Overlay for Mobile -->
   <div
     *ngIf="isMobileScreen && sidebarVisible"
     class="fixed top-0 left-0 w-full h-full bg-black-alpha-40"
@@ -82,19 +78,10 @@
 
         <!-- Notifications -->
         <p-button icon="pi pi-bell" [text]="true" [rounded]="true" severity="secondary" pBadge value="3" severity="danger"></p-button>
-
-        <p-button
-          icon="pi pi-cog"
-          [text]="true"
-          [rounded]="true"
-          severity="secondary"
-          (onClick)="openSettings()"
-          pTooltip="Settings (Coming Soon)">
-        </p-button>
       </div>
     </div>
 
-    <!-- ROUTER OUTLET (Pages go here) -->
+    <!-- ROUTER OUTLET -->
     <div class="flex-1 p-3 sm:p-5 overflow-y-auto">
       <router-outlet></router-outlet>
     </div>

@@ -43,13 +43,11 @@ export const appConfig: ApplicationConfig = {
     }),
 
     importProvidersFrom(
-      TranslateModule.forRoot({
-        defaultLanguage: localStorage.getItem('lang') || 'en'
-      })
+      TranslateModule.forRoot()
     ),
 
     provideTranslateHttpLoader({
-      prefix: './i18n/',
+      prefix: '/i18n/',
       suffix: '.json'
     })
   ]

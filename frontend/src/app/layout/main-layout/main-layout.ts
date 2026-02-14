@@ -10,7 +10,6 @@ import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 // i18n
@@ -34,7 +33,6 @@ import { InventoryService } from '../../api';
     ToastModule,
     TranslateModule
   ],
-  providers: [MessageService],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -52,8 +50,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     public translate: TranslateService,
-    private inventoryService: InventoryService,
-    private messageService: MessageService
+    private inventoryService: InventoryService
   ) {}
 
   ngOnInit() {
@@ -91,15 +88,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     const newLang = currentLang === 'en' ? 'ru' : 'en';
     this.translate.use(newLang);
     localStorage.setItem('app-lang', newLang);
-  }
-
-  openSettings() {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Coming Soon',
-      detail: 'Settings page is under development',
-      life: 3000
-    });
   }
 
   logout() {
@@ -188,18 +176,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     ];
 
     this.userMenuItems = [
-      {
-        label: this.translate.instant('MENU.PROFILE'),
-        icon: 'pi pi-user'
-      },
-      {
-        label: this.translate.instant('MENU.SETTINGS'),
-        icon: 'pi pi-cog',
-        command: () => this.openSettings()
-      },
-      {
-        separator: true
-      },
       {
         label: this.translate.instant('MENU.LOGOUT'),
         icon: 'pi pi-sign-out',

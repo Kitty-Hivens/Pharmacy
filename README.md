@@ -1,104 +1,449 @@
-# Haru Pharmacy: Enterprise Management System
+# 🏥 Haru Pharmacy Management System
 
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.1-brightgreen?style=for-the-badge&logo=springboot)
-![Angular](https://img.shields.io/badge/Angular-21.1.0-dd0031?style=for-the-badge&logo=angular)
-![Java](https://img.shields.io/badge/Java-21_(LTS)-orange?style=for-the-badge&logo=openjdk)
-![Docker](https://img.shields.io/badge/Deployment-Docker-2496ed?style=for-the-badge&logo=docker)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.1-brightgreen?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-21.1.0-dd0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
+[![Java](https://img.shields.io/badge/Java-21_(LTS)-orange?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-> **A Next-Generation Point of Sale (POS) & Inventory System.**
-> Built to demonstrate a strict **Contract-First** architecture using the bleeding edge of the Java ecosystem.
-
----
-
-## 🏗 Key Architectural Decisions
-
-This project implements strict engineering patterns to ensure scalability, type safety, and maintainability.
-
-### 1. Contract-First Development (OpenAPI)
-Instead of manually matching frontend and backend types, the project treats the **API Specification** as the absolute source of truth.
-* **Why:** To eliminate regression bugs caused by silent API changes (e.g., renamed fields).
-* **How:** The Backend exposes a live OpenAPI v3 spec. The Frontend client is **auto-generated** (`npm run generate-api`), ensuring 100% synchronization at compile time.
-
-### 2. Deterministic Data State
-* **Database Migrations:** Schema changes are versioned via **Flyway** (`V1__init_schema.sql`). This guarantees identical database structures across Development, Testing, and Production environments.
-* **DTO Mapping:** Usage of **MapStruct** for compile-time, zero-overhead mapping between Entities and Data Transfer Objects.
-
-### 3. Stateless Security Model
-* **Mechanism:** JWT (JSON Web Token) with per-request filters (`JwtFilter`).
-* **Access Control:** Role-Based Access Control (RBAC) separating Admin and Pharmacist privileges.
+> **Enterprise-Grade Point of Sale & Inventory Management System**  
+> A production-ready fullstack application demonstrating modern software architecture, clean code practices, and advanced Spring Boot 4 / Angular 21 features.
 
 ---
 
-## ⚡ Tech Stack (Bleeding Edge 2026)
+## 🎯 Project Highlights
 
-The system leverages the latest stable and rolling releases available as of Q1 2026.
+**Created by a Backend Developer** who decided to master the full stack — this project showcases end-to-end ownership from database design to pixel-perfect UI.
 
-| Layer        | Technology         | Version      | Rationale                                                 |
-|:-------------|:-------------------|:-------------|:----------------------------------------------------------|
-| **Backend**  | **Spring Boot**    | **4.0.1**    | Virtual Threads, Spring Framework 7, Structured Logging.  |
-| **Language** | **Java**           | **21 (LTS)** | Records, Pattern Matching, Sequenced Collections.         |
-| **Frontend** | **Angular**        | **21.1.0**   | **Zoneless** Change Detection, Signals-based Reactivity.  |
-| **Testing**  | **Playwright**     | **Latest**   | End-to-End testing infrastructure.                        |
-| **Database** | **MariaDB**        | **12.1.2**   | Rolling release with advanced vector search capabilities. |
-| **DevOps**   | **Docker Compose** | **Spec v2**  | Full infrastructure instantiation (Database + API).       |
+### Why This Project Stands Out
+
+✨ **Bleeding-Edge Stack** — Built with Spring Boot 4.0.1 and Angular 21.1.0 (latest stable releases as of Q1 2025)  
+🏗️ **Production Architecture** — Contract-First API design, CQRS patterns, optimistic locking, RBAC security  
+🧪 **Test Coverage** — Comprehensive JUnit tests with Mockito for business-critical logic  
+📦 **Docker Ready** — Full containerization with multi-stage builds and health checks  
+🌍 **i18n Support** — Bilingual interface (English/Russian) with dynamic language switching  
+🎨 **Professional UI** — Built with PrimeNG, responsive design, and modern UX patterns
 
 ---
 
-## 🛠 Developer Workflow
+## 🚀 Key Features
+
+### 🛒 Point of Sale (POS) Terminal
+- **Real-time stock validation** — Server-side checks prevent overselling
+- **Customer discount management** — Automatic price calculations
+- **Receipt generation** — Print-ready transaction summaries
+- **Cart persistence** — LocalStorage backup for session recovery
+
+### 📦 Inventory Management
+- **FEFO Algorithm** (First Expired, First Out) — Smart batch rotation for pharmaceutical compliance
+- **Batch tracking** — Full traceability with expiration date monitoring
+- **Low-stock alerts** — Proactive notifications for reordering
+- **Supplier integration** — Manage supply chain relationships
+
+### 📊 Business Intelligence
+- **Sales analytics** — Revenue tracking with growth metrics
+- **Customer insights** — Registration trends and loyalty tracking
+- **Inventory health** — Stock status visualization
+- **Historical reporting** — Paginated sales history with date filtering
+
+### 🔐 Security & Access Control
+- **JWT Authentication** — Stateless token-based security
+- **Role-Based Access Control** — Admin vs Pharmacist permissions
+- **Password encryption** — BCrypt hashing with Spring Security
+- **CORS configuration** — Secure cross-origin request handling
+
+### 🎨 Modern Frontend
+- **Zoneless Angular 21** — Signals-based reactivity for optimal performance
+- **PrimeNG UI Framework** — Enterprise-grade components
+- **Auto-generated API Client** — TypeScript SDK from OpenAPI spec
+- **Responsive Design** — Mobile-first approach with PrimeFlex
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend (Spring Boot 4 + Java 21)
+```java
+✓ Spring Boot 4.0.1         → Virtual Threads, Structured Logging
+✓ Java 21 (LTS)             → Records, Pattern Matching, Sequenced Collections
+✓ Spring Data JPA           → Database abstraction with Hibernate
+✓ Spring Security 7         → JWT + RBAC implementation
+✓ Flyway 10+                → Versioned database migrations
+✓ MapStruct 1.5.5           → Compile-time DTO mapping
+✓ SpringDoc OpenAPI 2.7     → API documentation generation
+✓ MariaDB 12.1.2            → Relational database with advanced features
+✓ JUnit 5 + Mockito         → Comprehensive unit testing
+```
+
+### Frontend (Angular 21 + TypeScript 5)
+```typescript
+✓ Angular 21.1.0            → Zoneless change detection, Signals API
+✓ PrimeNG 21                → UI component library
+✓ RxJS 7.8                  → Reactive programming
+✓ OpenAPI Generator         → Auto-generated TypeScript client
+✓ ngx-translate             → Internationalization (i18n)
+✓ TypeScript 5.9            → Type safety with strict mode
+```
+
+### DevOps & Tools
+```yaml
+✓ Docker Compose            → Multi-container orchestration
+✓ Gradle 8.14               → Build automation
+✓ npm 11.7.0                → Frontend package management
+✓ Git                       → Version control with conventional commits
+```
+
+---
+
+## 🏛️ Architecture Decisions
+
+### 1️⃣ Contract-First Development (OpenAPI)
+Instead of manually syncing frontend/backend types, the **API specification is the single source of truth**.
+
+**Benefits:**
+- Zero type mismatches at runtime
+- Breaking changes caught at compile time
+- Auto-generated, always up-to-date client SDK
+
+**Implementation:**
+```bash
+# Backend exposes /v3/api-docs
+# Frontend generates client:
+npm run generate-api
+```
+
+### 2️⃣ FEFO Inventory Algorithm
+Pharmaceutical compliance requires selling items closest to expiration first.
+
+**Query Strategy:**
+```sql
+SELECT * FROM inventory
+WHERE medicine_id = :id
+  AND stock_quantity > 0
+  AND expiration_date >= CURRENT_DATE
+ORDER BY expiration_date ASC
+```
+
+**Atomic Transaction:**
+```java
+@Transactional
+public void createSale(SaleCreateDto dto, String username) {
+    // 1. Fetch valid batches (FEFO)
+    List<Inventory> batches = inventoryRepo.findValidBatchesForSale(medicineId, LocalDate.now());
+    
+    // 2. Validate total stock
+    int totalStock = batches.stream().mapToInt(Inventory::getStockQuantity).sum();
+    if (totalStock < requestedQty) throw new InsufficientStockException();
+    
+    // 3. Deduct from batches (oldest first)
+    for (Inventory batch : batches) {
+        // Optimistic locking (@Version) prevents race conditions
+    }
+}
+```
+
+### 3️⃣ Optimistic Locking for Concurrency
+High-traffic POS scenarios require safe concurrent stock updates.
+
+**Implementation:**
+```java
+@Entity
+public class Inventory {
+    @Version
+    private Long version; // Hibernate automatic versioning
+}
+```
+
+**Behavior:** If two cashiers sell the same item simultaneously, the second transaction will fail with `OptimisticLockingFailureException`, triggering a retry.
+
+### 4️⃣ DTO Projection Queries
+Avoid N+1 queries by fetching aggregated data in a single SQL query.
+
+**Before (N+1 Problem):**
+```java
+// 1 query for medicines + N queries for stock
+for (Medicine m : medicines) {
+    int stock = inventoryRepo.sumByMedicine(m.getId());
+}
+```
+
+**After (Single Query):**
+```java
+@Query("""
+    SELECT new MedicineResponseDto(
+        m.id, m.name, m.price, 
+        COALESCE(SUM(i.stockQuantity), 0L)
+    )
+    FROM Medicine m
+    LEFT JOIN Inventory i ON i.medicine.id = m.id
+    GROUP BY m.id
+""")
+List<MedicineResponseDto> findAllSummarized();
+```
+
+### 5️⃣ Flyway Database Versioning
+All schema changes are tracked in migration files.
+
+**Example:**
+```
+backend/src/main/resources/db/migration/
+├── V1__init_schema.sql       → Initial tables
+├── V2__add_version_column.sql → Add optimistic locking
+└── V3__create_indexes.sql     → Performance optimization
+```
+
+**Result:** Identical database structure across Dev/Test/Prod environments.
+
+---
+
+## 📦 Getting Started
 
 ### Prerequisites
-* Java 21 JDK
-* Node.js 22+
-* Docker & Docker Compose
-
-### 🚀 Quick Start (Full Environment)
-
-The fastest way to get the system running (Database + Backend + Frontend):
-
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Kitty-Hivens/pharmacy.git
+Java 21 JDK       → https://adoptium.net/
+Node.js 22+       → https://nodejs.org/
+Docker & Compose  → https://www.docker.com/
+```
 
-# 2. Spin up Infrastructure (Database)
+### 🚀 Quick Start (Docker)
+```bash
+# Clone repository
+git clone https://github.com/Kitty-Hivens/Pharmacy.git
+cd Pharmacy
+
+# Start all services (DB + Backend + Frontend)
 docker-compose up -d
 
-# 3. Start Backend (Terminal 1)
+# Access application
+🌐 Frontend → http://localhost
+📚 API Docs → http://localhost:8080/swagger-ui.html
+🗄️ Database → localhost:3307 (root/root)
+```
+
+### 🔑 Default Credentials
+```
+Username: admin
+Password: Check backend startup logs or set via environment variable
+```
+
+### 💻 Local Development
+```bash
+# Terminal 1: Database
+docker-compose up -d db
+
+# Terminal 2: Backend
 cd backend
 ./gradlew bootRun
 
-# 4. Start Frontend (Terminal 2)
+# Terminal 3: Frontend
 cd frontend
 npm install
 ng serve
 
+# Docker: http://localhost
+# Local dev: http://localhost:4200
 ```
 
-* **App URL:** `http://localhost:4200`
-* **Swagger API Docs:** `http://localhost:8080/swagger-ui/index.html`
-
-### 🔄 Regenerating API Client
-
-If you modify the Backend DTOs/Controllers, run this to sync the Frontend:
-
+### 🔄 Regenerate API Client
+After modifying backend DTOs/Controllers:
 ```bash
 cd frontend
 npm run generate-api
-
 ```
 
 ---
 
-## 🔮 Project Roadmap
+## 📂 Project Structure
 
-* [x] **Core:** User Management, Security, JWT, Database Migrations.
-* [x] **Inventory:** SKU tracking, Stock Management, Supplier Relations.
-* [x] **POS Logic:** Sale processing, Transaction Atomicity, Server-side Stock Validation.
-* [x] **Sales History:** Full history module with pagination & filters.
-* [x] **Dashboard UI:** Advanced Charts, Analytics & Stats.
-* [ ] **Notification Service:** Low-stock alerts via WebSocket.
-* [ ] **E2E Coverage:** Full critical path coverage with Playwright.
+```
+pharmacy-management/
+├── backend/                    # Spring Boot 4 Application
+│   ├── src/main/java/
+│   │   └── haru/pharmacy/
+│   │       ├── config/         # Security, OpenAPI, CORS
+│   │       ├── controller/     # REST endpoints
+│   │       ├── dto/            # Request/Response objects
+│   │       ├── exception/      # Custom exceptions
+│   │       ├── mapper/         # MapStruct interfaces
+│   │       ├── model/          # JPA entities
+│   │       ├── repository/     # Spring Data repositories
+│   │       └── service/        # Business logic
+│   ├── src/main/resources/
+│   │   ├── db/migration/       # Flyway SQL scripts
+│   │   ├── messages.properties # i18n (EN)
+│   │   └── messages_ru.properties # i18n (RU)
+│   └── src/test/java/          # JUnit + Mockito tests
+│
+├── frontend/                   # Angular 21 Application
+│   ├── src/app/
+│   │   ├── api/                # Auto-generated OpenAPI client
+│   │   ├── core/               # Guards, Interceptors
+│   │   ├── layout/             # Main layout component
+│   │   └── pages/              # Feature modules
+│   │       ├── dashboard/
+│   │       ├── pos/            # Point of Sale
+│   │       ├── medicines/
+│   │       ├── inventory/
+│   │       ├── sales-history/
+│   │       ├── customers/
+│   │       ├── suppliers/
+│   │       └── users/
+│   └── public/i18n/            # Translation files
+│
+└── docker-compose.yml          # Multi-container setup
+```
 
-## ⚖️ License
+---
 
-**MIT License**.
-Developed by **Haru (Vitalii)** as a professional portfolio project.
+## 📚 API Documentation
+
+### Live Interactive Docs
+🔗 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+
+### Sample Endpoints
+```http
+POST /auth/login                → Authenticate user
+GET  /api/medicines             → List all medicines
+POST /api/inventory/restock     → Add stock (ADMIN only)
+POST /api/sales                 → Process sale transaction
+GET  /api/sales?from=&to=       → Sales history with filters
+POST /api/customers             → Register customer
+GET  /api/users                 → List employees (ADMIN only)
+```
+
+### Authentication Flow
+```javascript
+// 1. Login
+POST /auth/login
+{
+  "username": "admin",
+  "password": "your_password"
+}
+// Response: { "token": "eyJhbGc...", "role": "ADMIN" }
+
+// 2. Use token in subsequent requests
+GET /api/medicines
+Headers: { Authorization: "Bearer eyJhbGc..." }
+```
+
+---
+
+## 🧪 Testing
+
+### Backend Unit Tests
+```bash
+cd backend
+./gradlew test
+
+# Coverage Report
+./gradlew test jacocoTestReport
+open build/reports/jacoco/test/html/index.html
+```
+
+**Test Examples:**
+- ✅ Medicine CRUD operations
+- ✅ FEFO algorithm correctness
+- ✅ Stock validation (insufficient stock scenarios)
+- ✅ Optimistic locking conflict handling
+- ✅ User authentication & authorization
+
+### Frontend E2E Tests (Playwright)
+```bash
+cd frontend
+npm run test:e2e
+```
+
+---
+
+## 🚢 Deployment
+
+### Production Build
+```bash
+# Backend JAR
+cd backend
+./gradlew bootJar
+# Output: build/libs/Pharmacy-0.0.2-SNAPSHOT.jar
+
+# Frontend (Static Assets)
+cd frontend
+npm run build
+# Output: dist/frontend/browser/
+```
+
+### Environment Variables
+```bash
+# Backend (.env or docker-compose)
+DB_URL=jdbc:mariadb://db:3306/pharmacy_db
+DB_USERNAME=root
+DB_PASSWORD=secure_password
+JWT_SECRET=YourVeryLongSecretKey...
+APP_CORS_ALLOWED_ORIGINS=https://yourdomain.com
+ADMIN_INITIAL_PASSWORD=ChangeMe123!
+
+# Frontend (environment.prod.ts)
+apiUrl=https://api.yourdomain.com
+```
+
+### Docker Production
+```yaml
+# docker-compose.prod.yml
+services:
+  backend:
+    image: pharmacy-backend:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+  
+  frontend:
+    image: pharmacy-frontend:latest
+    
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+```
+
+## 🤝 Contributing
+
+This is a portfolio project, but feedback and suggestions are welcome!
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📧 Contact
+
+**Vitalii (Haru)**  
+🔗 GitHub: [@Kitty-Hivens](https://github.com/Kitty-Hivens)  
+📧 Email: vitalii.vakar@proton.me  
+💼 LinkedIn: [Vitalii Vakar](https://linkedin.com/in/vitalii-vakar)
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Prog Academy** — For the structured learning program and project requirements
+- **Spring Team** — For the incredible framework and documentation
+- **Angular Team** — For pushing the boundaries of frontend development
+- **PrimeNG** — For the professional UI component library
+- **OpenAPI Initiative** — For standardizing API specifications
+
+---
+
+<div align="center">
+
+### ⭐ If this project helped you, please consider giving it a star!
+
+**Built with ❤️ by a Backend Developer learning Frontend**
+
+</div>

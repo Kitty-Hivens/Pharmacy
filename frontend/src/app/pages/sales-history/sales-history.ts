@@ -150,6 +150,20 @@ export class SalesHistoryComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Prints the current sale receipt using browser print dialog.
+   */
+  printReceipt(sale?: SaleResponseDto) {
+    if (sale) {
+      this.selectedSale = sale;
+      this.detailsVisible = true;
+      // Small delay to ensure dialog is rendered before printing
+      setTimeout(() => window.print(), 100);
+    } else if (this.selectedSale) {
+      window.print();
+    }
+  }
+
+  /**
    * Formats the date-time string for display.
    */
   formatDateTime(dateTime?: string): string {
