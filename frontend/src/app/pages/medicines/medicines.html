@@ -145,7 +145,7 @@
 
   <p-dialog
     [(visible)]="supplyDialog"
-    [style]="{width: '400px'}"
+    [style]="{width: '450px'}"
     header="Add Stock (Supply)"
     [modal]="true"
     styleClass="p-fluid">
@@ -154,6 +154,21 @@
       <div class="field mb-3" *ngIf="selectedMedicineForSupply">
         <label class="font-bold text-lg text-primary">{{ selectedMedicineForSupply.name }}</label>
         <div class="text-sm text-500">{{ selectedMedicineForSupply.manufacturer }}</div>
+      </div>
+
+      <div class="field mb-3">
+        <label for="supplier">Supplier (Optional)</label>
+        <p-select
+          id="supplier"
+          [(ngModel)]="supply.supplierId"
+          [options]="suppliers"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Select supplier"
+          [showClear]="true"
+          class="w-full">
+        </p-select>
+        <small class="text-500">Link this stock to a supplier for tracking</small>
       </div>
 
       <div class="field mb-3">
