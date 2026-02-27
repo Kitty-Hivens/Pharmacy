@@ -14,7 +14,7 @@ import { AuthRequest } from '../../api';
 
 /**
  * Login Page Component.
- * Handles user authentication and token storage.
+ * Handles user authentication and token/role storage.
  */
 @Component({
   selector: 'app-login',
@@ -69,6 +69,8 @@ export class LoginComponent {
       next: (response) => {
         if (response.token) {
           localStorage.setItem('token', response.token);
+          // Store role for RBAC-driven UI
+          localStorage.setItem('role', response.role || '');
           this.router.navigate(['/dashboard']);
         } else {
           this.errorMessage = 'LOGIN.ERROR';
