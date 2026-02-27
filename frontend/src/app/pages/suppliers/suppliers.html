@@ -3,7 +3,9 @@
 
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
+      <!-- Only ADMIN can add suppliers -->
       <p-button
+        *ngIf="isAdmin"
         [label]="'SUPPLIERS.NEW_SUPPLIER' | translate"
         icon="pi pi-plus"
         severity="success"
@@ -100,7 +102,7 @@
     </ng-template>
   </p-table>
 
-  <!-- Create Dialog -->
+  <!-- Create Dialog (ADMIN only) -->
   <p-dialog
     [(visible)]="supplierDialog"
     [style]="{width: '450px'}"

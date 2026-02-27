@@ -4,7 +4,9 @@
 
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
+      <!-- Only ADMIN can create medicines -->
       <p-button
+        *ngIf="isAdmin"
         [label]="'MEDICINES.NEW_MEDICINE' | translate"
         icon="pi pi-plus"
         severity="success"
@@ -52,7 +54,8 @@
         <th pSortableColumn="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }} <p-sortIcon field="manufacturer"></p-sortIcon></th>
         <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
         <th pSortableColumn="quantity">Status <p-sortIcon field="quantity"></p-sortIcon></th>
-        <th style="min-width:12rem">Actions</th>
+        <!-- Show Actions column only when there's something to show -->
+        <th *ngIf="isAdmin" style="min-width:12rem">Actions</th>
       </tr>
     </ng-template>
 
@@ -68,7 +71,8 @@
           ></p-tag>
           <span class="ml-2 text-sm text-500" *ngIf="medicine.quantity">({{medicine.quantity}} pcs)</span>
         </td>
-        <td>
+        <!-- Action buttons: only visible to ADMIN -->
+        <td *ngIf="isAdmin">
           <p-button
             icon="pi pi-box"
             [rounded]="true"
@@ -100,6 +104,7 @@
     </ng-template>
   </p-table>
 
+  <!-- Create/Edit Dialog (ADMIN only — server will reject anyway) -->
   <p-dialog
     [(visible)]="medicineDialog"
     [style]="{width: '450px'}"
@@ -143,6 +148,7 @@
     </ng-template>
   </p-dialog>
 
+  <!-- Add Stock Dialog (ADMIN only) -->
   <p-dialog
     [(visible)]="supplyDialog"
     [style]="{width: '450px'}"

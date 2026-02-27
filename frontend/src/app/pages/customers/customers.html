@@ -91,6 +91,7 @@
         </td>
         <td>
           <div class="customers-table__actions">
+            <!-- Edit: ADMIN and PHARMACIST -->
             <p-button
               icon="pi pi-pencil"
               [rounded]="true"
@@ -99,7 +100,9 @@
               (onClick)="editCustomer(customer)"
               pTooltip="Edit">
             </p-button>
+            <!-- Delete: ADMIN only -->
             <p-button
+              *ngIf="isAdmin"
               icon="pi pi-trash"
               [rounded]="true"
               [text]="true"

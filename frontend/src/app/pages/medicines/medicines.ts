@@ -34,6 +34,9 @@ import {
   SupplierDto
 } from '../../api';
 
+// Core
+import { RoleService } from '../../core/role.service';
+
 /**
  * Component responsible for managing the medicine catalog and inventory supply.
  * Provides functionality for CRUD operations on medicines and adding stock (supply).
@@ -98,13 +101,19 @@ export class MedicinesComponent implements OnInit {
   /** The medicine selected for stock replenishment. */
   selectedMedicineForSupply: MedicineResponseDto | null = null;
 
+  /** Exposed to template for structural directives */
+  get isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
   constructor(
     private medicineService: MedicineService,
     private inventoryService: InventoryService,
     private supplierService: SupplierService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private roleService: RoleService
   ) {}
 
   /**

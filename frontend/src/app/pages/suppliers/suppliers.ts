@@ -17,6 +17,9 @@ import { MessageService } from 'primeng/api';
 import { TranslateModule } from '@ngx-translate/core';
 import { SupplierService, SupplierDto } from '../../api';
 
+// Core
+import { RoleService } from '../../core/role.service';
+
 @Component({
   selector: 'app-suppliers',
   standalone: true,
@@ -44,9 +47,15 @@ export class SuppliersComponent implements OnInit {
   submitted = false;
   supplier: Partial<SupplierDto> = {};
 
+  /** Exposed to template for structural directives */
+  get isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
   constructor(
     private supplierService: SupplierService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private roleService: RoleService
   ) {}
 
   ngOnInit() {

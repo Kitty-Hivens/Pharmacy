@@ -25,6 +25,9 @@ import {
   CustomerUpdateDto
 } from '../../api';
 
+// Core
+import { RoleService } from '../../core/role.service';
+
 @Component({
   selector: 'app-customers',
   standalone: true,
@@ -55,10 +58,16 @@ export class CustomersComponent implements OnInit {
   submitted = false;
   customer: Partial<CustomerResponseDto & CustomerCreateDto> = {};
 
+  /** Exposed to template for structural directives */
+  get isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
   constructor(
     private customerService: CustomerService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private roleService: RoleService
   ) {}
 
   ngOnInit() {

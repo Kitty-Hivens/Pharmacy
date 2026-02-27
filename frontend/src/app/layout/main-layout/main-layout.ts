@@ -18,6 +18,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 // API
 import { InventoryService } from '../../api';
 
+// Core
+import { RoleService } from '../../core/role.service';
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -50,7 +53,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     public translate: TranslateService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private roleService: RoleService
   ) {}
 
   ngOnInit() {
@@ -92,6 +96,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     this.router.navigate(['/login']);
   }
 
@@ -108,62 +113,72 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  get isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
   initMenu() {
-    this.menuItems = [
-      {
-        label: this.translate.instant('MENU.PHARMACY'),
-        items: [
-          {
-            label: this.translate.instant('MENU.DASHBOARD'),
-            icon: 'pi pi-home',
-            routerLink: '/dashboard'
-          },
-          {
-            label: this.translate.instant('MENU.POS_TERMINAL'),
-            icon: 'pi pi-calculator',
-            routerLink: '/pos',
-            styleClass: 'text-primary font-bold'
-          }
-        ]
-      },
-      {
-        label: this.translate.instant('MENU.INVENTORY'),
-        items: [
-          {
-            label: this.translate.instant('MENU.MEDICINES'),
-            icon: 'pi pi-box',
-            routerLink: '/medicines'
-          },
-          {
-            label: this.translate.instant('MENU.STOCK_ALERT'),
-            icon: 'pi pi-exclamation-circle',
-            routerLink: '/inventory',
-            badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
-            badgeStyleClass: 'p-badge-danger'
-          }
-        ]
-      },
-      {
-        label: this.translate.instant('MENU.BUSINESS'),
-        items: [
-          {
-            label: this.translate.instant('MENU.SALES_HISTORY'),
-            icon: 'pi pi-history',
-            routerLink: '/sales'
-          },
-          {
-            label: this.translate.instant('MENU.CUSTOMERS'),
-            icon: 'pi pi-users',
-            routerLink: '/customers'
-          },
-          {
-            label: this.translate.instant('MENU.SUPPLIERS'),
-            icon: 'pi pi-truck',
-            routerLink: '/suppliers'
-          }
-        ]
-      },
-      {
+    const pharmacySection: MenuItem = {
+      label: this.translate.instant('MENU.PHARMACY'),
+      items: [
+        {
+          label: this.translate.instant('MENU.DASHBOARD'),
+          icon: 'pi pi-home',
+          routerLink: '/dashboard'
+        },
+        {
+          label: this.translate.instant('MENU.POS_TERMINAL'),
+          icon: 'pi pi-calculator',
+          routerLink: '/pos',
+          styleClass: 'text-primary font-bold'
+        }
+      ]
+    };
+
+    const inventorySection: MenuItem = {
+      label: this.translate.instant('MENU.INVENTORY'),
+      items: [
+        {
+          label: this.translate.instant('MENU.MEDICINES'),
+          icon: 'pi pi-box',
+          routerLink: '/medicines'
+        },
+        {
+          label: this.translate.instant('MENU.STOCK_ALERT'),
+          icon: 'pi pi-exclamation-circle',
+          routerLink: '/inventory',
+          badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
+          badgeStyleClass: 'p-badge-danger'
+        }
+      ]
+    };
+
+    const businessSection: MenuItem = {
+      label: this.translate.instant('MENU.BUSINESS'),
+      items: [
+        {
+          label: this.translate.instant('MENU.SALES_HISTORY'),
+          icon: 'pi pi-history',
+          routerLink: '/sales'
+        },
+        {
+          label: this.translate.instant('MENU.CUSTOMERS'),
+          icon: 'pi pi-users',
+          routerLink: '/customers'
+        },
+        {
+          label: this.translate.instant('MENU.SUPPLIERS'),
+          icon: 'pi pi-truck',
+          routerLink: '/suppliers'
+        }
+      ]
+    };
+
+    this.menuItems = [pharmacySection, inventorySection, businessSection];
+
+    // Admin-only section: Employee management
+    if (this.isAdmin) {
+      this.menuItems.push({
         label: this.translate.instant('MENU.ADMIN'),
         items: [
           {
@@ -172,8 +187,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
             routerLink: '/users'
           }
         ]
-      }
-    ];
+      });
+    }
 
     this.userMenuItems = [
       {
