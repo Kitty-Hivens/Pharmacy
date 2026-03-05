@@ -3,6 +3,7 @@ package haru.pharmacy.service.impl;
 import haru.pharmacy.dto.customer.CustomerCreateDto;
 import haru.pharmacy.dto.customer.CustomerResponseDto;
 import haru.pharmacy.dto.customer.CustomerUpdateDto;
+import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.mapper.CustomerMapper;
 import haru.pharmacy.model.Customer;
@@ -22,6 +23,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponseDto create(CustomerCreateDto dto) {
+        if (repository.existsByPhone(dto.phone())) {
+            throw new BusinessConstraintException("error.customer.phone_exists");
+        }
+
         Customer entity = mapper.toEntity(dto);
         return mapper.toDto(repository.save(entity));
     }
@@ -30,6 +35,10 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDto update(Long id, CustomerUpdateDto dto) {
         Customer entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
+
+        if (!entity.getPhone().equals(dto.phone()) && repository.existsByPhone(dto.phone())) {
+            throw new BusinessConstraintException("error.customer.phone_exists");
+        }
 
         mapper.updateEntity(dto, entity);
         return mapper.toDto(repository.save(entity));
