@@ -3,6 +3,7 @@ package haru.pharmacy;
 import haru.pharmacy.dto.customer.CustomerCreateDto;
 import haru.pharmacy.dto.customer.CustomerResponseDto;
 import haru.pharmacy.dto.customer.CustomerUpdateDto;
+import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.mapper.CustomerMapper;
 import haru.pharmacy.model.Customer;
@@ -46,6 +47,7 @@ class CustomerServiceTest {
         saved.setId(1L);
         CustomerResponseDto response = new CustomerResponseDto(1L, BigDecimal.ZERO, "Ivan", "Ivanov", "123");
 
+        when(repository.existsByPhone(dto.phone())).thenReturn(false);
         when(mapper.toEntity(dto)).thenReturn(entity);
         when(repository.save(entity)).thenReturn(saved);
         when(mapper.toDto(saved)).thenReturn(response);
@@ -57,11 +59,22 @@ class CustomerServiceTest {
     }
 
     @Test
+    @DisplayName("Create should throw when phone exists")
+    void create_ShouldThrow_WhenPhoneExists() {
+        CustomerCreateDto dto = new CustomerCreateDto(BigDecimal.ZERO, "Ivan", "Ivanov", "123");
+        when(repository.existsByPhone(dto.phone())).thenReturn(true);
+
+        assertThrows(BusinessConstraintException.class, () -> service.create(dto));
+        verify(repository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("Update should modify entity when found")
     void update_ShouldUpdate_WhenFound() {
         Long id = 1L;
         CustomerUpdateDto dto = new CustomerUpdateDto(BigDecimal.TEN, "Petr", "Petrov", "321");
         Customer existing = new Customer();
+        existing.setPhone("321");
 
         when(repository.findById(id)).thenReturn(Optional.of(existing));
         when(repository.save(existing)).thenReturn(existing);
@@ -71,6 +84,21 @@ class CustomerServiceTest {
 
         assertEquals("Petr", result.firstName());
         verify(mapper).updateEntity(dto, existing);
+    }
+
+    @Test
+    @DisplayName("Update should throw when phone exists for different customer")
+    void update_ShouldThrow_WhenPhoneExists() {
+        Long id = 1L;
+        CustomerUpdateDto dto = new CustomerUpdateDto(BigDecimal.TEN, "Petr", "Petrov", "321");
+        Customer existing = new Customer();
+        existing.setPhone("123");
+
+        when(repository.findById(id)).thenReturn(Optional.of(existing));
+        when(repository.existsByPhone(dto.phone())).thenReturn(true);
+
+        assertThrows(BusinessConstraintException.class, () -> service.update(id, dto));
+        verify(repository, never()).save(any());
     }
 
     @Test
