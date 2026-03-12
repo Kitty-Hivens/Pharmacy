@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, forkJoin, Subject, takeUntil} from 'rxjs';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -109,24 +109,19 @@ export class PosComponent implements OnInit, OnDestroy {
    */
   loadData() {
     this.loading = true;
-
-    // --- Medicines ---
-    this.medicineService.getAllMedicines()
+    forkJoin({
+      medicines: this.medicineService.getAllMedicines(),
+      customers: this.customerService.getAllCustomers()
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: any) => {
-          // Handle potential wrapper from ResponseEntity or direct array
-          let data = response;
-          if (!Array.isArray(response) && response.body) {
-            data = response.body;
-          }
-          this.allMedicines = Array.isArray(data) ? data : [];
+        next: (res) => {
+          this.allMedicines = res.medicines;
+          this.allCustomers = res.customers;
           this.loading = false;
         },
         error: (err) => {
-          console.error();
-          this.showError('POS.ERRORS.LOAD_MEDICINES');
-          this.allMedicines = [];
+          this.showError('POS.ERRORS.LOAD_DATA');
           this.loading = false;
         }
       });
@@ -201,7 +196,10 @@ export class PosComponent implements OnInit, OnDestroy {
 
     // 1. Request fresh stock data from server
     this.medicineService.getMedicine(this.selectedMedicine.id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.loading = false)
+      )
       .subscribe({
         next: (response: any) => {
           // Extract body from response (handle ResponseEntity wrapper if present)
