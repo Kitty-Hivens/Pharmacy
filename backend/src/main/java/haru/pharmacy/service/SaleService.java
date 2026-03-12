@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service for processing sale operations.
@@ -122,6 +124,13 @@ public class SaleService {
             totalAmount = totalAmount.add(lineTotal);
         }
 
+        if (sale.getCustomer() != null && sale.getCustomer().getDiscountRate() != null) {
+            BigDecimal discountAmount = totalAmount
+                    .multiply(sale.getCustomer().getDiscountRate())
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            totalAmount = totalAmount.subtract(discountAmount);
+        }
+
         sale.setItems(items);
         sale.setTotalAmount(totalAmount);
 
@@ -139,12 +148,16 @@ public class SaleService {
 
     private SaleResponseDto mapToDto(Sale sale) {
         String sellerName = (sale.getEmployee() != null)
-                ? sale.getEmployee().getFirstName() + " " + sale.getEmployee().getLastName()
+                ? String.format("%s %s",
+                Objects.toString(sale.getEmployee().getFirstName(), ""),
+                Objects.toString(sale.getEmployee().getLastName(), "")).trim()
                 : "Unknown";
 
         // Обработка случая, если клиента удалили или это анонимная продажа
         String customerName = (sale.getCustomer() != null)
-                ? sale.getCustomer().getFirstName() + " " + sale.getCustomer().getLastName()
+                ? String.format("%s %s",
+                Objects.toString(sale.getCustomer().getFirstName(), ""),
+                Objects.toString(sale.getCustomer().getLastName(), "")).trim()
                 : "Guest";
 
         List<SaleResponseDto.SaleItemDto> itemDtos = sale.getItems().stream()
