@@ -47,6 +47,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   userMenuItems: MenuItem[] | undefined;
 
   lowStockCount: string = '0';
+  username: string = 'User';
 
   private destroy$ = new Subject<void>();
 
@@ -61,6 +62,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.checkScreenSize();
     this.checkLowStock();
     this.initMenu();
+    this.extractUsername();
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -197,5 +199,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         command: () => this.logout()
       }
     ];
+  }
+
+  private extractUsername() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        // Decoding Payload from JWT token
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        this.username = payload.sub || 'User'; // sub - username in Spring Security
+      } catch (e) {}
+    }
   }
 }

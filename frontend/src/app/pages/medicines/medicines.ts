@@ -301,7 +301,8 @@ export class MedicinesComponent implements OnInit {
     }
 
     // Convert Date object to YYYY-MM-DD string for backend
-    const dateStr = this.supply.expirationDateObj.toISOString().split('T')[0];
+    const d = this.supply.expirationDateObj;
+    const dateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
     const inventoryDto: InventoryAddDto = {
       medicineId: this.selectedMedicineForSupply!.id!,

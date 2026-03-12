@@ -272,6 +272,10 @@ export class PosComponent implements OnInit, OnDestroy {
    * @param item - The cart item being modified.
    */
   onQuantityChange(item: CartItem) {
+    if (!item.quantity || item.quantity < 1) {
+      item.quantity = 1;
+    }
+
     const maxStock = item.medicine.quantity || 0;
     if (item.quantity > maxStock) {
       item.quantity = maxStock;
