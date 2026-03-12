@@ -155,11 +155,13 @@ class MedicineServiceTest {
     @DisplayName("Delete should call repository when entity exists")
     void delete_ShouldCallRepo() {
         Long id = 1L;
-        when(repository.existsById(id)).thenReturn(true);
-
+        Medicine entity = new Medicine();
+        entity.setId(id);
+        entity.setIsArchived(false);
+        when(repository.findById(id)).thenReturn(Optional.of(entity));
         service.delete(id);
-
-        verify(repository).deleteById(id);
+        assertTrue(entity.getIsArchived());
+        verify(repository).save(entity);
     }
 
     @Test
@@ -167,10 +169,10 @@ class MedicineServiceTest {
     void delete_ShouldThrow_WhenMissing() {
         Long id = 99L;
 
-        when(repository.existsById(id)).thenReturn(false);
+        when(repository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> service.delete(id));
 
-        verify(repository, never()).deleteById(any());
+        verify(repository, never()).save(any());
     }
 }
