@@ -36,8 +36,10 @@ public class CustomerServiceImpl implements CustomerService {
         Customer entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
 
-        if (!entity.getPhone().equals(dto.phone()) && repository.existsByPhone(dto.phone())) {
-            throw new BusinessConstraintException("error.customer.phone_exists");
+        if (dto.phone() != null && !dto.phone().equals(entity.getPhone())) {
+            if (repository.existsByPhone(dto.phone())) {
+                throw new BusinessConstraintException("error.customer.phone_exists");
+            }
         }
 
         mapper.updateEntity(dto, entity);
