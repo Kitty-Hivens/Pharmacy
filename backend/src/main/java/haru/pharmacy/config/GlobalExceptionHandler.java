@@ -14,6 +14,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -86,6 +87,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleGenericV2(Exception ex, HttpServletRequest request) {
         log.error("UNEXPECTED ERROR", ex);
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error. Please contact support.", request.getRequestURI());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityV2(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Data Integrity Violation: {}", ex.getMessage());
+        String message = "Cannot delete this record because it is referenced in history (e.g., Sales).";
+        return buildErrorResponse(HttpStatus.CONFLICT, message, request.getRequestURI());
     }
 
     private ResponseEntity<ApiErrorResponse> buildErrorResponse(HttpStatus status, String message, String path) {
