@@ -120,19 +120,27 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   initMenu() {
+    const closeSidebar = () => {
+      if (this.isMobileScreen) {
+        this.sidebarVisible = false;
+      }
+    };
+
     const pharmacySection: MenuItem = {
       label: this.translate.instant('MENU.PHARMACY'),
       items: [
         {
           label: this.translate.instant('MENU.DASHBOARD'),
           icon: 'pi pi-home',
-          routerLink: '/dashboard'
+          routerLink: '/dashboard',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.POS_TERMINAL'),
           icon: 'pi pi-calculator',
           routerLink: '/pos',
-          styleClass: 'text-primary font-bold'
+          styleClass: 'text-primary font-bold',
+          command: closeSidebar
         }
       ]
     };
@@ -143,14 +151,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         {
           label: this.translate.instant('MENU.MEDICINES'),
           icon: 'pi pi-box',
-          routerLink: '/medicines'
+          routerLink: '/medicines',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.STOCK_ALERT'),
           icon: 'pi pi-exclamation-circle',
           routerLink: '/inventory',
           badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
-          badgeStyleClass: 'p-badge-danger'
+          badgeStyleClass: 'p-badge-danger',
+          command: closeSidebar
         }
       ]
     };
@@ -161,17 +171,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         {
           label: this.translate.instant('MENU.SALES_HISTORY'),
           icon: 'pi pi-history',
-          routerLink: '/sales'
+          routerLink: '/sales',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.CUSTOMERS'),
           icon: 'pi pi-users',
-          routerLink: '/customers'
+          routerLink: '/customers',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.SUPPLIERS'),
           icon: 'pi pi-truck',
-          routerLink: '/suppliers'
+          routerLink: '/suppliers',
+          command: closeSidebar
         }
       ]
     };
@@ -186,7 +199,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           {
             label: this.translate.instant('MENU.EMPLOYEES'),
             icon: 'pi pi-id-card',
-            routerLink: '/users'
+            routerLink: '/users',
+            command: closeSidebar
           }
         ]
       });
