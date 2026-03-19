@@ -104,8 +104,10 @@ export class PosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Preloads medicines and customers.
-   * @remarks In a real high-load production env, this should be replaced by server-side filtering.
+   * Preloads medicines and customers via a single forkJoin.
+   * fix: previously customers were loaded twice — once inside forkJoin and once
+   * in a separate subscribe below it, creating a race condition where the second
+   * response could overwrite the first with stale or differently-shaped data.
    */
   loadData() {
     this.loading = true;
@@ -117,29 +119,12 @@ export class PosComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.allMedicines = res.medicines;
-          this.allCustomers = res.customers;
+          this.allCustomers = Array.isArray(res.customers) ? res.customers : [];
           this.loading = false;
         },
-        error: (err) => {
-          this.showError('POS.ERRORS.LOAD_DATA');
+        error: () => {
+          this.showError('POS.ERRORS.LOAD_MEDICINES');
           this.loading = false;
-        }
-      });
-
-    // --- Customers ---
-    this.customerService.getAllCustomers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          let data = response;
-          if (!Array.isArray(response) && response.body) {
-            data = response.body;
-          }
-          this.allCustomers = Array.isArray(data) ? data : [];
-        },
-        error: (err) => {
-          console.error();
-          this.showError('POS.ERRORS.LOAD_CUSTOMERS');
         }
       });
   }
@@ -246,8 +231,7 @@ export class PosComponent implements OnInit, OnDestroy {
 
           this.loading = false;
         },
-        error: (err) => {
-          console.error('Failed to validate stock', err);
+        error: () => {
           this.showError('POS.ERRORS.LOAD_MEDICINES');
           this.loading = false;
         }
@@ -353,8 +337,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.resetForm();
           this.showReceiptDialog = true;
         },
-        error: (err: any) => {
-          console.error();
+        error: () => {
           this.showError('POS.ERRORS.TRANSACTION_FAILED');
           this.loading = false;
         }

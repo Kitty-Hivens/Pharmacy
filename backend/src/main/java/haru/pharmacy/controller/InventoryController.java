@@ -24,7 +24,7 @@ public class InventoryController {
     private final InventoryService service;
 
     @PostMapping("/restock")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     @Operation(summary = "Restock inventory", operationId = "restockInventory")
     public void restock(@Valid @RequestBody InventoryAddDto dto) {
         service.addStock(dto);

@@ -57,7 +57,11 @@ public class SaleService {
      */
     @Transactional
     public void createSale(SaleCreateDto dto, String username) {
-        // Create empty sale
+        // guard against empty cart — backend should never persist a zero-item sale
+        if (dto.items() == null || dto.items().isEmpty()) {
+            throw new BusinessConstraintException("error.sale.empty_items");
+        }
+
         Sale sale = new Sale();
         sale.setSaleDateTime(LocalDateTime.now());
 
@@ -153,7 +157,7 @@ public class SaleService {
                 Objects.toString(sale.getEmployee().getLastName(), "")).trim()
                 : "Unknown";
 
-        // Обработка случая, если клиента удалили или это анонимная продажа
+        // Handling the case if a client has been deleted or this is an anonymous sale
         String customerName = (sale.getCustomer() != null)
                 ? String.format("%s %s",
                 Objects.toString(sale.getCustomer().getFirstName(), ""),

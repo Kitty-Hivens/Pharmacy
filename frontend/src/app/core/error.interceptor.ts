@@ -8,6 +8,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // 401/403 are handled by authInterceptor (redirect to /login).
+      // Showing a toast here too creates a confusing double-message UX.
+      if (error.status === 401 || error.status === 403) {
+        return throwError(() => error);
+      }
+
       let errorMsg = 'An unexpected error occurred';
 
       if (error.error && error.error.message) {
