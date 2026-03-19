@@ -1,7 +1,7 @@
 <div class="suppliers">
   <p-toast></p-toast>
 
-  <p-toolbar styleClass="mb-4 gap-2">
+  <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <!-- Only ADMIN can add suppliers -->
       <p-button
@@ -35,20 +35,20 @@
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-    styleClass="suppliers-table">
+    class="suppliers-table">
 
     <ng-template pTemplate="caption">
       <div class="suppliers-table__caption">
         <h5 class="suppliers-table__title">{{ 'SUPPLIERS.TITLE' | translate }}</h5>
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
+        <p-iconfield>
+          <p-inputicon class="pi pi-search"></p-inputicon>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
           />
-        </span>
+        </p-iconfield>
       </div>
     </ng-template>
 
@@ -74,7 +74,7 @@
           <p-avatar
             [label]="getInitials(supplier.name)"
             shape="circle"
-            styleClass="suppliers-table__avatar">
+            class="suppliers-table__avatar">
           </p-avatar>
         </td>
         <td class="suppliers-table__company">{{ supplier.name }}</td>
@@ -92,7 +92,7 @@
       </tr>
     </ng-template>
 
-    <!-- ✅ FIX: pi-truck instead of pi-inbox for suppliers empty state -->
+    <!-- pi-truck instead of pi-inbox for suppliers empty state -->
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="5" class="suppliers-table__empty">

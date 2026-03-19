@@ -14,6 +14,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
+import { IconField } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
 
 // Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -45,7 +47,9 @@ import { RoleService } from '../../core/role.service';
     InputNumberModule,
     AvatarModule,
     TranslateModule,
-    TooltipModule
+    TooltipModule,
+    IconField,
+    InputIcon
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './customers.html',

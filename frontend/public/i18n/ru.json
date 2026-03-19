@@ -122,6 +122,7 @@
     "PRESCRIPTION_REQUIRED": "Нужен рецепт",
     "DELETE_CONFIRM": "Вы уверены, что хотите удалить {{name}}?",
     "DELETE_HEADER": "Подтверждение",
+    "STATUS": "Статус",
     "MESSAGES": {
       "CREATED": "Лекарство создано",
       "UPDATED": "Лекарство обновлено",

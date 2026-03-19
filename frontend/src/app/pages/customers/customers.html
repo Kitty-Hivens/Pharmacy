@@ -2,7 +2,7 @@
   <p-toast></p-toast>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
-  <p-toolbar styleClass="mb-4 gap-2">
+  <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <p-button
         [label]="'CUSTOMERS.NEW_CUSTOMER' | translate"
@@ -34,20 +34,20 @@
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-    styleClass="customers-table">
+    class="customers-table">
 
     <ng-template pTemplate="caption">
       <div class="customers-table__caption">
         <h5 class="customers-table__title">{{ 'CUSTOMERS.TITLE' | translate }}</h5>
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
+        <p-iconfield>
+          <p-inputicon class="pi pi-search"></p-inputicon>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
           />
-        </span>
+        </p-iconfield>
       </div>
     </ng-template>
 
@@ -76,7 +76,7 @@
           <p-avatar
             [label]="getInitials(customer.firstName, customer.lastName)"
             shape="circle"
-            styleClass="customers-table__avatar">
+            class="customers-table__avatar">
           </p-avatar>
         </td>
         <td>

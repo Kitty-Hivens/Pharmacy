@@ -1,7 +1,7 @@
 <div class="card">
   <p-toast></p-toast>
 
-  <p-toolbar styleClass="mb-4 gap-2">
+  <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <h2 class="text-900 font-bold text-2xl m-0">{{ 'INVENTORY.TITLE' | translate }}</h2>
     </ng-template>
@@ -42,7 +42,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [rowHover]="true"
     dataKey="id"
-    styleClass="p-datatable-striped">
+    class="p-datatable-striped">
 
     <ng-template pTemplate="header">
       <tr>

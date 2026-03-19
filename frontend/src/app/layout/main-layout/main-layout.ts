@@ -11,6 +11,7 @@ import { BadgeModule } from 'primeng/badge';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { Ripple } from 'primeng/ripple';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -34,7 +35,8 @@ import { RoleService } from '../../core/role.service';
     BadgeModule,
     TooltipModule,
     ToastModule,
-    TranslateModule
+    TranslateModule,
+    Ripple
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
