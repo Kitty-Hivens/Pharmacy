@@ -8,6 +8,7 @@
 
 :root {
   --font-family: 'Google Sans Flex', 'Inter', system-ui, -apple-system, sans-serif;
+  --p-font-family: var(--font-family);
   --font-mono: 'JetBrains Mono', 'JetBrainsMono NF', monospace;
 }
 
@@ -17,8 +18,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-:host ::ng-deep {
-  .p-component, .p-inputtext, .p-button, .p-element {
-    font-family: var(--font-family);
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #print-section, #print-section * {
+    visibility: visible;
+  }
+
+  #print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .p-dialog-header, .p-dialog-footer {
+    display: none !important;
+  }
+
+  .p-dialog {
+    box-shadow: none !important;
+    border: none !important;
   }
 }

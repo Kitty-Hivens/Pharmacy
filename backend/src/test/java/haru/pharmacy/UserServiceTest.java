@@ -86,6 +86,7 @@ class UserServiceTest {
     void getAll_ShouldReturnList() {
         // Given
         UserAccount user = new UserAccount();
+        user.setIsActive(true);
         Employee emp = new Employee();
         emp.setFirstName("John");
         user.setEmployee(emp);
@@ -110,13 +111,16 @@ class UserServiceTest {
         // Given
         Long id = 1L;
         UserAccount user = new UserAccount();
+        user.setIsActive(true);
         when(userRepo.findById(id)).thenReturn(Optional.of(user));
 
         // When
         userService.delete(id);
 
         // Then
-        verify(userRepo).delete(user);
+        assertFalse(user.getIsActive());
+        verify(userRepo).save(user);
+        verify(userRepo, never()).delete(any());
     }
 
     @Test
@@ -128,6 +132,6 @@ class UserServiceTest {
 
         // When & Then
         assertThrows(ResourceNotFoundException.class, () -> userService.delete(id));
-        verify(userRepo, never()).delete(any());
+        verify(userRepo, never()).save(any());
     }
 }

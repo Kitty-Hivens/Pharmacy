@@ -19,10 +19,11 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
             m.manufacturer,
             m.description,
             m.prescriptionRequired,
-            COALESCE(SUM(i.stockQuantity), 0L)
+            (SELECT COALESCE(SUM(i.stockQuantity), 0L) FROM Inventory i WHERE i.medicine.id = m.id)
         )
         FROM Medicine m
         LEFT JOIN Inventory i ON i.medicine.id = m.id
+        WHERE m.isArchived = false
         GROUP BY m.id, m.name, m.price, m.manufacturer, m.description, m.prescriptionRequired
     """)
     List<MedicineResponseDto> findAllSummarized();
@@ -35,11 +36,11 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
             m.manufacturer,
             m.description,
             m.prescriptionRequired,
-            COALESCE(SUM(i.stockQuantity), 0L)
+            (SELECT COALESCE(SUM(i.stockQuantity), 0L) FROM Inventory i WHERE i.medicine.id = m.id)
         )
         FROM Medicine m
         LEFT JOIN Inventory i ON i.medicine.id = m.id
-        WHERE m.id = :id
+        WHERE m.id = :id AND m.isArchived = false
         GROUP BY m.id, m.name, m.price, m.manufacturer, m.description, m.prescriptionRequired
     """)
     Optional<MedicineResponseDto> findDtoById(@Param("id") Long id);

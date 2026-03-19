@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
     public List<UserResponseDto> getAll() {
         return userRepo.findAll().stream()
+                .filter(UserAccount::getIsActive)
                 .map(mapper::toDto)
                 .toList();
     }
@@ -56,6 +57,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         UserAccount user = userRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.user.not_found", id));
-        userRepo.delete(user);
+        user.setIsActive(false);
+        userRepo.save(user);
     }
 }

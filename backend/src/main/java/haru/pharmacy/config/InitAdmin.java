@@ -49,9 +49,10 @@ public class InitAdmin {
         String passwordToUse = configuredPassword;
         if (passwordToUse == null || passwordToUse.isBlank()) {
             passwordToUse = UUID.randomUUID().toString().substring(0, 12);
-            log.warn("Generated temporary admin password: {}", passwordToUse); 
+            log.warn("Admin password was not configured via ADMIN_INITIAL_PASSWORD env variable. " +
+                    "A random password has been generated — retrieve it from the DB or set the env variable and restart.");
         } else {
-            log.info("Using configured admin password.");
+            log.info("Using configured admin password from environment.");
         }
 
         UserAccount user = new UserAccount();

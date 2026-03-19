@@ -103,8 +103,8 @@ export class SalesHistoryComponent implements OnInit, OnDestroy {
     };
 
     // Convert dates to ISO strings if present
-    const fromStr = this.dateFrom ? this.dateFrom.toISOString() : undefined;
-    const toStr = this.dateTo ? this.dateTo.toISOString() : undefined;
+    const fromStr = this.dateFrom ? this.toLocalISO(this.dateFrom) : undefined;
+    const toStr   = this.dateTo ? this.toLocalISO(this.dateTo, true) : undefined;
 
     this.saleService.getAllSales(pageable, fromStr, toStr)
       .pipe(takeUntil(this.destroy$))
@@ -177,5 +177,13 @@ export class SalesHistoryComponent implements OnInit, OnDestroy {
    */
   getTotalItems(sale: SaleResponseDto): number {
     return sale.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+  }
+
+
+  private toLocalISO(date: Date, endOfDay = false): string {
+    const d = new Date(date);
+    if (endOfDay) d.setHours(23, 59, 59, 999);
+    else d.setHours(0, 0, 0, 0);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
   }
 }

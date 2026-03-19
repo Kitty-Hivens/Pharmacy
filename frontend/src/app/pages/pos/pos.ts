@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, forkJoin, Subject, takeUntil} from 'rxjs';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -104,47 +104,27 @@ export class PosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Preloads medicines and customers.
-   * @remarks In a real high-load production env, this should be replaced by server-side filtering.
+   * Preloads medicines and customers via a single forkJoin.
+   * fix: previously customers were loaded twice — once inside forkJoin and once
+   * in a separate subscribe below it, creating a race condition where the second
+   * response could overwrite the first with stale or differently-shaped data.
    */
   loadData() {
     this.loading = true;
-
-    // --- Medicines ---
-    this.medicineService.getAllMedicines()
+    forkJoin({
+      medicines: this.medicineService.getAllMedicines(),
+      customers: this.customerService.getAllCustomers()
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: any) => {
-          // Handle potential wrapper from ResponseEntity or direct array
-          let data = response;
-          if (!Array.isArray(response) && response.body) {
-            data = response.body;
-          }
-          this.allMedicines = Array.isArray(data) ? data : [];
+        next: (res) => {
+          this.allMedicines = res.medicines;
+          this.allCustomers = Array.isArray(res.customers) ? res.customers : [];
           this.loading = false;
         },
-        error: (err) => {
-          console.error();
+        error: () => {
           this.showError('POS.ERRORS.LOAD_MEDICINES');
-          this.allMedicines = [];
           this.loading = false;
-        }
-      });
-
-    // --- Customers ---
-    this.customerService.getAllCustomers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          let data = response;
-          if (!Array.isArray(response) && response.body) {
-            data = response.body;
-          }
-          this.allCustomers = Array.isArray(data) ? data : [];
-        },
-        error: (err) => {
-          console.error();
-          this.showError('POS.ERRORS.LOAD_CUSTOMERS');
         }
       });
   }
@@ -157,8 +137,13 @@ export class PosComponent implements OnInit, OnDestroy {
 
   loadCartFromStorage() {
     const saved = localStorage.getItem('pos_cart');
-    if (saved) {
+    if (!saved) return;
+
+    try {
       this.cart = JSON.parse(saved);
+    } catch {
+      localStorage.removeItem('pos_cart');
+      this.cart = [];
     }
   }
 
@@ -201,7 +186,10 @@ export class PosComponent implements OnInit, OnDestroy {
 
     // 1. Request fresh stock data from server
     this.medicineService.getMedicine(this.selectedMedicine.id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.loading = false)
+      )
       .subscribe({
         next: (response: any) => {
           // Extract body from response (handle ResponseEntity wrapper if present)
@@ -248,8 +236,7 @@ export class PosComponent implements OnInit, OnDestroy {
 
           this.loading = false;
         },
-        error: (err) => {
-          console.error('Failed to validate stock', err);
+        error: () => {
           this.showError('POS.ERRORS.LOAD_MEDICINES');
           this.loading = false;
         }
@@ -274,6 +261,10 @@ export class PosComponent implements OnInit, OnDestroy {
    * @param item - The cart item being modified.
    */
   onQuantityChange(item: CartItem) {
+    if (!item.quantity || item.quantity < 1) {
+      item.quantity = 1;
+    }
+
     const maxStock = item.medicine.quantity || 0;
     if (item.quantity > maxStock) {
       item.quantity = maxStock;
@@ -351,8 +342,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.resetForm();
           this.showReceiptDialog = true;
         },
-        error: (err: any) => {
-          console.error();
+        error: () => {
           this.showError('POS.ERRORS.TRANSACTION_FAILED');
           this.loading = false;
         }

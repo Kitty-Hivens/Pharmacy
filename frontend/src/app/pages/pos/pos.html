@@ -170,11 +170,11 @@
     </div>
   </div>
 
-  <p-dialog [(visible)]="showReceiptDialog" [modal]="true" header="Receipt" [style]="{width: '400px'}" [closable]="true">
+  <p-dialog [(visible)]="showReceiptDialog" [modal]="true" [header]="'SALES.PRINT_RECEIPT' | translate"[style]="{width: '400px'}" [closable]="true">
     <div id="print-section" class="p-3" *ngIf="lastSale">
-      <div class="text-center font-bold text-xl mb-3">Pharmacy Receipt</div>
+      <div class="text-center font-bold text-xl mb-3">Haru Pharmacy</div>
       <div class="text-sm text-500 mb-2">{{ lastSale.date | date:'medium' }}</div>
-      <div *ngIf="lastSale.customer" class="mb-3">Customer: {{ lastSale.customer.firstName }} {{ lastSale.customer.lastName }}</div>
+      <div *ngIf="lastSale.customer" class="mb-3">{{ 'SALES.CUSTOMER' | translate }}: {{ lastSale.customer.firstName }} {{ lastSale.customer.lastName }}</div>
 
       <div class="border-top-1 border-bottom-1 surface-border py-2 my-2">
         <div *ngFor="let item of lastSale.items" class="flex justify-content-between mb-1">
@@ -184,13 +184,13 @@
       </div>
 
       <div class="flex justify-content-between font-bold text-lg mt-3">
-        <span>TOTAL</span>
+        <span>{{ 'POS.TOTAL' | translate | uppercase }}</span>
         <span>{{ lastSale.total | currency:'USD' }}</span>
       </div>
     </div>
     <ng-template pTemplate="footer">
-      <p-button label="Close" styleClass="p-button-text" (onClick)="showReceiptDialog = false"></p-button>
-      <p-button label="Print" icon="pi pi-print" (onClick)="printReceipt()"></p-button>
+      <p-button [label]="'SALES.CLOSE' | translate" styleClass="p-button-text" (onClick)="showReceiptDialog = false"></p-button>
+      <p-button [label]="'SALES.PRINT_RECEIPT' | translate" icon="pi pi-print" (onClick)="printReceipt()"></p-button>
     </ng-template>
   </p-dialog>
 </div>

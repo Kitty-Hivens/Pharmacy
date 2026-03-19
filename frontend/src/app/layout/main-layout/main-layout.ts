@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterModule } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { NavigationEnd, Router, RouterOutlet, RouterModule } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 
 // PrimeNG Imports
 import { ButtonModule } from 'primeng/button';
@@ -47,6 +47,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   userMenuItems: MenuItem[] | undefined;
 
   lowStockCount: string = '0';
+  username: string = 'User';
+
+  currentPageTitleKey = 'MENU.DASHBOARD';
+
+  private readonly routeTitleMap: Record<string, string> = {
+    '/dashboard': 'MENU.DASHBOARD',
+    '/pos':       'MENU.POS_TERMINAL',
+    '/medicines': 'MENU.MEDICINES',
+    '/inventory': 'MENU.STOCK_ALERT',
+    '/sales':     'MENU.SALES_HISTORY',
+    '/customers': 'MENU.CUSTOMERS',
+    '/suppliers': 'MENU.SUPPLIERS',
+    '/users':     'MENU.EMPLOYEES'
+  };
 
   private destroy$ = new Subject<void>();
 
@@ -61,6 +75,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.checkScreenSize();
     this.checkLowStock();
     this.initMenu();
+    this.extractUsername();
+
+    // Set initial title from current URL
+    this.currentPageTitleKey = this.routeTitleMap[this.router.url] || 'MENU.DASHBOARD';
+
+    // Update title on navigation
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((e) => {
+      this.currentPageTitleKey = this.routeTitleMap[e.urlAfterRedirects] || 'MENU.DASHBOARD';
+    });
+
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -118,19 +145,27 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   initMenu() {
+    const closeSidebar = () => {
+      if (this.isMobileScreen) {
+        this.sidebarVisible = false;
+      }
+    };
+
     const pharmacySection: MenuItem = {
       label: this.translate.instant('MENU.PHARMACY'),
       items: [
         {
           label: this.translate.instant('MENU.DASHBOARD'),
           icon: 'pi pi-home',
-          routerLink: '/dashboard'
+          routerLink: '/dashboard',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.POS_TERMINAL'),
           icon: 'pi pi-calculator',
           routerLink: '/pos',
-          styleClass: 'text-primary font-bold'
+          styleClass: 'text-primary font-bold',
+          command: closeSidebar
         }
       ]
     };
@@ -141,14 +176,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         {
           label: this.translate.instant('MENU.MEDICINES'),
           icon: 'pi pi-box',
-          routerLink: '/medicines'
+          routerLink: '/medicines',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.STOCK_ALERT'),
           icon: 'pi pi-exclamation-circle',
           routerLink: '/inventory',
           badge: this.lowStockCount !== '0' ? this.lowStockCount : undefined,
-          badgeStyleClass: 'p-badge-danger'
+          badgeStyleClass: 'p-badge-danger',
+          command: closeSidebar
         }
       ]
     };
@@ -159,17 +196,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         {
           label: this.translate.instant('MENU.SALES_HISTORY'),
           icon: 'pi pi-history',
-          routerLink: '/sales'
+          routerLink: '/sales',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.CUSTOMERS'),
           icon: 'pi pi-users',
-          routerLink: '/customers'
+          routerLink: '/customers',
+          command: closeSidebar
         },
         {
           label: this.translate.instant('MENU.SUPPLIERS'),
           icon: 'pi pi-truck',
-          routerLink: '/suppliers'
+          routerLink: '/suppliers',
+          command: closeSidebar
         }
       ]
     };
@@ -184,7 +224,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           {
             label: this.translate.instant('MENU.EMPLOYEES'),
             icon: 'pi pi-id-card',
-            routerLink: '/users'
+            routerLink: '/users',
+            command: closeSidebar
           }
         ]
       });
@@ -197,5 +238,16 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         command: () => this.logout()
       }
     ];
+  }
+
+  private extractUsername() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        // Decoding Payload from JWT token
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        this.username = payload.sub || 'User'; // sub - username in Spring Security
+      } catch (e) {}
+    }
   }
 }

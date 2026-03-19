@@ -1,7 +1,7 @@
 package haru.pharmacy.controller;
 
 import haru.pharmacy.dto.InventoryAddDto;
-import haru.pharmacy.model.Inventory;
+import haru.pharmacy.dto.InventoryResponseDto;
 import haru.pharmacy.service.InventoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,7 @@ public class InventoryController {
     private final InventoryService service;
 
     @PostMapping("/restock")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     @Operation(summary = "Restock inventory", operationId = "restockInventory")
     public void restock(@Valid @RequestBody InventoryAddDto dto) {
         service.addStock(dto);
@@ -33,7 +33,7 @@ public class InventoryController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     @Operation(summary = "Get inventory items with search", operationId = "getInventory")
-    public Page<Inventory> getAll(
+    public Page<InventoryResponseDto> getAll(
             @Parameter(description = "Search by medicine name or batch number")
             @RequestParam(required = false) String search,
 

@@ -20,6 +20,9 @@ public class AuthService {
         UserAccount user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new BusinessConstraintException("error.auth.invalid"));
 
+        if (!user.getIsActive())
+            throw new BusinessConstraintException("error.auth.invalid");
+
         if (!encoder.matches(password, user.getPasswordHash()))
             throw new BusinessConstraintException("error.auth.invalid");
 

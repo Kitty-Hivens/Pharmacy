@@ -9,14 +9,14 @@
  */
 import { PageableObject } from './pageable-object';
 import { SortObject } from './sort-object';
-import { Inventory } from './inventory';
+import { InventoryResponseDto } from './inventory-response-dto';
 
 
-export interface PageInventory { 
+export interface PageInventoryResponseDto { 
     totalElements?: number;
     totalPages?: number;
     size?: number;
-    content?: Array<Inventory>;
+    content?: Array<InventoryResponseDto>;
     number?: number;
     sort?: SortObject;
     numberOfElements?: number;

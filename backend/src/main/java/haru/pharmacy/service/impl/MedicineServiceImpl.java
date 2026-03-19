@@ -54,10 +54,12 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("error.medicine.not_found", id);
-        }
-        repository.deleteById(id);
+        Medicine entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("error.medicine.not_found", id));
+
+        entity.setIsArchived(true);
+        repository.save(entity);
     }
 }

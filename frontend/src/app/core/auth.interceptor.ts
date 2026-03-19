@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // 1. Получаем данные из LocalStorage
   const token = localStorage.getItem('token');
   // Язык берем из хранилища, или 'en' по умолчанию
-  const lang = localStorage.getItem('lang') || 'en';
+  const lang = localStorage.getItem('app-lang') || 'en';
 
   // 2. Клонируем запрос, добавляя заголовки
   // Заголовки иммутабельны, поэтому мы создаем копию запроса

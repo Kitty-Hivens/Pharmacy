@@ -2,29 +2,29 @@
   <!-- Toolbar with Filters -->
   <div class="surface-card shadow-1 border-round p-4 mb-4">
     <div class="flex flex-column lg:flex-row gap-3 align-items-center justify-content-between">
-      <h2 class="text-900 font-bold text-2xl m-0">Sales History</h2>
+      <h2 class="text-900 font-bold text-2xl m-0">{{ 'SALES.TITLE' | translate }}</h2>
 
       <div class="flex flex-column sm:flex-row gap-3 w-full lg:w-auto">
         <!-- Date From -->
         <div class="flex flex-column">
-          <label class="text-sm font-medium text-600 mb-1">From Date</label>
+          <label class="text-sm font-medium text-600 mb-1">{{ 'SALES.FROM_DATE' | translate }}</label>
           <p-datepicker
             [(ngModel)]="dateFrom"
             dateFormat="yy-mm-dd"
             [showIcon]="true"
-            placeholder="Start date"
+            [placeholder]="'SALES.FROM_DATE' | translate"
             [showButtonBar]="true">
           </p-datepicker>
         </div>
 
         <!-- Date To -->
         <div class="flex flex-column">
-          <label class="text-sm font-medium text-600 mb-1">To Date</label>
+          <label class="text-sm font-medium text-600 mb-1">{{ 'SALES.TO_DATE' | translate }}</label>
           <p-datepicker
             [(ngModel)]="dateTo"
             dateFormat="yy-mm-dd"
             [showIcon]="true"
-            placeholder="End date"
+            [placeholder]="'SALES.TO_DATE' | translate"
             [showButtonBar]="true">
           </p-datepicker>
         </div>
@@ -32,13 +32,13 @@
         <!-- Filter Buttons -->
         <div class="flex gap-2 align-items-end">
           <p-button
-            label="Apply"
+            [label]="'SALES.APPLY_FILTER' | translate"
             icon="pi pi-filter"
             (onClick)="applyFilters()"
             severity="primary">
           </p-button>
           <p-button
-            label="Clear"
+            [label]="'SALES.CLEAR_FILTER' | translate"
             icon="pi pi-filter-slash"
             (onClick)="clearFilters()"
             [outlined]="true"
@@ -69,13 +69,13 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 4rem"></th>
-        <th pSortableColumn="id">Sale ID</th>
-        <th pSortableColumn="saleDateTime">Date & Time</th>
-        <th>Seller</th>
-        <th>Customer</th>
-        <th>Items</th>
-        <th pSortableColumn="totalAmount" class="text-right">Total Amount</th>
-        <th style="width: 8rem">Actions</th>
+        <th pSortableColumn="id">{{ 'SALES.SALE_ID' | translate }}</th>
+        <th pSortableColumn="saleDateTime">{{ 'SALES.DATE_TIME' | translate }}</th>
+        <th>{{ 'SALES.SELLER' | translate }}</th>
+        <th>{{ 'SALES.CUSTOMER' | translate }}</th>
+        <th>{{ 'SALES.ITEMS' | translate }}</th>
+        <th pSortableColumn="totalAmount" class="text-right">{{ 'SALES.TOTAL_AMOUNT' | translate }}</th>
+        <th style="width: 8rem">{{ 'SALES.ACTIONS' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -126,7 +126,7 @@
         <!-- Items Count -->
         <td>
           <p-tag
-            [value]="getTotalItems(sale) + ' items'"
+            [value]="getTotalItems(sale) + ' ' + ('SALES.ITEMS' | translate)"
             severity="info">
           </p-tag>
         </td>
@@ -146,7 +146,7 @@
               [rounded]="true"
               [text]="true"
               severity="info"
-              pTooltip="View Details"
+              [pTooltip]="'SALES.VIEW_DETAILS' | translate"
               (onClick)="viewDetails(sale)">
             </p-button>
             <p-button
@@ -154,7 +154,7 @@
               [rounded]="true"
               [text]="true"
               severity="secondary"
-              pTooltip="Print Receipt"
+              [pTooltip]="'SALES.PRINT_RECEIPT' | translate"
               (onClick)="printReceipt(sale)">
             </p-button>
           </div>
@@ -167,14 +167,14 @@
       <tr>
         <td colspan="8">
           <div class="p-4">
-            <h5 class="text-900 font-bold mb-3">Sale Items</h5>
+            <h5 class="text-900 font-bold mb-3">{{ 'SALES.SALE_ITEMS' | translate }}</h5>
             <p-table [value]="sale.items || []" [tableStyle]="{ 'min-width': '40rem' }">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Medicine Name</th>
-                  <th class="text-right">Unit Price</th>
-                  <th class="text-right">Quantity</th>
-                  <th class="text-right">Total Price</th>
+                  <th>{{ 'SALES.MEDICINE_NAME' | translate }}</th>
+                  <th class="text-right">{{ 'SALES.UNIT_PRICE' | translate }}</th>
+                  <th class="text-right">{{ 'SALES.QUANTITY' | translate }}</th>
+                  <th class="text-right">{{ 'SALES.TOTAL_PRICE' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-item>
@@ -189,7 +189,7 @@
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr>
-                  <td colspan="3" class="text-right font-bold text-lg">Subtotal:</td>
+                  <td colspan="3" class="text-right font-bold text-lg">{{ 'SALES.SUBTOTAL' | translate }}:</td>
                   <td class="text-right font-bold text-xl text-green-600">
                     {{ sale.totalAmount | currency:'USD' }}
                   </td>
@@ -206,8 +206,8 @@
       <tr>
         <td colspan="8" class="text-center p-6">
           <i class="pi pi-inbox text-500 text-6xl mb-3"></i>
-          <div class="text-500 font-medium text-xl">No sales found</div>
-          <div class="text-500 text-sm mt-2">Try adjusting your filters or date range</div>
+          <div class="text-500 font-medium text-xl">{{ 'SALES.NO_SALES' | translate }}</div>
+          <div class="text-500 text-sm mt-2">{{ 'SALES.FILTER_TIP' | translate }}</div>
         </td>
       </tr>
     </ng-template>
@@ -217,7 +217,7 @@
   <p-dialog
     [(visible)]="detailsVisible"
     [style]="{ width: '50rem' }"
-    header="Sale Details"
+    [header]="'SALES.DETAILS_TITLE' | translate"
     [modal]="true"
     [draggable]="false"
     [resizable]="false">
@@ -229,21 +229,21 @@
           <div class="grid">
             <div class="col-12 md:col-6">
               <div class="mb-3">
-                <span class="text-500 text-sm">Sale ID</span>
+                <span class="text-500 text-sm">{{ 'SALES.SALE_ID' | translate }}</span>
                 <div class="font-bold text-xl text-primary">#{{ selectedSale.id }}</div>
               </div>
               <div class="mb-3">
-                <span class="text-500 text-sm">Date & Time</span>
+                <span class="text-500 text-sm">{{ 'SALES.DATE_TIME' | translate }}</span>
                 <div class="font-medium">{{ formatDateTime(selectedSale.dateTime) }}</div>
               </div>
             </div>
             <div class="col-12 md:col-6">
               <div class="mb-3">
-                <span class="text-500 text-sm">Seller</span>
+                <span class="text-500 text-sm">{{ 'SALES.SELLER' | translate }}</span>
                 <div class="font-medium">{{ selectedSale.sellerName }}</div>
               </div>
               <div class="mb-3">
-                <span class="text-500 text-sm">Customer</span>
+                <span class="text-500 text-sm">{{ 'SALES.CUSTOMER' | translate }}</span>
                 <div class="font-medium">{{ selectedSale.customerName }}</div>
               </div>
             </div>
@@ -252,7 +252,7 @@
 
         <!-- Items List -->
         <div>
-          <h5 class="text-900 font-bold mb-3">Purchased Items</h5>
+          <h5 class="text-900 font-bold mb-3">{{ 'SALES.PURCHASED_ITEMS' | translate }}</h5>
           <div class="flex flex-column gap-2">
             <div
               *ngFor="let item of selectedSale.items"
@@ -269,7 +269,7 @@
         <!-- Total Summary -->
         <div class="border-top-1 surface-border pt-3">
           <div class="flex justify-content-between align-items-center">
-            <span class="text-xl font-bold text-900">Total Amount</span>
+            <span class="text-xl font-bold text-900">{{ 'SALES.TOTAL_AMOUNT' | translate }}</span>
             <span class="text-3xl font-bold text-green-600">
               {{ selectedSale.totalAmount | currency:'USD' }}
             </span>
@@ -280,13 +280,13 @@
 
     <ng-template pTemplate="footer">
       <p-button
-        label="Close"
+        [label]="'SALES.CLOSE' | translate"
         icon="pi pi-times"
         (onClick)="detailsVisible = false"
         [text]="true">
       </p-button>
       <p-button
-        label="Print Receipt"
+        [label]="'SALES.PRINT_RECEIPT' | translate"
         icon="pi pi-print"
         severity="primary"
         (onClick)="printReceipt()">

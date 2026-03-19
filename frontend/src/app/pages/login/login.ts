@@ -47,7 +47,7 @@ export class LoginComponent {
     private router: Router,
     public translate: TranslateService
   ) {
-    const savedLang = localStorage.getItem('lang') || 'en';
+    const savedLang = localStorage.getItem('app-lang') || 'en';
     this.translate.use(savedLang);
   }
 

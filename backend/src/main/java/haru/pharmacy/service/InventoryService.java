@@ -1,6 +1,7 @@
 package haru.pharmacy.service;
 
 import haru.pharmacy.dto.InventoryAddDto;
+import haru.pharmacy.dto.InventoryResponseDto;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.Inventory;
 import haru.pharmacy.model.Medicine;
@@ -68,7 +69,23 @@ public class InventoryService {
      * @return A page of Inventory entities.
      */
     @Transactional(readOnly = true)
-    public Page<Inventory> getAll(String search, Pageable pageable) {
-        return inventoryRepository.searchByMedicineOrBatch(search, pageable);
+    public Page<InventoryResponseDto> getAll(String search, Pageable pageable) {
+        return inventoryRepository
+                .searchByMedicineOrBatch(search, pageable)
+                .map(this::toDto);
+    }
+
+    private InventoryResponseDto toDto(Inventory i) {
+        return new InventoryResponseDto(
+                i.getId(),
+                i.getMedicine() != null ? i.getMedicine().getId() : null,
+                i.getMedicine() != null ? i.getMedicine().getName() : null,
+                i.getMedicine() != null ? i.getMedicine().getManufacturer() : null,
+                i.getSupplier() != null ? i.getSupplier().getId() : null,
+                i.getSupplier() != null ? i.getSupplier().getName() : null,
+                i.getStockQuantity(),
+                i.getBatchNumber(),
+                i.getExpirationDate()
+        );
     }
 }

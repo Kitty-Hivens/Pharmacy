@@ -1,7 +1,9 @@
 package haru.pharmacy.config;
 
+import haru.pharmacy.dto.ApiErrorResponse;
 import haru.pharmacy.exception.BusinessConstraintException;
 import haru.pharmacy.exception.ResourceNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -12,7 +14,9 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +27,12 @@ import java.util.Map;
  * a consistent and localized JSON response structure.
  *
  * @author Haru
- * @version 1.0
+ * @version 1.2
  */
 @Slf4j
 @ControllerAdvice
 @RequiredArgsConstructor
+@SuppressWarnings({"DataFlowIssue", "NullableProblems"})
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
@@ -47,60 +52,58 @@ public class GlobalExceptionHandler {
         }
     }
 
-    /**
-     * Handles {@link ResourceNotFoundException}.
-     * Returns HTTP 404 (Not Found).
-     */
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<ApiErrorResponse> handleNotFoundV2(ResourceNotFoundException ex, HttpServletRequest request) {
         String message = getMessage(ex.getMessage(), ex.getArgs());
         log.warn("Resource Not Found: {}", message);
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        return buildErrorResponse(HttpStatus.NOT_FOUND, message, request.getRequestURI());
     }
 
-    /**
-     * Handles {@link BusinessConstraintException}.
-     * Returns HTTP 400 (Bad Request).
-     */
     @ExceptionHandler(BusinessConstraintException.class)
-    public ResponseEntity<String> handleBusiness(BusinessConstraintException ex) {
+    public ResponseEntity<ApiErrorResponse> handleBusinessV2(BusinessConstraintException ex, HttpServletRequest request) {
         String message = getMessage(ex.getMessage(), ex.getArgs());
         log.warn("Business Logic Error: {}", message);
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
     }
 
-    /**
-     * Handles validation errors (e.g. @NotNull, @Size).
-     * Returns HTTP 400 (Bad Request) with a map of field errors.
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiErrorResponse> handleValidationV2(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
         log.warn("Validation Failed: {}", errors);
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed: " + errors, request.getRequestURI());
     }
 
-    /**
-     * Handles unexpected system exceptions.
-     * Returns HTTP 500 (Internal Server Error).
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneric(Exception ex) {
-        log.error("UNEXPECTED ERROR", ex);
-        return new ResponseEntity<>("Internal Server Error. Please contact support.", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Handles Optimistic Locking failures (concurrent updates).
-     * Returns HTTP 409 (Conflict).
-     */
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<String> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
+    public ResponseEntity<ApiErrorResponse> handleOptimisticLockV2(ObjectOptimisticLockingFailureException ex, HttpServletRequest request) {
         log.warn("Optimistic lock failure: {}", ex.getMessage());
         String message = getMessage("error.optimistic.lock");
-        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+        return buildErrorResponse(HttpStatus.CONFLICT, message, request.getRequestURI());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleGenericV2(Exception ex, HttpServletRequest request) {
+        log.error("UNEXPECTED ERROR", ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error. Please contact support.", request.getRequestURI());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityV2(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Data Integrity Violation: {}", ex.getMessage());
+        String message = "Cannot delete this record because it is referenced in history (e.g., Sales).";
+        return buildErrorResponse(HttpStatus.CONFLICT, message, request.getRequestURI());
+    }
+
+    private ResponseEntity<ApiErrorResponse> buildErrorResponse(HttpStatus status, String message, String path) {
+        ApiErrorResponse response = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
+                .path(path)
+                .build();
+        return new ResponseEntity<>(response, status);
     }
 }

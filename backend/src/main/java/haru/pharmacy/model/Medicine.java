@@ -24,5 +24,5 @@ public class Medicine {
     private String description;
     private String manufacturer;
     private Boolean prescriptionRequired;
-    private Boolean isArchived;
+    private Boolean isArchived = false;
 }

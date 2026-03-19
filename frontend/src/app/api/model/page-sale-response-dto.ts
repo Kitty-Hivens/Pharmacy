@@ -15,14 +15,14 @@ import { SortObject } from './sort-object';
 export interface PageSaleResponseDto { 
     totalElements?: number;
     totalPages?: number;
-    pageable?: PageableObject;
-    numberOfElements?: number;
-    first?: boolean;
-    last?: boolean;
     size?: number;
     content?: Array<SaleResponseDto>;
     number?: number;
     sort?: SortObject;
+    numberOfElements?: number;
+    pageable?: PageableObject;
+    first?: boolean;
+    last?: boolean;
     empty?: boolean;
 }
 
