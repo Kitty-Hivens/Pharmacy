@@ -46,7 +46,7 @@
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
-          />
+            />
         </p-iconfield>
       </div>
     </ng-template>
@@ -101,15 +101,16 @@
               pTooltip="Edit">
             </p-button>
             <!-- Delete: ADMIN only -->
-            <p-button
-              *ngIf="isAdmin"
-              icon="pi pi-trash"
-              [rounded]="true"
-              [text]="true"
-              severity="danger"
-              (onClick)="deleteCustomer(customer)"
-              [pTooltip]="'COMMON.DELETE' | translate">
-            </p-button>
+            @if (isAdmin) {
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+                (onClick)="deleteCustomer(customer)"
+                [pTooltip]="'COMMON.DELETE' | translate">
+              </p-button>
+            }
           </div>
         </td>
       </tr>
@@ -143,10 +144,12 @@
           [(ngModel)]="customer.firstName"
           required
           autofocus
-        />
-        <small class="p-error" *ngIf="submitted && !customer.firstName">
-          {{ 'CUSTOMERS.FIRST_NAME' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !customer.firstName) {
+          <small class="p-error">
+            {{ 'CUSTOMERS.FIRST_NAME' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="customer-dialog__field">
@@ -157,10 +160,12 @@
           id="lastName"
           [(ngModel)]="customer.lastName"
           required
-        />
-        <small class="p-error" *ngIf="submitted && !customer.lastName">
-          {{ 'CUSTOMERS.LAST_NAME' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !customer.lastName) {
+          <small class="p-error">
+            {{ 'CUSTOMERS.LAST_NAME' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="customer-dialog__field">
@@ -172,10 +177,12 @@
           [(ngModel)]="customer.phone"
           required
           placeholder="+380991234567"
-        />
-        <small class="p-error" *ngIf="submitted && !customer.phone">
-          {{ 'CUSTOMERS.PHONE' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !customer.phone) {
+          <small class="p-error">
+            {{ 'CUSTOMERS.PHONE' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="customer-dialog__field">
@@ -188,9 +195,11 @@
           suffix="%"
           [showButtons]="true">
         </p-inputNumber>
-        <small class="p-error" *ngIf="submitted && customer.discountRate === undefined">
-          Discount is required.
-        </small>
+        @if (submitted && customer.discountRate === undefined) {
+          <small class="p-error">
+            Discount is required.
+          </small>
+        }
       </div>
     </ng-template>
 

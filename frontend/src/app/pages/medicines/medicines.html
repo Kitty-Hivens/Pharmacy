@@ -5,14 +5,15 @@
   <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <!-- Only ADMIN can create medicines -->
-      <p-button
-        *ngIf="isAdmin"
-        [label]="'MEDICINES.NEW_MEDICINE' | translate"
-        icon="pi pi-plus"
-        severity="success"
-        styleClass="mr-2"
-        (onClick)="openNew()"
-      ></p-button>
+      @if (isAdmin) {
+        <p-button
+          [label]="'MEDICINES.NEW_MEDICINE' | translate"
+          icon="pi pi-plus"
+          severity="success"
+          styleClass="mr-2"
+          (onClick)="openNew()"
+        ></p-button>
+      }
     </ng-template>
 
     <ng-template pTemplate="right">
@@ -32,7 +33,7 @@
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-  >
+    >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
         <h5 class="m-0 text-xl font-semibold">{{ 'MEDICINES.TITLE' | translate }}</h5>
@@ -43,7 +44,7 @@
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
-          />
+            />
         </p-iconfield>
       </div>
     </ng-template>
@@ -55,7 +56,9 @@
         <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
         <th pSortableColumn="quantity">{{ 'MEDICINES.STATUS' | translate }}</th>
         <!-- Show Actions column only when there's something to show -->
-        <th *ngIf="isAdmin">{{ 'COMMON.ACTIONS' | translate }}</th>
+        @if (isAdmin) {
+          <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+        }
       </tr>
     </ng-template>
 
@@ -69,37 +72,39 @@
             [value]="getStatus(medicine.quantity)"
             [severity]="getSeverity(medicine.quantity)"
           ></p-tag>
-          <span class="ml-2 text-sm text-500" *ngIf="medicine.quantity">({{medicine.quantity}} pcs)</span>
+          @if (medicine.quantity) {
+            <span class="ml-2 text-sm text-500">({{medicine.quantity}} pcs)</span>
+          }
         </td>
         <!-- Action buttons: only visible to ADMIN -->
-        <td *ngIf="isAdmin">
-          <p-button
-            icon="pi pi-box"
-            [rounded]="true"
-            [text]="true"
-            severity="success"
-            pTooltip="Add Stock"
-            styleClass="mr-1"
-            (onClick)="openSupply(medicine)">
-          </p-button>
-
-          <p-button
-            icon="pi pi-pencil"
-            [rounded]="true"
-            [text]="true"
-            severity="secondary"
-            styleClass="mr-1"
-            (onClick)="editMedicine(medicine)">
-          </p-button>
-
-          <p-button
-            icon="pi pi-trash"
-            [rounded]="true"
-            [text]="true"
-            severity="danger"
-            (onClick)="deleteMedicine(medicine)">
-          </p-button>
-        </td>
+        @if (isAdmin) {
+          <td>
+            <p-button
+              icon="pi pi-box"
+              [rounded]="true"
+              [text]="true"
+              severity="success"
+              pTooltip="Add Stock"
+              styleClass="mr-1"
+              (onClick)="openSupply(medicine)">
+            </p-button>
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              styleClass="mr-1"
+              (onClick)="editMedicine(medicine)">
+            </p-button>
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (onClick)="deleteMedicine(medicine)">
+            </p-button>
+          </td>
+        }
       </tr>
     </ng-template>
 
@@ -125,19 +130,25 @@
       <div class="field mb-4">
         <label for="name" class="block font-medium mb-2">{{ 'MEDICINES.NAME' | translate }}</label>
         <input type="text" pInputText id="name" [(ngModel)]="medicine.name" class="w-full" required autofocus />
-        <small class="p-error block mt-1" *ngIf="submitted && !medicine.name">Name is required.</small>
+        @if (submitted && !medicine.name) {
+          <small class="p-error block mt-1">Name is required.</small>
+        }
       </div>
 
       <div class="field mb-4">
         <label for="manufacturer" class="block font-medium mb-2">{{ 'MEDICINES.MANUFACTURER' | translate }}</label>
         <input type="text" pInputText id="manufacturer" [(ngModel)]="medicine.manufacturer" class="w-full" required />
-        <small class="p-error block mt-1" *ngIf="submitted && !medicine.manufacturer">Manufacturer is required.</small>
+        @if (submitted && !medicine.manufacturer) {
+          <small class="p-error block mt-1">Manufacturer is required.</small>
+        }
       </div>
 
       <div class="field mb-4">
         <label for="price" class="block font-medium mb-2">{{ 'MEDICINES.PRICE' | translate }}</label>
         <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" styleClass="w-full" required></p-inputNumber>
-        <small class="p-error block mt-1" *ngIf="submitted && !medicine.price">Price is required.</small>
+        @if (submitted && !medicine.price) {
+          <small class="p-error block mt-1">Price is required.</small>
+        }
       </div>
 
       <div class="field mb-4">
@@ -166,10 +177,12 @@
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
-      <div class="field mb-3" *ngIf="selectedMedicineForSupply">
-        <label class="font-bold text-lg text-primary">{{ selectedMedicineForSupply.name }}</label>
-        <div class="text-sm text-500">{{ selectedMedicineForSupply.manufacturer }}</div>
-      </div>
+      @if (selectedMedicineForSupply) {
+        <div class="field mb-3">
+          <label class="font-bold text-lg text-primary">{{ selectedMedicineForSupply.name }}</label>
+          <div class="text-sm text-500">{{ selectedMedicineForSupply.manufacturer }}</div>
+        </div>
+      }
 
       <div class="field mb-3">
         <label for="supplier">Supplier (Optional)</label>
@@ -189,7 +202,9 @@
       <div class="field mb-3">
         <label for="batch">Batch Number</label>
         <input type="text" pInputText id="batch" [(ngModel)]="supply.batchNumber" required placeholder="e.g. BATCH-001" />
-        <small class="p-error" *ngIf="submitted && !supply.batchNumber">Batch is required.</small>
+        @if (submitted && !supply.batchNumber) {
+          <small class="p-error">Batch is required.</small>
+        }
       </div>
 
       <div class="field mb-3">
@@ -200,13 +215,15 @@
       <div class="field mb-3">
         <label for="expiry">Expiration Date (FEFO)</label>
         <p-datepicker
-        id="expiry"
-        [(ngModel)]="supply.expirationDateObj"
-        dateFormat="yy-mm-dd"
-        appendTo="body"
-        [showIcon]="true">
-      </p-datepicker>
-        <small class="p-error" *ngIf="submitted && !supply.expirationDateObj">Date is required.</small>
+          id="expiry"
+          [(ngModel)]="supply.expirationDateObj"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+          [showIcon]="true">
+        </p-datepicker>
+        @if (submitted && !supply.expirationDateObj) {
+          <small class="p-error">Date is required.</small>
+        }
       </div>
     </ng-template>
 

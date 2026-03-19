@@ -8,24 +8,32 @@
           <div class="stat-card__header">
             <div>
               <span class="stat-card__label">{{ 'DASHBOARD.TOTAL_SALES' | translate }}</span>
-              <div class="stat-card__value" *ngIf="!loading">
-                {{ formatCurrency(stats.totalSales) }}
-              </div>
-              <p-skeleton *ngIf="loading" width="8rem" height="2rem"></p-skeleton>
+              @if (!loading) {
+                <div class="stat-card__value">
+                  {{ formatCurrency(stats.totalSales) }}
+                </div>
+              }
+              @if (loading) {
+                <p-skeleton width="8rem" height="2rem"></p-skeleton>
+              }
             </div>
             <div class="stat-card__icon stat-card__icon--blue">
               <i class="pi pi-shopping-bag"></i>
             </div>
           </div>
-          <div class="stat-card__footer" *ngIf="!loading">
-            <span class="stat-card__growth stat-card__growth--positive">
-              +{{ stats.salesGrowth }}%
-            </span>
-            <span class="stat-card__footer-text">
-              {{ 'DASHBOARD.SINCE_LAST_MONTH' | translate }}
-            </span>
-          </div>
-          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+          @if (!loading) {
+            <div class="stat-card__footer">
+              <span class="stat-card__growth stat-card__growth--positive">
+                +{{ stats.salesGrowth }}%
+              </span>
+              <span class="stat-card__footer-text">
+                {{ 'DASHBOARD.SINCE_LAST_MONTH' | translate }}
+              </span>
+            </div>
+          }
+          @if (loading) {
+            <p-skeleton width="100%" height="1rem"></p-skeleton>
+          }
         </div>
       </div>
     </div>
@@ -37,24 +45,32 @@
           <div class="stat-card__header">
             <div>
               <span class="stat-card__label">{{ 'DASHBOARD.CUSTOMERS' | translate }}</span>
-              <div class="stat-card__value" *ngIf="!loading">
-                {{ stats.totalCustomers | number }}
-              </div>
-              <p-skeleton *ngIf="loading" width="6rem" height="2rem"></p-skeleton>
+              @if (!loading) {
+                <div class="stat-card__value">
+                  {{ stats.totalCustomers | number }}
+                </div>
+              }
+              @if (loading) {
+                <p-skeleton width="6rem" height="2rem"></p-skeleton>
+              }
             </div>
             <div class="stat-card__icon stat-card__icon--orange">
               <i class="pi pi-users"></i>
             </div>
           </div>
-          <div class="stat-card__footer" *ngIf="!loading">
-            <span class="stat-card__growth stat-card__growth--positive">
-              +{{ stats.newCustomers }}
-            </span>
-            <span class="stat-card__footer-text">
-              {{ 'DASHBOARD.NEW_REGISTRATIONS' | translate }}
-            </span>
-          </div>
-          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+          @if (!loading) {
+            <div class="stat-card__footer">
+              <span class="stat-card__growth stat-card__growth--positive">
+                +{{ stats.newCustomers }}
+              </span>
+              <span class="stat-card__footer-text">
+                {{ 'DASHBOARD.NEW_REGISTRATIONS' | translate }}
+              </span>
+            </div>
+          }
+          @if (loading) {
+            <p-skeleton width="100%" height="1rem"></p-skeleton>
+          }
         </div>
       </div>
     </div>
@@ -66,21 +82,29 @@
           <div class="stat-card__header">
             <div>
               <span class="stat-card__label">{{ 'DASHBOARD.LOW_STOCK' | translate }}</span>
-              <div class="stat-card__value" *ngIf="!loading">
-                {{ stats.lowStockCount }} {{ 'DASHBOARD.ITEMS' | translate }}
-              </div>
-              <p-skeleton *ngIf="loading" width="7rem" height="2rem"></p-skeleton>
+              @if (!loading) {
+                <div class="stat-card__value">
+                  {{ stats.lowStockCount }} {{ 'DASHBOARD.ITEMS' | translate }}
+                </div>
+              }
+              @if (loading) {
+                <p-skeleton width="7rem" height="2rem"></p-skeleton>
+              }
             </div>
             <div class="stat-card__icon stat-card__icon--red">
               <i class="pi pi-exclamation-triangle"></i>
             </div>
           </div>
-          <div class="stat-card__footer" *ngIf="!loading">
-            <span class="stat-card__growth stat-card__growth--negative">
-              {{ 'DASHBOARD.ACTION_NEEDED' | translate }}
-            </span>
-          </div>
-          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+          @if (!loading) {
+            <div class="stat-card__footer">
+              <span class="stat-card__growth stat-card__growth--negative">
+                {{ 'DASHBOARD.ACTION_NEEDED' | translate }}
+              </span>
+            </div>
+          }
+          @if (loading) {
+            <p-skeleton width="100%" height="1rem"></p-skeleton>
+          }
         </div>
       </div>
     </div>
@@ -92,21 +116,29 @@
           <div class="stat-card__header">
             <div>
               <span class="stat-card__label">{{ 'DASHBOARD.TOTAL_MEDICINES' | translate }}</span>
-              <div class="stat-card__value" *ngIf="!loading">
-                {{ stats.totalMedicines | number }}
-              </div>
-              <p-skeleton *ngIf="loading" width="5rem" height="2rem"></p-skeleton>
+              @if (!loading) {
+                <div class="stat-card__value">
+                  {{ stats.totalMedicines | number }}
+                </div>
+              }
+              @if (loading) {
+                <p-skeleton width="5rem" height="2rem"></p-skeleton>
+              }
             </div>
             <div class="stat-card__icon stat-card__icon--purple">
               <i class="pi pi-box"></i>
             </div>
           </div>
-          <div class="stat-card__footer" *ngIf="!loading">
-            <span class="stat-card__footer-text">
-              {{ 'DASHBOARD.IN_CATALOG' | translate }}
-            </span>
-          </div>
-          <p-skeleton *ngIf="loading" width="100%" height="1rem"></p-skeleton>
+          @if (!loading) {
+            <div class="stat-card__footer">
+              <span class="stat-card__footer-text">
+                {{ 'DASHBOARD.IN_CATALOG' | translate }}
+              </span>
+            </div>
+          }
+          @if (loading) {
+            <p-skeleton width="100%" height="1rem"></p-skeleton>
+          }
         </div>
       </div>
     </div>

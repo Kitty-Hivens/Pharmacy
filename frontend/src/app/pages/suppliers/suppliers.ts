@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG Modules
@@ -26,7 +26,6 @@ import { RoleService } from '../../core/role.service';
   selector: 'app-suppliers',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     TableModule,
     ButtonModule,
@@ -39,7 +38,7 @@ import { RoleService } from '../../core/role.service';
     TooltipModule,
     InputIcon,
     IconField
-  ],
+],
   providers: [MessageService],
   templateUrl: './suppliers.html',
   styleUrl: './suppliers.scss'

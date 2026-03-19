@@ -66,41 +66,45 @@
       <div class="surface-card shadow-2 border-round p-4" style="min-height: 11rem">
         <label class="block text-900 font-medium mb-2">{{ 'POS.CUSTOMER_LABEL' | translate }}</label>
 
-        <p-autoComplete *ngIf="!selectedCustomer"
-                        [(ngModel)]="selectedCustomer"
-                        [suggestions]="filteredCustomers"
-                        (completeMethod)="filterCustomers($event)"
-                        field="lastName"
-                        [placeholder]="'POS.SEARCH_CUSTOMER' | translate"
-                        [dropdown]="true"
-                        class="w-full"
-                        inputStyleClass="w-full">
-          <ng-template let-customer pTemplate="item">
-            <div class="flex align-items-center gap-2">
-              <i class="pi pi-user"></i>
-              <div>
-                <span class="font-bold">{{ customer.firstName }} {{ customer.lastName }}</span>
-                <div class="text-sm text-500">{{ customer.phone }}</div>
+        @if (!selectedCustomer) {
+          <p-autoComplete
+            [(ngModel)]="selectedCustomer"
+            [suggestions]="filteredCustomers"
+            (completeMethod)="filterCustomers($event)"
+            field="lastName"
+            [placeholder]="'POS.SEARCH_CUSTOMER' | translate"
+            [dropdown]="true"
+            class="w-full"
+            inputStyleClass="w-full">
+            <ng-template let-customer pTemplate="item">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-user"></i>
+                <div>
+                  <span class="font-bold">{{ customer.firstName }} {{ customer.lastName }}</span>
+                  <div class="text-sm text-500">{{ customer.phone }}</div>
+                </div>
               </div>
-            </div>
-          </ng-template>
-        </p-autoComplete>
+            </ng-template>
+          </p-autoComplete>
+        }
 
-        <div *ngIf="selectedCustomer" class="h-full flex flex-column justify-content-center animate-fade-in">
-          <div class="p-3 bg-blue-50 border-round flex align-items-center gap-3">
-            <p-avatar label="C" shape="circle" size="large" class="bg-blue-500 text-white"></p-avatar>
-            <div>
-              <div class="font-bold text-blue-900">{{selectedCustomer.firstName}} {{selectedCustomer.lastName}}</div>
-              <div class="text-sm text-blue-700">{{ 'POS.DISCOUNT' | translate }}: {{selectedCustomer.discountRate}}%</div>
+        @if (selectedCustomer) {
+          <div class="h-full flex flex-column justify-content-center animate-fade-in">
+            <div class="p-3 bg-blue-50 border-round flex align-items-center gap-3">
+              <p-avatar label="C" shape="circle" size="large" class="bg-blue-500 text-white"></p-avatar>
+              <div>
+                <div class="font-bold text-blue-900">{{selectedCustomer.firstName}} {{selectedCustomer.lastName}}</div>
+                <div class="text-sm text-blue-700">{{ 'POS.DISCOUNT' | translate }}: {{selectedCustomer.discountRate}}%</div>
+              </div>
+              <p-button
+                icon="pi pi-times"
+                styleClass="p-button-text p-button-rounded p-button-danger ml-auto"
+                (onClick)="selectedCustomer = null"
+                pTooltip="Change Customer">
+              </p-button>
             </div>
-            <p-button
-              icon="pi pi-times"
-              styleClass="p-button-text p-button-rounded p-button-danger ml-auto"
-              (onClick)="selectedCustomer = null"
-              pTooltip="Change Customer">
-            </p-button>
           </div>
-        </div>
+        }
       </div>
 
       <div class="surface-card shadow-2 border-round p-4">
@@ -138,12 +142,14 @@
           <span class="text-lg font-medium">{{ subtotal | currency:'USD' }}</span>
         </div>
 
-        <div class="flex justify-content-between align-items-center mb-2" *ngIf="selectedCustomer && discountAmount > 0">
-          <span class="text-lg text-600">
-            {{ 'POS.DISCOUNT' | translate }} ({{ selectedCustomer.discountRate }}%)
-          </span>
-          <span class="text-lg font-medium text-orange-500">-{{ discountAmount | currency:'USD' }}</span>
-        </div>
+        @if (selectedCustomer && discountAmount > 0) {
+          <div class="flex justify-content-between align-items-center mb-2">
+            <span class="text-lg text-600">
+              {{ 'POS.DISCOUNT' | translate }} ({{ selectedCustomer.discountRate }}%)
+            </span>
+            <span class="text-lg font-medium text-orange-500">-{{ discountAmount | currency:'USD' }}</span>
+          </div>
+        }
 
         <div class="flex justify-content-between align-items-center mb-4">
           <span class="text-lg text-600">{{ 'POS.TAX' | translate }} (0%)</span>
@@ -171,23 +177,27 @@
   </div>
 
   <p-dialog [(visible)]="showReceiptDialog" [modal]="true" [header]="'SALES.PRINT_RECEIPT' | translate"[style]="{width: '400px'}" [closable]="true">
-    <div id="print-section" class="p-3" *ngIf="lastSale">
-      <div class="text-center font-bold text-xl mb-3">Haru Pharmacy</div>
-      <div class="text-sm text-500 mb-2">{{ lastSale.date | date:'medium' }}</div>
-      <div *ngIf="lastSale.customer" class="mb-3">{{ 'SALES.CUSTOMER' | translate }}: {{ lastSale.customer.firstName }} {{ lastSale.customer.lastName }}</div>
-
-      <div class="border-top-1 border-bottom-1 surface-border py-2 my-2">
-        <div *ngFor="let item of lastSale.items" class="flex justify-content-between mb-1">
-          <span>{{ item.medicine.name }} x{{ item.quantity }}</span>
-          <span>{{ item.total | currency:'USD' }}</span>
+    @if (lastSale) {
+      <div id="print-section" class="p-3">
+        <div class="text-center font-bold text-xl mb-3">Haru Pharmacy</div>
+        <div class="text-sm text-500 mb-2">{{ lastSale.date | date:'medium' }}</div>
+        @if (lastSale.customer) {
+          <div class="mb-3">{{ 'SALES.CUSTOMER' | translate }}: {{ lastSale.customer.firstName }} {{ lastSale.customer.lastName }}</div>
+        }
+        <div class="border-top-1 border-bottom-1 surface-border py-2 my-2">
+          @for (item of lastSale.items; track item) {
+            <div class="flex justify-content-between mb-1">
+              <span>{{ item.medicine.name }} x{{ item.quantity }}</span>
+              <span>{{ item.total | currency:'USD' }}</span>
+            </div>
+          }
+        </div>
+        <div class="flex justify-content-between font-bold text-lg mt-3">
+          <span>{{ 'POS.TOTAL' | translate | uppercase }}</span>
+          <span>{{ lastSale.total | currency:'USD' }}</span>
         </div>
       </div>
-
-      <div class="flex justify-content-between font-bold text-lg mt-3">
-        <span>{{ 'POS.TOTAL' | translate | uppercase }}</span>
-        <span>{{ lastSale.total | currency:'USD' }}</span>
-      </div>
-    </div>
+    }
     <ng-template pTemplate="footer">
       <p-button [label]="'SALES.CLOSE' | translate" styleClass="p-button-text" (onClick)="showReceiptDialog = false"></p-button>
       <p-button [label]="'SALES.PRINT_RECEIPT' | translate" icon="pi pi-print" (onClick)="printReceipt()"></p-button>

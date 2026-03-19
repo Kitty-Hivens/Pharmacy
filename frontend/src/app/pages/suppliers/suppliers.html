@@ -4,13 +4,14 @@
   <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <!-- Only ADMIN can add suppliers -->
-      <p-button
-        *ngIf="isAdmin"
-        [label]="'SUPPLIERS.NEW_SUPPLIER' | translate"
-        icon="pi pi-plus"
-        severity="success"
-        (onClick)="openNew()">
-      </p-button>
+      @if (isAdmin) {
+        <p-button
+          [label]="'SUPPLIERS.NEW_SUPPLIER' | translate"
+          icon="pi pi-plus"
+          severity="success"
+          (onClick)="openNew()">
+        </p-button>
+      }
     </ng-template>
 
     <ng-template pTemplate="right">
@@ -47,7 +48,7 @@
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
-          />
+            />
         </p-iconfield>
       </div>
     </ng-template>
@@ -80,13 +81,16 @@
         <td class="suppliers-table__company">{{ supplier.name }}</td>
         <td>{{ supplier.contactPerson || '-' }}</td>
         <td>
-          <a
-            *ngIf="supplier.email"
-            [href]="'mailto:' + supplier.email"
-            class="suppliers-table__email">
-            {{ supplier.email }}
-          </a>
-          <span *ngIf="!supplier.email" class="suppliers-table__empty-value">-</span>
+          @if (supplier.email) {
+            <a
+              [href]="'mailto:' + supplier.email"
+              class="suppliers-table__email">
+              {{ supplier.email }}
+            </a>
+          }
+          @if (!supplier.email) {
+            <span class="suppliers-table__empty-value">-</span>
+          }
         </td>
         <td>{{ supplier.phone || '-' }}</td>
       </tr>
@@ -121,10 +125,12 @@
           [(ngModel)]="supplier.name"
           required
           autofocus
-        />
-        <small class="p-error" *ngIf="submitted && !supplier.name">
-          Company name is required.
-        </small>
+          />
+        @if (submitted && !supplier.name) {
+          <small class="p-error">
+            Company name is required.
+          </small>
+        }
       </div>
 
       <div class="supplier-dialog__field">
@@ -134,7 +140,7 @@
           pInputText
           id="contactPerson"
           [(ngModel)]="supplier.contactPerson"
-        />
+          />
       </div>
 
       <div class="supplier-dialog__field">
@@ -145,7 +151,7 @@
           id="email"
           [(ngModel)]="supplier.email"
           placeholder="supplier@example.com"
-        />
+          />
       </div>
 
       <div class="supplier-dialog__field">
@@ -156,7 +162,7 @@
           id="phone"
           [(ngModel)]="supplier.phone"
           placeholder="+380991234567"
-        />
+          />
       </div>
     </ng-template>
 
