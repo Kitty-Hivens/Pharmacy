@@ -52,25 +52,31 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UserAccount user = userRepository.findByUsername(username).orElse(null);
 
-            if (user != null) {
-                Claims claims;
-                try {
-                    claims = jwtService.extractClaims(token);
-                } catch (Exception e) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-
-                String role = (String) claims.get("role");
-
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                user.getUsername(), null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            // previously a fired/deactivated employee could continue using
+            // their JWT until expiry (up to 24h). Now we reject tokens for
+            // inactive users on every request.
+            if (user == null || !Boolean.TRUE.equals(user.getIsActive())) {
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            Claims claims;
+            try {
+                claims = jwtService.extractClaims(token);
+            } catch (Exception e) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String role = (String) claims.get("role");
+
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
         filterChain.doFilter(request, response);

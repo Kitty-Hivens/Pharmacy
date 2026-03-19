@@ -45,14 +45,16 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/secret/**").permitAll() // Easter egg
 
-                        // RBAC: Admin only
-                        .requestMatchers("/users/**").hasRole("ADMIN")
-                        .requestMatchers("/suppliers/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/inventory/**").hasRole("ADMIN")
+                        // was "/users/**" and "/suppliers/**" — these never matched
+                        // because controllers are mapped under /api/users and /api/suppliers.
+                        // Rules were silently ignored, leaving @PreAuthorize as the only guard.
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/suppliers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/inventory/**").hasRole("ADMIN")
 
                         // RBAC: Admin and Pharmacist
-                        .requestMatchers(HttpMethod.POST, "/inventory/**").hasAnyRole("ADMIN", "PHARMACIST")
-                        .requestMatchers(HttpMethod.PUT, "/inventory/**").hasAnyRole("ADMIN", "PHARMACIST")
+                        .requestMatchers(HttpMethod.POST, "/api/inventory/**").hasAnyRole("ADMIN", "PHARMACIST")
+                        .requestMatchers(HttpMethod.PUT, "/api/inventory/**").hasAnyRole("ADMIN", "PHARMACIST")
 
                         .anyRequest().authenticated()
                 )
