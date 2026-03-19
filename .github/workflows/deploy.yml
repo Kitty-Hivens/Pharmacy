@@ -15,6 +15,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /path/to/pharmacy
+            cd /root/Pharmacy
             git pull
             docker compose up --build -d
