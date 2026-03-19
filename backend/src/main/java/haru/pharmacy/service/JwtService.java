@@ -4,14 +4,12 @@ import haru.pharmacy.config.JwtProperties;
 import haru.pharmacy.model.UserAccount;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
 /**
@@ -40,11 +38,8 @@ public class JwtService {
      * @return The key object for HMAC-SHA signing.
      * @throws io.jsonwebtoken.security.WeakKeyException if the configured key is too short.
      */
-    private Key getSigningKey() {
-        String secret = jwtProperties.getSecret();
-        // Handle potential null to avoid NPE, though validation should catch this earlier
-        byte[] keyBytes = secret != null ? secret.getBytes(StandardCharsets.UTF_8) : new byte[0];
-
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -56,11 +51,11 @@ public class JwtService {
      */
     public String generateToken(UserAccount user) {
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .subject(user.getUsername())
                 .claim("role", user.getRole())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -71,11 +66,11 @@ public class JwtService {
      * @return The Claims object.
      */
     public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**
