@@ -14,7 +14,7 @@ import { ToastModule } from 'primeng/toast';
 // Services & Models
 import { MessageService } from 'primeng/api';
 import { TranslateModule } from '@ngx-translate/core';
-import { InventoryService, Inventory, Pageable } from '../../api';
+import { InventoryService, InventoryResponseDto, Pageable } from '../../api';
 
 @Component({
   selector: 'app-inventory',
@@ -36,7 +36,7 @@ import { InventoryService, Inventory, Pageable } from '../../api';
   styleUrl: './inventory.scss'
 })
 export class InventoryComponent implements OnInit {
-  inventory: Inventory[] = [];
+  inventory: InventoryResponseDto[] = [];
   loading = true;
   first = 0;
   rows = 10;

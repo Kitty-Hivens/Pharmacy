@@ -137,8 +137,13 @@ export class PosComponent implements OnInit, OnDestroy {
 
   loadCartFromStorage() {
     const saved = localStorage.getItem('pos_cart');
-    if (saved) {
+    if (!saved) return;
+
+    try {
       this.cart = JSON.parse(saved);
+    } catch {
+      localStorage.removeItem('pos_cart');
+      this.cart = [];
     }
   }
 

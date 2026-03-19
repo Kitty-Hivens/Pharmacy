@@ -20,13 +20,12 @@ model/customer-create-dto.ts
 model/customer-response-dto.ts
 model/customer-update-dto.ts
 model/inventory-add-dto.ts
-model/inventory.ts
+model/inventory-response-dto.ts
 model/medicine-create-dto.ts
 model/medicine-response-dto.ts
 model/medicine-update-dto.ts
-model/medicine.ts
 model/models.ts
-model/page-inventory.ts
+model/page-inventory-response-dto.ts
 model/page-sale-response-dto.ts
 model/pageable-object.ts
 model/pageable.ts
@@ -36,7 +35,6 @@ model/sale-item-request.ts
 model/sale-response-dto.ts
 model/sort-object.ts
 model/supplier-dto.ts
-model/supplier.ts
 model/user-create-dto.ts
 model/user-response-dto.ts
 param.ts

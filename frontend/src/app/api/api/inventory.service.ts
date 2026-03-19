@@ -19,7 +19,7 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { InventoryAddDto } from '../model/inventory-add-dto';
 // @ts-ignore
-import { PageInventory } from '../model/page-inventory';
+import { PageInventoryResponseDto } from '../model/page-inventory-response-dto';
 // @ts-ignore
 import { Pageable } from '../model/pageable';
 
@@ -48,9 +48,9 @@ export class InventoryService extends BaseService {
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public getInventory(pageable: Pageable, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<PageInventory>;
-    public getInventory(pageable: Pageable, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PageInventory>>;
-    public getInventory(pageable: Pageable, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PageInventory>>;
+    public getInventory(pageable: Pageable, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<PageInventoryResponseDto>;
+    public getInventory(pageable: Pageable, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PageInventoryResponseDto>>;
+    public getInventory(pageable: Pageable, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PageInventoryResponseDto>>;
     public getInventory(pageable: Pageable, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (pageable === null || pageable === undefined) {
             throw new Error('Required parameter pageable was null or undefined when calling getInventory.');
@@ -106,7 +106,7 @@ export class InventoryService extends BaseService {
 
         let localVarPath = `/api/inventory`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<PageInventory>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<PageInventoryResponseDto>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters.toHttpParams(),

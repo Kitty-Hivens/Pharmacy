@@ -46,9 +46,9 @@
 
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="medicine.name" style="min-width:15rem">
+        <th pSortableColumn="medicineName" style="min-width:15rem">
           Medicine
-          <p-sortIcon field="medicine.name"></p-sortIcon>
+          <p-sortIcon field="medicineName"></p-sortIcon>
         </th>
         <th pSortableColumn="batchNumber">
           Batch Number
@@ -70,8 +70,8 @@
     <ng-template pTemplate="body" let-item>
       <tr>
         <td>
-          <div class="font-bold">{{ item.medicine?.name }}</div>
-          <div class="text-sm text-500">{{ item.medicine?.manufacturer }}</div>
+          <div class="font-bold">{{ item.medicineName }}</div>
+          <div class="text-sm text-500">{{ item.medicineManufacturer }}</div>
         </td>
         <td>
           <span class="font-mono">{{ item.batchNumber }}</span>
@@ -91,8 +91,8 @@
           </div>
         </td>
         <td>
-          <span *ngIf="item.supplier">{{ item.supplier.name }}</span>
-          <span *ngIf="!item.supplier" class="text-500">-</span>
+          <span *ngIf="item.supplierName">{{ item.supplierName }}</span>
+          <span *ngIf="!item.supplierName" class="text-500">-</span>
         </td>
         <td>
           <p-tag

@@ -27,7 +27,7 @@ import java.util.Map;
  * a consistent and localized JSON response structure.
  *
  * @author Haru
- * @version 1.1
+ * @version 1.2
  */
 @Slf4j
 @ControllerAdvice
@@ -105,62 +105,5 @@ public class GlobalExceptionHandler {
                 .path(path)
                 .build();
         return new ResponseEntity<>(response, status);
-    }
-
-    /**
-     * Handles {@link ResourceNotFoundException}.
-     * Returns HTTP 404 (Not Found).
-     */
-    @Deprecated
-    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
-        String message = getMessage(ex.getMessage(), ex.getArgs());
-        log.warn("Resource Not Found: {}", message);
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-    }
-
-    /**
-     * Handles {@link BusinessConstraintException}.
-     * Returns HTTP 400 (Bad Request).
-     */
-    @Deprecated
-    public ResponseEntity<String> handleBusiness(BusinessConstraintException ex) {
-        String message = getMessage(ex.getMessage(), ex.getArgs());
-        log.warn("Business Logic Error: {}", message);
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Handles validation errors (e.g. @NotNull, @Size).
-     * Returns HTTP 400 (Bad Request) with a map of field errors.
-     */
-    @Deprecated
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
-        log.warn("Validation Failed: {}", errors);
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Handles unexpected system exceptions.
-     * Returns HTTP 500 (Internal Server Error).
-     */
-    @Deprecated
-    public ResponseEntity<String> handleGeneric(Exception ex) {
-        log.error("UNEXPECTED ERROR", ex);
-        return new ResponseEntity<>("Internal Server Error. Please contact support.", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Handles Optimistic Locking failures (concurrent updates).
-     * Returns HTTP 409 (Conflict).
-     */
-    @Deprecated
-    public ResponseEntity<String> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
-        log.warn("Optimistic lock failure: {}", ex.getMessage());
-        String message = getMessage("error.optimistic.lock");
-        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 }
