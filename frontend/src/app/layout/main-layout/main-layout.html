@@ -63,7 +63,9 @@
           severity="secondary"
           (onClick)="toggleSidebar()">
         </p-button>
-        <span class="text-xl font-medium text-900 hidden sm:inline">Dashboard</span>
+        <span class="text-xl font-medium text-900 hidden sm:inline">
+          {{ currentPageTitleKey | translate }}
+        </span>
       </div>
 
       <!-- Right: Actions -->

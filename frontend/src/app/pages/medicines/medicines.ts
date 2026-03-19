@@ -347,9 +347,9 @@ export class MedicinesComponent implements OnInit {
    * @param quantity - Current stock level.
    */
   getStatus(quantity?: number): string {
-    if (!quantity) return 'OUTOFSTOCK';
-    if (quantity > 50) return 'INSTOCK';
-    if (quantity > 10) return 'LOWSTOCK';
-    return 'OUTOFSTOCK';
+    if (!quantity) return 'Out of Stock';
+    if (quantity > 50) return 'In Stock';
+    if (quantity > 10) return 'Low Stock';
+    return 'Out of Stock';
   }
 }

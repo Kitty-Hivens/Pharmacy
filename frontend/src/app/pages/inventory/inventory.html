@@ -3,7 +3,7 @@
 
   <p-toolbar styleClass="mb-4 gap-2">
     <ng-template pTemplate="left">
-      <h2 class="text-900 font-bold text-2xl m-0">Stock Inventory</h2>
+      <h2 class="text-900 font-bold text-2xl m-0">{{ 'INVENTORY.TITLE' | translate }}</h2>
     </ng-template>
 
     <ng-template pTemplate="right">
@@ -14,7 +14,7 @@
           type="text"
           [(ngModel)]="searchValue"
           (input)="onSearch()"
-          placeholder="Search by name or batch..."
+          [placeholder]="'INVENTORY.SEARCH' | translate"
         />
       </span>
       <p-button
@@ -22,7 +22,7 @@
         [rounded]="true"
         [text]="true"
         (onClick)="loadInventory()"
-        pTooltip="Refresh">
+        [pTooltip]="'COMMON.REFRESH' | translate">
       </p-button>
     </ng-template>
   </p-toolbar>
@@ -47,23 +47,23 @@
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="medicineName" style="min-width:15rem">
-          Medicine
+          {{ 'INVENTORY.MEDICINE' | translate }}
           <p-sortIcon field="medicineName"></p-sortIcon>
         </th>
         <th pSortableColumn="batchNumber">
-          Batch Number
+          {{ 'INVENTORY.BATCH_NUMBER' | translate }}
           <p-sortIcon field="batchNumber"></p-sortIcon>
         </th>
         <th pSortableColumn="stockQuantity">
-          Stock
+          {{ 'INVENTORY.STOCK' | translate }}
           <p-sortIcon field="stockQuantity"></p-sortIcon>
         </th>
         <th pSortableColumn="expirationDate">
-          Expiration Date
+          {{ 'INVENTORY.EXPIRATION_DATE' | translate }}
           <p-sortIcon field="expirationDate"></p-sortIcon>
         </th>
-        <th>Supplier</th>
-        <th>Status</th>
+        <th>{{ 'INVENTORY.SUPPLIER' | translate }}</th>
+        <th>{{ 'INVENTORY.STATUS' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -107,7 +107,7 @@
       <tr>
         <td colspan="6" class="text-center p-6">
           <i class="pi pi-inbox text-500 text-6xl mb-3"></i>
-          <div class="text-500 font-medium text-xl">No inventory items found</div>
+          <div class="text-500 font-medium text-xl">{{ 'INVENTORY.NO_ITEMS' | translate }}</div>
         </td>
       </tr>
     </ng-template>

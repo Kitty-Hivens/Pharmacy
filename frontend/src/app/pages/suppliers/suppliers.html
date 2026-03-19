@@ -92,10 +92,11 @@
       </tr>
     </ng-template>
 
+    <!-- ✅ FIX: pi-truck instead of pi-inbox for suppliers empty state -->
     <ng-template pTemplate="emptymessage">
       <tr>
         <td colspan="5" class="suppliers-table__empty">
-          <i class="pi pi-inbox"></i>
+          <i class="pi pi-truck"></i>
           <div class="suppliers-table__empty-text">{{ 'SUPPLIERS.NO_SUPPLIERS' | translate }}</div>
         </td>
       </tr>

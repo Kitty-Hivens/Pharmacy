@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterModule } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { NavigationEnd, Router, RouterOutlet, RouterModule } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 
 // PrimeNG Imports
 import { ButtonModule } from 'primeng/button';
@@ -49,6 +49,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   lowStockCount: string = '0';
   username: string = 'User';
 
+  currentPageTitleKey = 'MENU.DASHBOARD';
+
+  private readonly routeTitleMap: Record<string, string> = {
+    '/dashboard': 'MENU.DASHBOARD',
+    '/pos':       'MENU.POS_TERMINAL',
+    '/medicines': 'MENU.MEDICINES',
+    '/inventory': 'MENU.STOCK_ALERT',
+    '/sales':     'MENU.SALES_HISTORY',
+    '/customers': 'MENU.CUSTOMERS',
+    '/suppliers': 'MENU.SUPPLIERS',
+    '/users':     'MENU.EMPLOYEES'
+  };
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -63,6 +76,18 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.checkLowStock();
     this.initMenu();
     this.extractUsername();
+
+    // Set initial title from current URL
+    this.currentPageTitleKey = this.routeTitleMap[this.router.url] || 'MENU.DASHBOARD';
+
+    // Update title on navigation
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((e) => {
+      this.currentPageTitleKey = this.routeTitleMap[e.urlAfterRedirects] || 'MENU.DASHBOARD';
+    });
+
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
