@@ -2,7 +2,7 @@
   <p-toast></p-toast>
   <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
 
-  <p-toolbar styleClass="mb-4 gap-2">
+  <p-toolbar class="mb-4 gap-2">
     <ng-template pTemplate="left">
       <!-- Only ADMIN can create medicines -->
       <p-button
@@ -36,15 +36,15 @@
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
         <h5 class="m-0 text-xl font-semibold">{{ 'MEDICINES.TITLE' | translate }}</h5>
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
+        <p-iconfield>
+          <p-inputicon class="pi pi-search"></p-inputicon>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
           />
-        </span>
+        </p-iconfield>
       </div>
     </ng-template>
 
@@ -53,9 +53,9 @@
         <th pSortableColumn="name" style="min-width:15rem">{{ 'MEDICINES.NAME' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
         <th pSortableColumn="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }} <p-sortIcon field="manufacturer"></p-sortIcon></th>
         <th pSortableColumn="price">{{ 'MEDICINES.PRICE' | translate }} <p-sortIcon field="price"></p-sortIcon></th>
-        <th pSortableColumn="quantity">Status <p-sortIcon field="quantity"></p-sortIcon></th>
+        <th pSortableColumn="quantity">{{ 'MEDICINES.STATUS' | translate }}</th>
         <!-- Show Actions column only when there's something to show -->
-        <th *ngIf="isAdmin" style="min-width:12rem">Actions</th>
+        <th *ngIf="isAdmin">{{ 'COMMON.ACTIONS' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -122,32 +122,32 @@
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
-      <div class="field mb-3">
-        <label for="name">{{ 'MEDICINES.NAME' | translate }}</label>
-        <input type="text" pInputText id="name" [(ngModel)]="medicine.name" required autofocus />
-        <small class="p-error" *ngIf="submitted && !medicine.name">Name is required.</small>
+      <div class="field mb-4">
+        <label for="name" class="block font-medium mb-2">{{ 'MEDICINES.NAME' | translate }}</label>
+        <input type="text" pInputText id="name" [(ngModel)]="medicine.name" class="w-full" required autofocus />
+        <small class="p-error block mt-1" *ngIf="submitted && !medicine.name">Name is required.</small>
       </div>
 
-      <div class="field mb-3">
-        <label for="manufacturer">{{ 'MEDICINES.MANUFACTURER' | translate }}</label>
-        <input type="text" pInputText id="manufacturer" [(ngModel)]="medicine.manufacturer" required />
-        <small class="p-error" *ngIf="submitted && !medicine.manufacturer">Manufacturer is required.</small>
+      <div class="field mb-4">
+        <label for="manufacturer" class="block font-medium mb-2">{{ 'MEDICINES.MANUFACTURER' | translate }}</label>
+        <input type="text" pInputText id="manufacturer" [(ngModel)]="medicine.manufacturer" class="w-full" required />
+        <small class="p-error block mt-1" *ngIf="submitted && !medicine.manufacturer">Manufacturer is required.</small>
       </div>
 
-      <div class="field mb-3">
-        <label for="price">{{ 'MEDICINES.PRICE' | translate }}</label>
-        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" required></p-inputNumber>
-        <small class="p-error" *ngIf="submitted && !medicine.price">Price is required.</small>
+      <div class="field mb-4">
+        <label for="price" class="block font-medium mb-2">{{ 'MEDICINES.PRICE' | translate }}</label>
+        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" styleClass="w-full" required></p-inputNumber>
+        <small class="p-error block mt-1" *ngIf="submitted && !medicine.price">Price is required.</small>
       </div>
 
-      <div class="field mb-3">
-        <label for="description">{{ 'MEDICINES.DESCRIPTION' | translate }}</label>
-        <textarea id="description" pTextarea [(ngModel)]="medicine.description" rows="3" cols="20"></textarea>
+      <div class="field mb-4">
+        <label for="description" class="block font-medium mb-2">{{ 'MEDICINES.DESCRIPTION' | translate }}</label>
+        <textarea id="description" pTextarea [(ngModel)]="medicine.description" rows="3" class="w-full"></textarea>
       </div>
 
-      <div class="field-checkbox mb-3 flex align-items-center gap-2">
+      <div class="flex align-items-center gap-2">
         <p-checkbox id="prescription" [(ngModel)]="medicine.prescriptionRequired" [binary]="true" inputId="binary"></p-checkbox>
-        <label for="binary" class="m-0">{{ 'MEDICINES.PRESCRIPTION_REQUIRED' | translate }}</label>
+        <label for="binary" class="font-medium cursor-pointer">{{ 'MEDICINES.PRESCRIPTION_REQUIRED' | translate }}</label>
       </div>
     </ng-template>
 

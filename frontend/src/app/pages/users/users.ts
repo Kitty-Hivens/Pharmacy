@@ -15,6 +15,8 @@ import { TagModule } from 'primeng/tag';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputIcon } from 'primeng/inputicon';
+import { IconField } from 'primeng/iconfield';
 
 // Services & Models
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -39,7 +41,9 @@ import { UserService, UserResponseDto, UserCreateDto } from '../../api';
     PasswordModule,
     SelectModule,
     TooltipModule,
-    TranslateModule
+    TranslateModule,
+    InputIcon,
+    IconField
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './users.html',

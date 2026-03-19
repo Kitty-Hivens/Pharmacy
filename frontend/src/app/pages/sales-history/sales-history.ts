@@ -13,6 +13,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { Ripple } from 'primeng/ripple';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -50,7 +51,8 @@ import {
     DatePickerModule,
     IconFieldModule,
     InputIconModule,
-    TranslateModule
+    TranslateModule,
+    Ripple
   ],
   templateUrl: './sales-history.html',
   styleUrl: './sales-history.scss'

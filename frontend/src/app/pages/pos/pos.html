@@ -9,7 +9,7 @@
         <span class="text-500">{{ cart.length }} {{ 'POS.ITEMS' | translate }}</span>
       </div>
 
-      <p-table [value]="cart" [scrollable]="true" scrollHeight="500px" styleClass="p-datatable-striped">
+      <p-table [value]="cart" [scrollable]="true" scrollHeight="500px" class="p-datatable-striped">
         <ng-template pTemplate="header">
           <tr>
             <th style="min-width: 200px">{{ 'POS.TABLE.MEDICINE' | translate }}</th>
@@ -73,7 +73,7 @@
                         field="lastName"
                         [placeholder]="'POS.SEARCH_CUSTOMER' | translate"
                         [dropdown]="true"
-                        styleClass="w-full"
+                        class="w-full"
                         inputStyleClass="w-full">
           <ng-template let-customer pTemplate="item">
             <div class="flex align-items-center gap-2">
@@ -88,7 +88,7 @@
 
         <div *ngIf="selectedCustomer" class="h-full flex flex-column justify-content-center animate-fade-in">
           <div class="p-3 bg-blue-50 border-round flex align-items-center gap-3">
-            <p-avatar label="C" shape="circle" size="large" styleClass="bg-blue-500 text-white"></p-avatar>
+            <p-avatar label="C" shape="circle" size="large" class="bg-blue-500 text-white"></p-avatar>
             <div>
               <div class="font-bold text-blue-900">{{selectedCustomer.firstName}} {{selectedCustomer.lastName}}</div>
               <div class="text-sm text-blue-700">{{ 'POS.DISCOUNT' | translate }}: {{selectedCustomer.discountRate}}%</div>
@@ -112,7 +112,7 @@
           (onSelect)="addToCart()"
           field="name"
           [placeholder]="'POS.TYPE_PRODUCT' | translate"
-          styleClass="w-full"
+          class="w-full"
           inputStyleClass="w-full p-3 text-lg">
           <ng-template let-med pTemplate="item">
             <div class="flex justify-content-between align-items-center w-full">

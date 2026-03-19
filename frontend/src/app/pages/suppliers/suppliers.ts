@@ -11,6 +11,8 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputIcon } from 'primeng/inputicon';
+import { IconField } from 'primeng/iconfield';
 
 // Services & Models
 import { MessageService } from 'primeng/api';
@@ -34,7 +36,9 @@ import { RoleService } from '../../core/role.service';
     ToastModule,
     AvatarModule,
     TranslateModule,
-    TooltipModule
+    TooltipModule,
+    InputIcon,
+    IconField
   ],
   providers: [MessageService],
   templateUrl: './suppliers.html',

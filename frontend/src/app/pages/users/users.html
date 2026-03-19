@@ -34,20 +34,20 @@
     [loading]="loading"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [showCurrentPageReport]="true"
-    styleClass="users-table">
+    class="users-table">
 
     <ng-template pTemplate="caption">
       <div class="users-table__caption">
         <h5 class="users-table__title">{{ 'USERS.TITLE' | translate }}</h5>
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
+        <p-iconfield>
+          <p-inputicon class="pi pi-search"></p-inputicon>
           <input
             pInputText
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
           />
-        </span>
+        </p-iconfield>
       </div>
     </ng-template>
 
@@ -76,7 +76,7 @@
           <p-avatar
             [label]="getInitials(user.firstName, user.lastName)"
             shape="circle"
-            [styleClass]="'users-table__avatar ' + (user.role === 'ADMIN' ? 'users-table__avatar--admin' : 'users-table__avatar--user')">
+            [class]="'users-table__avatar ' + (user.role === 'ADMIN' ? 'users-table__avatar--admin' : 'users-table__avatar--user')">
           </p-avatar>
         </td>
         <td>
