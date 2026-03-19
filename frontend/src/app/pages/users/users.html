@@ -46,7 +46,7 @@
             type="text"
             (input)="dt.filterGlobal($any($event.target).value, 'contains')"
             [placeholder]="'COMMON.SEARCH' | translate"
-          />
+            />
         </p-iconfield>
       </div>
     </ng-template>
@@ -133,10 +133,12 @@
           [(ngModel)]="user.firstName"
           required
           autofocus
-        />
-        <small class="p-error" *ngIf="submitted && !user.firstName">
-          {{ 'USERS.FIRST_NAME' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !user.firstName) {
+          <small class="p-error">
+            {{ 'USERS.FIRST_NAME' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="user-dialog__field">
@@ -147,10 +149,12 @@
           id="lastName"
           [(ngModel)]="user.lastName"
           required
-        />
-        <small class="p-error" *ngIf="submitted && !user.lastName">
-          {{ 'USERS.LAST_NAME' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !user.lastName) {
+          <small class="p-error">
+            {{ 'USERS.LAST_NAME' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="user-dialog__field">
@@ -161,7 +165,7 @@
           id="position"
           [(ngModel)]="user.position"
           placeholder="e.g. Senior Pharmacist"
-        />
+          />
       </div>
 
       <div class="user-dialog__field">
@@ -172,10 +176,12 @@
           id="username"
           [(ngModel)]="user.username"
           required
-        />
-        <small class="p-error" *ngIf="submitted && !user.username">
-          {{ 'USERS.USERNAME' | translate }} is required.
-        </small>
+          />
+        @if (submitted && !user.username) {
+          <small class="p-error">
+            {{ 'USERS.USERNAME' | translate }} is required.
+          </small>
+        }
       </div>
 
       <div class="user-dialog__field">
@@ -192,9 +198,11 @@
           [mediumLabel]="'Medium'"
           [strongLabel]="'Strong'">
         </p-password>
-        <small class="p-error" *ngIf="submitted && !user.password">
-          {{ 'USERS.MESSAGES.PASSWORD_MIN' | translate }}
-        </small>
+        @if (submitted && !user.password) {
+          <small class="p-error">
+            {{ 'USERS.MESSAGES.PASSWORD_MIN' | translate }}
+          </small>
+        }
       </div>
 
       <div class="user-dialog__field">
@@ -208,22 +216,38 @@
           placeholder="Select role"
           class="w-full">
         </p-select>
-        <small class="p-error" *ngIf="submitted && !user.role">
-          {{ 'USERS.ROLE' | translate }} is required.
-        </small>
+        @if (submitted && !user.role) {
+          <small class="p-error">
+            {{ 'USERS.ROLE' | translate }} is required.
+          </small>
+        }
       </div>
 
-      <div class="user-dialog__permissions" *ngIf="user.role">
-        <div class="user-dialog__permissions-title">Role Permissions:</div>
-        <ul class="user-dialog__permissions-list">
-          <li *ngIf="user.role === 'ADMIN'">✓ Full system access</li>
-          <li *ngIf="user.role === 'ADMIN'">✓ User management</li>
-          <li *ngIf="user.role === 'ADMIN'">✓ Inventory control</li>
-          <li *ngIf="user.role === 'PHARMACIST'">✓ POS terminal</li>
-          <li *ngIf="user.role === 'PHARMACIST'">✓ Sales processing</li>
-          <li *ngIf="user.role === 'PHARMACIST'">✓ View inventory</li>
-        </ul>
-      </div>
+      @if (user.role) {
+        <div class="user-dialog__permissions">
+          <div class="user-dialog__permissions-title">Role Permissions:</div>
+          <ul class="user-dialog__permissions-list">
+            @if (user.role === 'ADMIN') {
+              <li>✓ Full system access</li>
+            }
+            @if (user.role === 'ADMIN') {
+              <li>✓ User management</li>
+            }
+            @if (user.role === 'ADMIN') {
+              <li>✓ Inventory control</li>
+            }
+            @if (user.role === 'PHARMACIST') {
+              <li>✓ POS terminal</li>
+            }
+            @if (user.role === 'PHARMACIST') {
+              <li>✓ Sales processing</li>
+            }
+            @if (user.role === 'PHARMACIST') {
+              <li>✓ View inventory</li>
+            }
+          </ul>
+        </div>
+      }
     </ng-template>
 
     <ng-template pTemplate="footer">

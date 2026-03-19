@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -20,7 +20,6 @@ import { AuthRequest } from '../../api';
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
     CheckboxModule,
@@ -29,7 +28,7 @@ import { AuthRequest } from '../../api';
     RippleModule,
     MessageModule,
     TranslateModule
-  ],
+],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })

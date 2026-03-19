@@ -15,7 +15,7 @@
           [(ngModel)]="searchValue"
           (input)="onSearch()"
           [placeholder]="'INVENTORY.SEARCH' | translate"
-        />
+          />
       </span>
       <p-button
         icon="pi pi-refresh"
@@ -91,8 +91,12 @@
           </div>
         </td>
         <td>
-          <span *ngIf="item.supplierName">{{ item.supplierName }}</span>
-          <span *ngIf="!item.supplierName" class="text-500">-</span>
+          @if (item.supplierName) {
+            <span>{{ item.supplierName }}</span>
+          }
+          @if (!item.supplierName) {
+            <span class="text-500">-</span>
+          }
         </td>
         <td>
           <p-tag

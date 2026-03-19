@@ -223,59 +223,60 @@
     [resizable]="false">
 
     <ng-template pTemplate="content">
-      <div *ngIf="selectedSale" class="flex flex-column gap-4">
-        <!-- Sale Info Header -->
-        <div class="surface-50 border-round p-4">
-          <div class="grid">
-            <div class="col-12 md:col-6">
-              <div class="mb-3">
-                <span class="text-500 text-sm">{{ 'SALES.SALE_ID' | translate }}</span>
-                <div class="font-bold text-xl text-primary">#{{ selectedSale.id }}</div>
+      @if (selectedSale) {
+        <div class="flex flex-column gap-4">
+          <!-- Sale Info Header -->
+          <div class="surface-50 border-round p-4">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="mb-3">
+                  <span class="text-500 text-sm">{{ 'SALES.SALE_ID' | translate }}</span>
+                  <div class="font-bold text-xl text-primary">#{{ selectedSale.id }}</div>
+                </div>
+                <div class="mb-3">
+                  <span class="text-500 text-sm">{{ 'SALES.DATE_TIME' | translate }}</span>
+                  <div class="font-medium">{{ formatDateTime(selectedSale.dateTime) }}</div>
+                </div>
               </div>
-              <div class="mb-3">
-                <span class="text-500 text-sm">{{ 'SALES.DATE_TIME' | translate }}</span>
-                <div class="font-medium">{{ formatDateTime(selectedSale.dateTime) }}</div>
+              <div class="col-12 md:col-6">
+                <div class="mb-3">
+                  <span class="text-500 text-sm">{{ 'SALES.SELLER' | translate }}</span>
+                  <div class="font-medium">{{ selectedSale.sellerName }}</div>
+                </div>
+                <div class="mb-3">
+                  <span class="text-500 text-sm">{{ 'SALES.CUSTOMER' | translate }}</span>
+                  <div class="font-medium">{{ selectedSale.customerName }}</div>
+                </div>
               </div>
             </div>
-            <div class="col-12 md:col-6">
-              <div class="mb-3">
-                <span class="text-500 text-sm">{{ 'SALES.SELLER' | translate }}</span>
-                <div class="font-medium">{{ selectedSale.sellerName }}</div>
-              </div>
-              <div class="mb-3">
-                <span class="text-500 text-sm">{{ 'SALES.CUSTOMER' | translate }}</span>
-                <div class="font-medium">{{ selectedSale.customerName }}</div>
-              </div>
+          </div>
+          <!-- Items List -->
+          <div>
+            <h5 class="text-900 font-bold mb-3">{{ 'SALES.PURCHASED_ITEMS' | translate }}</h5>
+            <div class="flex flex-column gap-2">
+              @for (item of selectedSale.items; track item) {
+                <div
+                  class="surface-card border-1 surface-border border-round p-3 flex justify-content-between align-items-center">
+                  <div>
+                    <div class="font-bold text-900">{{ item.medicineName }}</div>
+                    <div class="text-sm text-500">{{ item.quantity }} × {{ item.unitPrice | currency:'USD' }}</div>
+                  </div>
+                  <div class="font-bold text-lg">{{ item.totalPrice | currency:'USD' }}</div>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Total Summary -->
+          <div class="border-top-1 surface-border pt-3">
+            <div class="flex justify-content-between align-items-center">
+              <span class="text-xl font-bold text-900">{{ 'SALES.TOTAL_AMOUNT' | translate }}</span>
+              <span class="text-3xl font-bold text-green-600">
+                {{ selectedSale.totalAmount | currency:'USD' }}
+              </span>
             </div>
           </div>
         </div>
-
-        <!-- Items List -->
-        <div>
-          <h5 class="text-900 font-bold mb-3">{{ 'SALES.PURCHASED_ITEMS' | translate }}</h5>
-          <div class="flex flex-column gap-2">
-            <div
-              *ngFor="let item of selectedSale.items"
-              class="surface-card border-1 surface-border border-round p-3 flex justify-content-between align-items-center">
-              <div>
-                <div class="font-bold text-900">{{ item.medicineName }}</div>
-                <div class="text-sm text-500">{{ item.quantity }} × {{ item.unitPrice | currency:'USD' }}</div>
-              </div>
-              <div class="font-bold text-lg">{{ item.totalPrice | currency:'USD' }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Total Summary -->
-        <div class="border-top-1 surface-border pt-3">
-          <div class="flex justify-content-between align-items-center">
-            <span class="text-xl font-bold text-900">{{ 'SALES.TOTAL_AMOUNT' | translate }}</span>
-            <span class="text-3xl font-bold text-green-600">
-              {{ selectedSale.totalAmount | currency:'USD' }}
-            </span>
-          </div>
-        </div>
-      </div>
+      }
     </ng-template>
 
     <ng-template pTemplate="footer">

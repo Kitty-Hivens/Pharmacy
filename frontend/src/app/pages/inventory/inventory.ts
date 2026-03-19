@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG Modules
@@ -20,7 +20,6 @@ import { InventoryService, InventoryResponseDto, Pageable } from '../../api';
   selector: 'app-inventory',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     TableModule,
     ButtonModule,
@@ -30,7 +29,7 @@ import { InventoryService, InventoryResponseDto, Pageable } from '../../api';
     TooltipModule,
     ToastModule,
     TranslateModule
-  ],
+],
   providers: [MessageService],
   templateUrl: './inventory.html',
   styleUrl: './inventory.scss'

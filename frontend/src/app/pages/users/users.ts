@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG Modules
@@ -27,7 +27,6 @@ import { UserService, UserResponseDto, UserCreateDto } from '../../api';
   selector: 'app-users',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     TableModule,
     ButtonModule,
@@ -44,7 +43,7 @@ import { UserService, UserResponseDto, UserCreateDto } from '../../api';
     TranslateModule,
     InputIcon,
     IconField
-  ],
+],
   providers: [MessageService, ConfirmationService],
   templateUrl: './users.html',
   styleUrl: './users.scss'
