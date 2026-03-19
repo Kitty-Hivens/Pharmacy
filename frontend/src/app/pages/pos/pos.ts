@@ -14,6 +14,7 @@ import { DividerModule } from 'primeng/divider';
 import { AvatarModule } from 'primeng/avatar';
 import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
+import { Tooltip } from 'primeng/tooltip';
 
 // i18n
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -57,7 +58,8 @@ interface CartItem {
     DividerModule,
     AvatarModule,
     TranslateModule,
-    DialogModule
+    DialogModule,
+    Tooltip
   ],
   providers: [MessageService],
   templateUrl: './pos.html',
