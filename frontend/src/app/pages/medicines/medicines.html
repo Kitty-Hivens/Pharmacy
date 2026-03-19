@@ -145,7 +145,7 @@
 
       <div class="field mb-4">
         <label for="price" class="block font-medium mb-2">{{ 'MEDICINES.PRICE' | translate }}</label>
-        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" styleClass="w-full" required></p-inputNumber>
+        <p-inputNumber id="price" [(ngModel)]="medicine.price" mode="currency" currency="USD" locale="en-US" class="w-full" required></p-inputNumber>
         @if (submitted && !medicine.price) {
           <small class="p-error block mt-1">Price is required.</small>
         }
