@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   navigateTo(path: string) {
-    this.router.navigate([path]);
+    void this.router.navigate([path]);
   }
 
   loadDashboardData() {

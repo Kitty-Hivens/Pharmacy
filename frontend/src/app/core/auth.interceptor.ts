@@ -35,7 +35,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401 || error.status === 403) {
         // Считаем токен невалидным -> чистим и на выход
         localStorage.removeItem('token');
-        router.navigate(['/login']);
+        void router.navigate(['/login']);
       }
       // Пробрасываем ошибку дальше, чтобы компонент мог показать сообщение
       return throwError(() => error);

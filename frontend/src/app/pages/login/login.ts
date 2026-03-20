@@ -70,13 +70,13 @@ export class LoginComponent {
           localStorage.setItem('token', response.token);
           // Store role for RBAC-driven UI
           localStorage.setItem('role', response.role || '');
-          this.router.navigate(['/dashboard']);
+          void this.router.navigate(['/dashboard']);
         } else {
           this.errorMessage = 'LOGIN.ERROR';
         }
         this.loading = false;
       },
-      error: (err) => {
+      error: (_) => {
         console.error();
         this.errorMessage = 'LOGIN.ERROR';
         this.loading = false;
