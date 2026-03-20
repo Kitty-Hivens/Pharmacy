@@ -23,6 +23,9 @@ public class UserAccount {
     private String username;
 
     private String passwordHash;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private Boolean isActive;
 }

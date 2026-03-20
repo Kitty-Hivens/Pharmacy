@@ -1,6 +1,7 @@
 package haru.pharmacy.config;
 
 import haru.pharmacy.model.Employee;
+import haru.pharmacy.model.Role;
 import haru.pharmacy.model.UserAccount;
 import haru.pharmacy.repository.EmployeeRepository;
 import haru.pharmacy.repository.UserRepository;
@@ -58,7 +59,7 @@ public class InitAdmin {
         UserAccount user = new UserAccount();
         user.setUsername(adminUsername);
         user.setPasswordHash(encoder.encode(passwordToUse));
-        user.setRole("ADMIN");
+        user.setRole(Role.ADMIN);
         user.setIsActive(true);
         user.setEmployee(emp);
 

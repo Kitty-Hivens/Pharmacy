@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +32,9 @@ public class SaleController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     @Operation(summary = "Create a new sale", operationId = "createSale")
-    public void create(@Valid @RequestBody SaleCreateDto dto, Principal principal) {
+    public ResponseEntity<Void> create(@Valid @RequestBody SaleCreateDto dto, Principal principal) {
         service.createSale(dto, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping

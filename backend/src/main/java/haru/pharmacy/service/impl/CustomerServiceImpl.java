@@ -11,6 +11,7 @@ import haru.pharmacy.repository.CustomerRepository;
 import haru.pharmacy.service.interfaces.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper mapper;
 
     @Override
+    @Transactional
     public CustomerResponseDto create(CustomerCreateDto dto) {
         if (repository.existsByPhone(dto.phone())) {
             throw new BusinessConstraintException("error.customer.phone_exists");
@@ -32,6 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerResponseDto update(Long id, CustomerUpdateDto dto) {
         Customer entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("error.customer.not_found"));
@@ -47,6 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerResponseDto get(Long id) {
         return repository.findById(id)
                 .map(mapper::toDto)
@@ -54,6 +58,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public List<CustomerResponseDto> getAll() {
         return repository.findAll().stream()
                 .map(mapper::toDto)
@@ -61,6 +66,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
     }
