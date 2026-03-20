@@ -13,7 +13,7 @@
 }
 
 body {
-  font-family: var(--font-family);
+  font-family: var(--font-family), serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -48,4 +48,57 @@ body {
   .p-tooltip .p-tooltip-text {
     white-space: nowrap;
   }
+}
+
+// Shared table styles
+.table-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.table-empty {
+  text-align: center;
+  padding: 4rem 1.5rem !important;
+
+  i {
+    display: block;
+    font-size: 4rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+}
+
+// Shared dialog layout
+.p-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--surface-border);
+  }
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+  .p-dialog-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--surface-border);
+  }
+}
+
+// Shared table empty state text
+.table-empty-text {
+  font-size: 1.125rem;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+}
+
+// Shared table title
+.table-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
 }

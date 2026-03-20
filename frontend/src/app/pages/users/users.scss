@@ -1,20 +1,5 @@
 .users {
   .users-table {
-    &__caption {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    &__title {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-color);
-    }
 
     &__avatar-col {
       width: 4rem;
@@ -49,25 +34,6 @@
       font-family: 'Courier New', monospace;
       font-size: 0.9rem;
       color: var(--text-color-secondary);
-    }
-
-    &__empty {
-      text-align: center;
-      padding: 4rem 1.5rem !important;
-
-      i {
-        display: block;
-        font-size: 4rem;
-        color: var(--text-color-secondary);
-        margin-bottom: 1rem;
-        opacity: 0.5;
-      }
-    }
-
-    &__empty-text {
-      font-size: 1.125rem;
-      color: var(--text-color-secondary);
-      font-weight: 500;
     }
   }
 
@@ -130,36 +96,5 @@
         }
       }
     }
-  }
-}
-
-:host ::ng-deep {
-  .p-dialog {
-    .p-dialog-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .p-dialog-content {
-      padding: 1.5rem;
-    }
-
-    .p-dialog-footer {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--surface-border);
-    }
-  }
-
-  .p-password {
-    width: 100%;
-
-    input {
-      width: 100%;
-    }
-  }
-
-  .p-tag {
-    font-weight: 600;
-    font-size: 0.875rem;
   }
 }
