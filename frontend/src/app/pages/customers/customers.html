@@ -37,8 +37,8 @@
     class="customers-table">
 
     <ng-template pTemplate="caption">
-      <div class="customers-table__caption">
-        <h5 class="customers-table__title">{{ 'CUSTOMERS.TITLE' | translate }}</h5>
+      <div class="table-caption">
+        <h5 class="table-title">{{ 'CUSTOMERS.TITLE' | translate }}</h5>
         <p-iconfield>
           <p-inputicon class="pi pi-search"></p-inputicon>
           <input
@@ -118,9 +118,9 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="customers-table__empty">
+        <td colspan="5" class="table-empty">
           <i class="pi pi-users"></i>
-          <div class="customers-table__empty-text">{{ 'CUSTOMERS.NO_CUSTOMERS' | translate }}</div>
+          <div class="table-empty-text">{{ 'CUSTOMERS.NO_CUSTOMERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
@@ -132,7 +132,7 @@
     [style]="{width: '450px'}"
     [header]="(customer.id ? 'CUSTOMERS.EDIT_CUSTOMER' : 'CUSTOMERS.NEW_CUSTOMER') | translate"
     [modal]="true"
-    styleClass="p-fluid customer-dialog">
+    class="p-fluid customer-dialog">
 
     <ng-template pTemplate="content">
       <div class="customer-dialog__field">

@@ -39,8 +39,8 @@
     class="suppliers-table">
 
     <ng-template pTemplate="caption">
-      <div class="suppliers-table__caption">
-        <h5 class="suppliers-table__title">{{ 'SUPPLIERS.TITLE' | translate }}</h5>
+      <div class="table-caption">
+        <h5 class="table-title">{{ 'SUPPLIERS.TITLE' | translate }}</h5>
         <p-iconfield>
           <p-inputicon class="pi pi-search"></p-inputicon>
           <input
@@ -99,9 +99,9 @@
     <!-- pi-truck instead of pi-inbox for suppliers empty state -->
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="suppliers-table__empty">
+        <td colspan="5" class="table-empty">
           <i class="pi pi-truck"></i>
-          <div class="suppliers-table__empty-text">{{ 'SUPPLIERS.NO_SUPPLIERS' | translate }}</div>
+          <div class="table-empty-text">{{ 'SUPPLIERS.NO_SUPPLIERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
@@ -113,7 +113,7 @@
     [style]="{width: '450px'}"
     [header]="'SUPPLIERS.NEW_SUPPLIER' | translate"
     [modal]="true"
-    styleClass="p-fluid supplier-dialog">
+    class="p-fluid supplier-dialog">
 
     <ng-template pTemplate="content">
       <div class="supplier-dialog__field">

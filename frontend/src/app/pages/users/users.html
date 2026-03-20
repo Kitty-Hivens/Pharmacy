@@ -37,8 +37,8 @@
     class="users-table">
 
     <ng-template pTemplate="caption">
-      <div class="users-table__caption">
-        <h5 class="users-table__title">{{ 'USERS.TITLE' | translate }}</h5>
+      <div class="table-caption">
+        <h5 class="table-title">{{ 'USERS.TITLE' | translate }}</h5>
         <p-iconfield>
           <p-inputicon class="pi pi-search"></p-inputicon>
           <input
@@ -107,9 +107,9 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="users-table__empty">
+        <td colspan="5" class="table-empty">
           <i class="pi pi-users"></i>
-          <div class="users-table__empty-text">{{ 'USERS.NO_USERS' | translate }}</div>
+          <div class="table-empty-text">{{ 'USERS.NO_USERS' | translate }}</div>
         </td>
       </tr>
     </ng-template>
@@ -121,7 +121,7 @@
     [style]="{width: '500px'}"
     [header]="'USERS.REGISTER' | translate"
     [modal]="true"
-    styleClass="p-fluid user-dialog">
+    class="p-fluid user-dialog">
 
     <ng-template pTemplate="content">
       <div class="user-dialog__field">
