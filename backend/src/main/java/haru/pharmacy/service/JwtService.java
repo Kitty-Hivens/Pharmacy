@@ -52,7 +52,7 @@ public class JwtService {
     public String generateToken(UserAccount user) {
         return Jwts.builder()
                 .subject(user.getUsername())
-                .claim("role", user.getRole())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getSigningKey())

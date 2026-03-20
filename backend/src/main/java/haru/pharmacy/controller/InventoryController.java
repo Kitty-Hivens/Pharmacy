@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +28,9 @@ public class InventoryController {
     @PostMapping("/restock")
     @PreAuthorize("hasAnyRole('ADMIN', 'PHARMACIST')")
     @Operation(summary = "Restock inventory", operationId = "restockInventory")
-    public void restock(@Valid @RequestBody InventoryAddDto dto) {
+    public ResponseEntity<Void> restock(@Valid @RequestBody InventoryAddDto dto) {
         service.addStock(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping

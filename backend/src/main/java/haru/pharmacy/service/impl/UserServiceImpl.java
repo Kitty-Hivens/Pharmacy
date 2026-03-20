@@ -3,9 +3,10 @@ package haru.pharmacy.service.impl;
 import haru.pharmacy.dto.user.UserCreateDto;
 import haru.pharmacy.dto.user.UserResponseDto;
 import haru.pharmacy.exception.BusinessConstraintException;
-import haru.pharmacy.exception.ResourceNotFoundException; // <--- Импорт
+import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.mapper.UserMapper;
 import haru.pharmacy.model.Employee;
+import haru.pharmacy.model.Role;
 import haru.pharmacy.model.UserAccount;
 import haru.pharmacy.repository.EmployeeRepository;
 import haru.pharmacy.repository.UserRepository;
@@ -39,13 +40,14 @@ public class UserServiceImpl implements UserService {
         UserAccount user = new UserAccount();
         user.setUsername(dto.username());
         user.setPasswordHash(encoder.encode(dto.password()));
-        user.setRole(dto.role());
+        user.setRole(Role.valueOf(dto.role()));
         user.setIsActive(true);
         user.setEmployee(emp);
 
         userRepo.save(user);
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponseDto> getAll() {
         return userRepo.findAll().stream()
                 .filter(UserAccount::getIsActive)

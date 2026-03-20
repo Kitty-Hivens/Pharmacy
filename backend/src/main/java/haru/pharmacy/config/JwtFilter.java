@@ -60,15 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Claims claims;
-            try {
-                claims = jwtService.extractClaims(token);
-            } catch (Exception e) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            String role = (String) claims.get("role");
+            String role = user.getRole().name();
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
