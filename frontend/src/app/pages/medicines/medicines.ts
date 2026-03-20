@@ -82,9 +82,6 @@ export class MedicinesComponent implements OnInit {
   /** Loading state indicator for UI spinners. */
   loading = true;
 
-  /** Current value of the global search filter. */
-  searchValue: string | undefined;
-
   // --- Medicine Dialog State ---
   /** Controls visibility of the creation/edit medicine dialog. */
   medicineDialog = false;

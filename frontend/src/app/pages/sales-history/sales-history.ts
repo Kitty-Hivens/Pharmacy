@@ -16,7 +16,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { Ripple } from 'primeng/ripple';
 
 // i18n
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 // API Services & Models
 import {
@@ -77,7 +77,6 @@ export class SalesHistoryComponent implements OnInit, OnDestroy {
 
   constructor(
     private saleService: SaleService,
-    private translate: TranslateService
   ) {}
 
   ngOnInit() {

@@ -103,7 +103,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
+  onResize(_: any) {
     this.checkScreenSize();
   }
 
@@ -126,7 +126,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    this.router.navigate(['/login']);
+    void this.router.navigate(['/login']);
   }
 
   checkLowStock() {

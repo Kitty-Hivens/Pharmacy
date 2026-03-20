@@ -36,6 +36,6 @@ export const authGuard: CanActivateFn = () => {
     localStorage.removeItem('role');
   }
 
-  router.navigate(['/login']);
+  void router.navigate(['/login']);
   return false;
 };
