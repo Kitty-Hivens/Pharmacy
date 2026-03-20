@@ -201,7 +201,7 @@ class SaleServiceTest {
     void createSale_ShouldThrow_WhenSellerNotFound() {
         // Given
         String username = "unknown_user";
-        SaleCreateDto dto = new SaleCreateDto(null, Collections.emptyList());
+        SaleCreateDto dto = new SaleCreateDto(null, List.of(new SaleCreateDto.SaleItemRequest(1L, 1)));
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
@@ -220,7 +220,7 @@ class SaleServiceTest {
         // Given
         String username = "admin";
         Long customerId = 999L;
-        SaleCreateDto dto = new SaleCreateDto(customerId, Collections.emptyList());
+        SaleCreateDto dto = new SaleCreateDto(customerId, List.of(new SaleCreateDto.SaleItemRequest(1L, 1)));
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(new UserAccount()));
         when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
