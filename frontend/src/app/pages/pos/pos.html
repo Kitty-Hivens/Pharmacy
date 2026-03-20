@@ -15,7 +15,7 @@
             <th style="min-width: 200px">{{ 'POS.TABLE.MEDICINE' | translate }}</th>
             <th>{{ 'POS.TABLE.PRICE' | translate }}</th>
             <th style="width: 150px">{{ 'POS.TABLE.QUANTITY' | translate }}</th>
-            <th>{{ 'POS.TABLE.TOTAL' | translate }}</th>
+            <th style="min-width: 120px; text-align: right">{{ 'POS.TABLE.TOTAL' | translate }}</th>
             <th style="width: 50px"></th>
           </tr>
         </ng-template>
@@ -38,7 +38,7 @@
               </p-inputNumber>
               <div class="text-xs text-500 mt-1 ml-1">{{ 'POS.STOCK' | translate }}: {{item.medicine.quantity}}</div>
             </td>
-            <td class="font-bold text-lg">{{ item.total | currency:'USD' }}</td>
+            <td style="min-width: 120px" class="font-bold text-lg">{{ item.total | currency:'USD' }}</td>
             <td>
               <p-button
                 icon="pi pi-trash"
