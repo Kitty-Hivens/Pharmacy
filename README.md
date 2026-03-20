@@ -1,14 +1,18 @@
 # 🏥 Haru Pharmacy Management System
 
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.1-brightgreen?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-21.1.0-dd0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
+[![Angular](https://img.shields.io/badge/Angular-21.2.5-dd0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
 [![Java](https://img.shields.io/badge/Java-21_(LTS)-orange?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/Kitty-Hivens/Pharmacy/actions)
+[![Live](https://img.shields.io/badge/Live-pharmacy.hivens.dev-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://pharmacy.hivens.dev)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 > **Enterprise-Grade Point of Sale & Inventory Management System**  
 > A production-ready fullstack application demonstrating modern software architecture, clean code practices, and advanced Spring Boot 4 / Angular 21 features.
+
+🔗 **Live Demo:** [https://pharmacy.hivens.dev](https://pharmacy.hivens.dev)
 
 ---
 
@@ -18,10 +22,11 @@
 
 ### Why This Project Stands Out
 
-✨ **Bleeding-Edge Stack** — Built with Spring Boot 4.0.1 and Angular 21.1.0 (latest stable releases as of Q1 2025)  
+✨ **Bleeding-Edge Stack** — Built with Spring Boot 4.0.1 and Angular 21.2.5 (latest stable releases as of Q1 2026)  
 🏗️ **Production Architecture** — Contract-First API design, CQRS patterns, optimistic locking, RBAC security  
 🧪 **Test Coverage** — Comprehensive JUnit tests with Mockito for business-critical logic  
 📦 **Docker Ready** — Full containerization with multi-stage builds and health checks  
+🚀 **CI/CD Pipeline** — Automated deployment to VPS via GitHub Actions on every push  
 🌍 **i18n Support** — Bilingual interface (English/Russian) with dynamic language switching  
 🎨 **Professional UI** — Built with PrimeNG, responsive design, and modern UX patterns
 
@@ -72,14 +77,14 @@
 ✓ Flyway 10+                → Versioned database migrations
 ✓ MapStruct 1.5.5           → Compile-time DTO mapping
 ✓ SpringDoc OpenAPI 2.7     → API documentation generation
-✓ MariaDB 12.1.2            → Relational database with advanced features
+✓ MariaDB 10.11             → Relational database with advanced features
 ✓ JUnit 5 + Mockito         → Comprehensive unit testing
 ```
 
 ### Frontend (Angular 21 + TypeScript 5)
 ```typescript
-✓ Angular 21.1.0            → Zoneless change detection, Signals API
-✓ PrimeNG 21                → UI component library
+✓ Angular 21.2.5            → Zoneless change detection, Signals API
+✓ PrimeNG 21.1.3            → UI component library
 ✓ RxJS 7.8                  → Reactive programming
 ✓ OpenAPI Generator         → Auto-generated TypeScript client
 ✓ ngx-translate             → Internationalization (i18n)
@@ -89,6 +94,8 @@
 ### DevOps & Tools
 ```yaml
 ✓ Docker Compose            → Multi-container orchestration
+✓ GitHub Actions            → CI/CD — auto deploy on push to main
+✓ Nginx + Let's Encrypt     → Reverse proxy with HTTPS
 ✓ Gradle 8.14               → Build automation
 ✓ npm 11.7.0                → Frontend package management
 ✓ Git                       → Version control with conventional commits
@@ -224,7 +231,7 @@ docker-compose up -d
 ### 🔑 Default Credentials
 ```
 Username: admin
-Password: Check backend startup logs or set via environment variable
+Password: Set via ADMIN_INITIAL_PASSWORD environment variable
 ```
 
 ### 💻 Local Development
@@ -291,6 +298,8 @@ pharmacy-management/
 │   │       └── users/
 │   └── public/i18n/            # Translation files
 │
+├── .github/workflows/
+│   └── deploy.yml              # GitHub Actions CI/CD
 └── docker-compose.yml          # Multi-container setup
 ```
 
@@ -299,7 +308,7 @@ pharmacy-management/
 ## 📚 API Documentation
 
 ### Live Interactive Docs
-🔗 **Swagger UI:** `http://localhost:8080/swagger-ui.html`
+🔗 **Swagger UI:** `https://pharmacy.hivens.dev/swagger-ui.html`
 
 ### Sample Endpoints
 ```http
@@ -385,9 +394,29 @@ ADMIN_INITIAL_PASSWORD=ChangeMe123!
 apiUrl=https://api.yourdomain.com
 ```
 
+### CI/CD Pipeline
+Every push to the `Central-Workflow` branch triggers automatic deployment:
+
+```yaml
+# .github/workflows/deploy.yml
+on:
+  push:
+    branches: [Central-Workflow]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          script: |
+            cd /root/Pharmacy
+            git pull
+            docker compose up --build -d
+```
+
 ### Docker Production
 ```yaml
-# docker-compose.prod.yml
+# docker-compose.yml
 services:
   backend:
     image: pharmacy-backend:latest
@@ -402,6 +431,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
 ```
+
+---
 
 ## 🤝 Contributing
 
