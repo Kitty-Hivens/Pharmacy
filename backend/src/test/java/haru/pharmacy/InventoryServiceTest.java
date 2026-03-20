@@ -1,6 +1,7 @@
 package haru.pharmacy;
 
 import haru.pharmacy.dto.InventoryAddDto;
+import haru.pharmacy.dto.InventoryResponseDto;
 import haru.pharmacy.exception.ResourceNotFoundException;
 import haru.pharmacy.model.Inventory;
 import haru.pharmacy.model.Medicine;
@@ -120,7 +121,7 @@ class InventoryServiceTest {
                 .thenReturn(expectedPage);
 
         // When
-        Page<Inventory> result = inventoryService.getAll(searchQuery, pageable);
+        Page<InventoryResponseDto> result = inventoryService.getAll(searchQuery, pageable);
 
         // Then
         assertEquals(1, result.getTotalElements());
