@@ -32,6 +32,18 @@
 
 ---
 
+## 📸 Screenshots
+
+| Dashboard                                    | POS Terminal                     |
+|----------------------------------------------|----------------------------------|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![POS](docs/screenshots/pos.png) |
+
+| Inventory Management                         | Sales History                        |
+|----------------------------------------------|--------------------------------------|
+| ![Medicines](docs/screenshots/medicines.png) | ![Sales](docs/screenshots/sales.png) |
+
+---
+
 ## 🚀 Key Features
 
 ### 🛒 Point of Sale (POS) Terminal
@@ -436,8 +448,6 @@ services:
 
 ## 🤝 Contributing
 
-This is a portfolio project, but feedback and suggestions are welcome!
-
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit changes (`git commit -m 'Add AmazingFeature'`)
@@ -463,7 +473,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 🙏 Acknowledgments
 
-- **Prog Academy** — For the structured learning program and project requirements
 - **Spring Team** — For the incredible framework and documentation
 - **Angular Team** — For pushing the boundaries of frontend development
 - **PrimeNG** — For the professional UI component library
@@ -474,7 +483,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 <div align="center">
 
 ### ⭐ If this project helped you, please consider giving it a star!
-
-**Built with ❤️ by a Backend Developer learning Frontend**
 
 </div>
